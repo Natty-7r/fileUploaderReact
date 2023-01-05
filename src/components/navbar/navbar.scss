@@ -1,0 +1,112 @@
+/* ---------------- hero sections  starts ------------- */
+/* ---------------- mobile navbar list  starts  ------------- */
+.hero .navbar {
+  padding: 3rem 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+  color: var(--white);
+}
+.navbar .humburger {
+  flex-basis: 10%;
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+
+  .bar {
+    background-color: var(--white);
+    height: 1px;
+    border-radius: 50%;
+  }
+  .bar_1 {
+    width: 0.8rem;
+  }
+  .bar_2 {
+    width: 1.4rem;
+  }
+  .bar_3 {
+    width: 1.1rem;
+  }
+}
+.logo_div {
+  text-transform: capitalize;
+  font-size: 1.4rem;
+  margin-left: -2rem;
+  font-weight: lighter;
+}
+.btn_lang {
+  background-color: transparent;
+  border: none;
+  color: var(--golden);
+  /* text-decoration: underline; */
+  text-transform: capitalize;
+  border: solid thin var(--golden);
+  padding: 0.1rem 0.6rem;
+}
+
+.mobile_navlist {
+  position: absolute;
+  left: 0rem;
+  top: 0rem;
+  width: 100%;
+  height: 100vh;
+  background-image: linear-gradient(
+    to right bottom,
+    rgba(0, 0, 0, 0.985),
+    rgba(17, 24, 39, 0.963)
+  );
+  list-style: none;
+  color: var(--white);
+  z-index: 3;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3.2rem;
+
+  animation: slideOUt 0.3s;
+  transform-origin: left top;
+
+  .btn_close {
+    position: absolute;
+    top: 5rem;
+    left: 5rem;
+    color: red;
+    font-size: 2rem;
+  }
+  li {
+  }
+  li a {
+    text-decoration: none;
+    font-size: 3.6rem;
+    color: var(--whiteDim);
+    text-transform: capitalize;
+    font-weight: 100;
+    letter-spacing: 0.3rem;
+  }
+}
+.mobile_navlist_visible {
+  animation: slideIn 0.2s forwards;
+}
+.mobile_navlist_hidden {
+  animation: slideOut 0.2s forwards;
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes slideIn {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}

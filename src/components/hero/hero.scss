@@ -1,0 +1,64 @@
+.hero {
+  position: relative;
+  height: 65vh;
+  background-image: linear-gradient(
+      to right bottom,
+      hsla(0, 0%, 32%, 0.863),
+      rgba(41, 37, 36, 0.837)
+    ),
+    url("../../../public/images/redSofa.png");
+  opacity: 1;
+  background-position: center;
+  background-size: cover;
+}
+
+/* ---------------- hero main starts ------------- */
+.hero_main {
+  margin: 7rem auto auto;
+  padding-left: 3rem;
+  color: var(--white);
+  font-family: "Roboto", sans-serif;
+}
+.hero_main .hero_text-name {
+  text-transform: uppercase;
+  letter-spacing: 7px;
+  font-weight: 100;
+  color: var(--whiteDim);
+}
+.hero_main .hero_text-bold {
+  margin-top: 1.2rem;
+  text-transform: uppercase;
+  font-size: 3.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--golden);
+}
+
+.hero_main .hero_text-ligther {
+  margin-top: 2.4rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  line-height: 1.5em;
+  color: var(--whiteDim);
+}
+.hero_main .btn_hero {
+  margin: 2.4rem auto auto 0%;
+  width: 90%;
+  padding: 1rem 1.4rem;
+  border: none;
+  background-color: var(--golden);
+  color: var(--gray);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.hero .hero_image {
+  position: absolute;
+  bottom: 0rem;
+  right: 5%;
+  transform: translateY(70%);
+  height: 14rem;
+  width: 70%;
+}
