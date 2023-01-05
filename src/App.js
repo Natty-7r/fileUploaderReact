@@ -1,12 +1,8 @@
-import Navbar from "./components/navbar/navbar";
-import Hero from "./components/hero/hero";
-import About from "./components/about/about";
-
+import Admin from "./components/pages/admin";
 function App() {
   return (
     <div className="App">
-      <Hero />
-      <About />
+      <Admin />
     </div>
   );
 }
