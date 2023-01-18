@@ -69,20 +69,6 @@ const storeDrugs = [
     suppliedDate: "13/13/13",
   },
 ];
-const fetchDrugs = async () => {
-  let drugsFetched = [];
-  const response = await axios.get(`${baseUrl}/drugs`);
-  drugsFetched = response.data.drugs;
-  // axios
-  //   .get(`${baseUrl}/drugs`)
-  //   .then((response) => {
-  //     drugsFetched = response.data.drugs;
-  //   })
-  //   .catch((e) => {
-  //     console.log(e);
-  //   });
-  return drugsFetched;
-};
 
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
@@ -285,8 +271,12 @@ const ExpiredDrug = (props) => {
 };
 
 export default (props) => {
+  let totalDrugs = 0,
+    totalAvailbleDrugs = 0,
+    totalExpiredDrugs = 0;
   const [editing, setEditing] = useState(false);
   const [checkingExpiration, setCheckingExpiration] = useState(false);
+  const [summary, setSummary] = useState([0, 0, 0]);
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
   const [drugs, setDrugs] = useState([]);
@@ -295,8 +285,13 @@ export default (props) => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
       setDrugs(response.data.drugs);
+      createSummary();
     });
   }, []);
+
+  useEffect(() => {
+    createSummary();
+  }, [drugs]);
 
   const handleUpdate = (index) => {
     setEditing(true);
@@ -316,10 +311,10 @@ export default (props) => {
       .catch((error) => console.log(error));
   };
   const handleDiscard = (indexSelected, drugId) => {
-    console.log(drugId);
     drugs.splice(indexSelected, 1);
     setDrugs(drugs);
     setDrugsLength(drugs.length);
+    createSummary();
     axios
       .delete(`${baseUrl}/drug/${drugId}`)
       .then((response) => {
@@ -355,21 +350,34 @@ export default (props) => {
     });
     return expiredDrugs;
   };
+  const createSummary = () => {
+    drugs.forEach((drug) => {
+      const expireDate = new Date(drug.expireDate);
+
+      if (expireDate < new Date()) {
+        totalExpiredDrugs += drug.amount;
+      } else {
+        totalAvailbleDrugs += drug.amount;
+      }
+      totalDrugs += drug.amount;
+    });
+    setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
+  };
   return (
     <div className="coordinator_page">
       <div className="coordinator_main">
         <div className="overview">
           <div className="summary">
             <p className="summary_name">total drugs in stock </p>
-            <p className="summary_value">500</p>
+            <p className="summary_value">{summary[0]}</p>
           </div>
           <div className="summary">
             <p className="summary_name">availbles drugs </p>
-            <p className="summary_value">500</p>
+            <p className="summary_value">{summary[1]}</p>
           </div>
           <div className="summary">
             <p className="summary_name">expired drugs </p>
-            <p className="summary_value">500</p>
+            <p className="summary_value">{summary[2]}</p>
           </div>
           <div className="summary">
             <p className="summary_name">pending drugs </p>
