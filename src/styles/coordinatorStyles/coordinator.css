@@ -1,0 +1,280 @@
+* {
+  /* overflow-y: auto; */
+}
+.coordinator_page {
+  /* margin: 1rem 3% 0rem; */
+}
+.coordinator_main {
+}
+.coordinator_page .overview {
+  display: flex;
+  padding: 1rem 0rem;
+  justify-content: flex-start;
+  padding-left: 5%;
+  gap: 1rem;
+  /* display: none; */
+}
+.overview .summary {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2rem 3rem;
+  background-color: var(--white);
+  border-radius: 0.5rem;
+  box-shadow: 0rem 10rem 20rem rgba(101, 98, 98, 0.131);
+  font-size: 1.6rem;
+  text-transform: capitalize;
+  letter-spacing: 0.05rem;
+  border-bottom: solid thin var(--whiteDim);
+}
+.summary .summary_name {
+  font-weight: 600;
+}
+.summary .summary_value {
+  font-weight: 600;
+  font-size: 2.2rem;
+  color: var(--lightDarkBlue);
+}
+.coordinator_page .actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin: 1rem;
+}
+.actions .btn {
+  text-transform: capitalize;
+  letter-spacing: 0.08rem;
+}
+.actions .btn:hover {
+  opacity: 0.9;
+}
+.coordinator_page .druglist {
+  padding: auto 2rem;
+}
+.druglist .list_header {
+  display: flex;
+  justify-content: space-around;
+  background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+  color: white;
+  padding-right: 1.3%;
+}
+
+.list_body {
+  height: 53vh;
+  overflow-y: auto;
+  border-bottom: solid var(--grayColor);
+}
+.blurred {
+  filter: blur(2rem);
+}
+.list_body .lists {
+  margin-bottom: 0.2rem;
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--white);
+  box-shadow: 0rem 10rem 20rem rgba(0, 0, 0, 0.074);
+}
+.list_body .expired {
+  background-color: var(--whiteDim);
+}
+.list {
+  flex-basis: 12%;
+  display: flex;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  padding: 0.5rem 0rem 0.5rem 0.5rem;
+  border-right: solid thin red;
+}
+.lists .list {
+  text-transform: capitalize;
+}
+
+.list_header .list {
+  padding: 1rem;
+}
+
+/*  defining the size of each colum*/
+
+.list-no {
+  flex-basis: 7%;
+}
+
+.list-name {
+  flex-basis: 15%;
+}
+.list-supplier {
+  flex-basis: 15%;
+}
+.list-btn {
+  width: fit-content;
+}
+.list-btn .btn {
+}
+.list .list_btn {
+  background-color: white;
+  border: solid thin var(--golden);
+  padding: 0.6rem 2.4rem;
+  border-radius: 0.5rem;
+  text-transform: capitalize;
+  letter-spacing: 0.05rem;
+}
+.list .list_btn-update:hover {
+  background-color: var(--grayColor);
+  color: var(--white);
+}
+.list .list_btn-discard:hover {
+  background-color: var(--orange);
+  color: var(--white);
+}
+/*  column definition ends here  */
+
+.list_footer {
+  height: 100vh;
+}
+
+/*  update drug information  */
+.update_druginfo {
+  width: 40%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: var(--white);
+  box-shadow: 0rem 10rem 20rem rgba(0, 0, 0, 0.4);
+  padding: 2% 7%;
+  font-size: 1.4em;
+  text-transform: capitalize;
+  z-index: 6;
+  font-weight: 600;
+}
+.close_check {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
+.close_check:hover {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+  color: red;
+}
+
+.info {
+  margin-bottom: 1rem;
+}
+.druglist .drug_name {
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.07rem;
+  width: fit-content;
+  margin-bottom: 2rem;
+  padding: 0.2rem;
+  border-bottom: solid thin var(--grayColor);
+}
+.info label {
+  display: block;
+  margin-bottom: 0.2rem;
+  letter-spacing: 0.07rem;
+}
+.info .info_input {
+  width: 100%;
+  height: 3.5rem;
+  outline: hidden;
+  padding-left: 0.8rem;
+  font-weight: 600;
+  border: solid thin var(--grayColor);
+  border-radius: 0.4rem;
+}
+
+/*  cheking expired dates and discarding them  */
+
+.expired_drugs {
+  width: 70%;
+  max-height: 45vh;
+  min-height: 25vh;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: var(--white);
+  box-shadow: 0rem 10rem 20rem rgba(0, 0, 0, 0.4);
+  padding: 4% 5% 2%;
+  font-size: 1.4em;
+  text-transform: capitalize;
+  z-index: 6;
+  font-weight: 600;
+}
+
+.no_data_header {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%);
+  letter-spacing: 00.1rem;
+}
+.expired_drugs .close_check {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+}
+.expired_drugs .close_check:hover {
+  position: absolute;
+  right: 5%;
+  top: 5%;
+  color: red;
+}
+.expired_drugs .expired_list_header {
+  background-color: var(--grayColor);
+  color: var(--white);
+  display: flex;
+  justify-content: space-around;
+}
+.expired_drugs .expired_list_body {
+  max-height: 30vh;
+  border: solid thin var(--grayColor);
+  overflow-y: auto;
+  display: flex;
+  flex-flow: column;
+}
+.expired_list_body .expired_lists {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.2rem;
+}
+.expired_list {
+  display: flex;
+  align-items: center;
+  text-align: left;
+  flex-basis: 20%;
+  padding-left: 0.4rem;
+  border-right: solid thin red;
+  padding: 0.6rem 0.1rem 0.6rem 0.4rem;
+}
+.expired_list_body .expired_list {
+  background-color: var(--whiteBlue);
+  font-weight: 400;
+  border-bottom: dashed thin var(--grayColor);
+}
+.expired_list_body .expired_list::last-child {
+  border-bottom: none 0rem var(--grayColor);
+}
+.expired_list .expired_list_btn {
+  background: var(--white);
+  color: var(--grayColor);
+  border: solid thin var(--golden);
+  padding: 0.4rem 1.4rem;
+  border-radius: 0.2rem;
+  text-transform: capitalize;
+  letter-spacing: 0.05rem;
+  font-size: 1.4rem;
+  margin: 0.2rem auto;
+}
+.expired_list .expired_list_btn:hover {
+  background-color: var(--orange);
+  color: var(--white);
+}
+/*  cheking expired dates and discarding them  */

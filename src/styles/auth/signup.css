@@ -1,0 +1,113 @@
+.signupForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2.4rem auto auto;
+  width: 60%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 0.4rem;
+  box-shadow: 0 10px 25px rgba(92, 99, 105, 0.2);
+  z-index: 5;
+}
+.formContainer {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 1rem;
+  width: 90%;
+  padding: 10% 5%;
+}
+.inputContainer {
+  position: relative;
+  height: 7rem;
+  padding: 0rem 0.5rem;
+  width: 90%;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1.4rem;
+  margin-top: 1.4rem;
+  width: 90%;
+}
+.input {
+  position: absolute;
+  bottom: 0rem;
+  left: 0rem;
+  height: 80%;
+  width: 100%;
+  border: 1px solid #dadce0;
+  border-radius: 0.4rem;
+  font-size: 1.6rem;
+  padding: 0rem 2rem;
+  outline: none;
+  background: none;
+  z-index: 1;
+}
+
+::placeholder {
+  color: transparent;
+}
+
+.label {
+  position: absolute;
+  bottom: 25%;
+  left: 1%;
+  padding: 0 0.4rem;
+  background-color: white;
+  color: #b9c5de;
+  font-size: 1.6rem;
+  transition: all 0.5s;
+  z-index: 0;
+}
+
+.input:focus + .label {
+  transform: translateY(-180%);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--grayColor);
+  display: block;
+  padding: 0rem 1rem;
+  z-index: 5;
+}
+.input:focus {
+  border: thin solid var(--grayColor);
+  z-index: 5;
+}
+
+.input:not(:placeholder-shown) + .label {
+  transform: translateY(-180%);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--grayColor);
+  display: block;
+  padding: 0rem 1rem;
+  z-index: 5;
+}
+.btn_submit {
+  padding: 0.8rem 1.6rem;
+}
+.link {
+  text-transform: lowercase;
+  letter-spacing: 0.05rem;
+  color: red;
+  padding-bottom: 0rem;
+  border-bottom: solid thin transparent;
+}
+.link:hover {
+  border-bottom: solid thin red;
+}
+@media (max-width: 600px) {
+  .signupForm {
+    width: 80%;
+  }
+  .formContainer {
+    gap: 0rem;
+    width: 90%;
+    padding: 10% 5%;
+  }
+}
