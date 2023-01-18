@@ -78,6 +78,12 @@
 .list_body .expired {
   background-color: var(--whiteDim);
 }
+.list_body .expired .list {
+  opacity: 0.4;
+}
+.list_body .expired .list-btn {
+  opacity: 1;
+}
 .list {
   flex-basis: 12%;
   display: flex;

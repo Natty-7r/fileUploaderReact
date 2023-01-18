@@ -414,15 +414,22 @@ export default (props) => {
             className={`list_body ${
               editing || checkingExpiration ? "blurred" : ""
             }`}>
-            {drugs.map((drug, index) => (
-              <DrugList
-                drug={drug}
-                index={index}
-                key={index}
-                handleUpdate={handleUpdate}
-                handleDiscard={handleDiscard}
-              />
-            ))}
+            {drugs.length == 0 ? (
+              <h1 className="no_data_header">
+                {" "}
+                No drug was found in the stock!
+              </h1>
+            ) : (
+              drugs.map((drug, index) => (
+                <DrugList
+                  drug={drug}
+                  index={index}
+                  key={index}
+                  handleUpdate={handleUpdate}
+                  handleDiscard={handleDiscard}
+                />
+              ))
+            )}
           </div>
           <div className="list_footer"></div>
         </div>
