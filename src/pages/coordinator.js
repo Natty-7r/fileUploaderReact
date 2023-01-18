@@ -1,6 +1,8 @@
-import { useState } from "react";
-
 import "../styles/coordinatorStyles/coordinator.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
+const baseUrl = "http://localhost:8080";
+
 const storeDrugs = [
   {
     name: "diclone",
@@ -67,6 +69,20 @@ const storeDrugs = [
     suppliedDate: "13/13/13",
   },
 ];
+const fetchDrugs = async () => {
+  let drugsFetched = [];
+  const response = await axios.get(`${baseUrl}/drugs`);
+  drugsFetched = response.data.drugs;
+  // axios
+  //   .get(`${baseUrl}/drugs`)
+  //   .then((response) => {
+  //     drugsFetched = response.data.drugs;
+  //   })
+  //   .catch((e) => {
+  //     console.log(e);
+  //   });
+  return drugsFetched;
+};
 
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
@@ -77,13 +93,18 @@ const DrugList = function (props) {
       <p className="list list_name list-name">{props.drug.name} </p>
       <p className="list list_name list-price">{props.drug.price} birr </p>
       <p className="list list_name list-amount">{props.drug.amount} </p>
-      <p className="list list_name list-e_date ">{props.drug.expireDate} </p>
+      <p className="list list_name list-e_date ">
+        {new Date(props.drug.expireDate).toLocaleDateString()}{" "}
+      </p>
       <p className="list list_name list-supplier">{props.drug.supplier}</p>
-      <p className="list list_name list-s_date">{props.drug.suppliedDate} </p>
+      <p className="list list_name list-s_date">
+        {new Date(props.drug.suppliedDate).toLocaleDateString()}{" "}
+      </p>
       <p className="list list_name list-btn ">
         {
           <ListButton
             index={props.index}
+            drugId={props.drug._id}
             expired={expired}
             handleUpdate={props.handleUpdate}
             handleDiscard={props.handleDiscard}
@@ -99,7 +120,7 @@ const ListButton = (props) => {
     props.handleUpdate(index);
   };
   const handleDiscard = () => {
-    props.handleDiscard(index);
+    props.handleDiscard(index, props.drugId);
   };
 
   if (props.expired) {
@@ -125,6 +146,7 @@ const ListButton = (props) => {
 const UpdateDrugInfo = (props) => {
   let amount = props?.selecteDrug?.amount;
   let price = props?.selecteDrug?.price;
+  const drugId = props?.selecteDrug?._id;
   const updatePrice = (e) => {
     price = e.target.value;
   };
@@ -132,7 +154,7 @@ const UpdateDrugInfo = (props) => {
     amount = e.target.value;
   };
   const handleUpdateDone = () => {
-    props.handleUpdateDone(price, amount);
+    props.handleUpdateDone(price, amount, drugId);
   };
   const handleCloseUpdating = () => {
     props.setEditing(false);
@@ -177,12 +199,13 @@ const UpdateDrugInfo = (props) => {
 
 const ExpiredDrugsList = (props) => {
   if (!props.checkingExpiration) return null;
-  const expriredDrugIndexes = props.expiredDrugs.map((drug) => {
-    return drug.index;
+  const expriredDrugs = props.expiredDrugs.map((drug) => {
+    return { index: drug.index, drugId: drug._id };
   });
+  const s = expriredDrugs.sort((a, b) => b.index - a.index); // sorting in descending order by index in drugs
 
   const handleDiscardAll = () => {
-    props.handleDiscardAll(expriredDrugIndexes);
+    props.handleDiscardAll(expriredDrugs);
   };
   const handleCloseChecking = () => {
     props.setCheckingExpiration(false);
@@ -214,7 +237,7 @@ const ExpiredDrugsList = (props) => {
             <p className="expired_list">no</p>
             <p className="expired_list">name</p>
             <p className="expired_list">expire date</p>
-            <p className="expired_list">expire date</p>
+            <p className="expired_list">expired before</p>
             <p className="expired_list">
               {" "}
               <button
@@ -240,13 +263,15 @@ const ExpiredDrugsList = (props) => {
 const ExpiredDrug = (props) => {
   let index = props.index;
   const handleDiscard = () => {
-    props.handleDiscard(index);
+    props.handleDiscard(index, props.drug._id);
   };
   return (
     <div className="expired_lists">
+      <p className="expired_list">{props.order + 1}</p>
       <p className="expired_list">{props.drug.name}</p>
-      <p className="expired_list">{props.drug.name}</p>
-      <p className="expired_list">{props.drug.expireDate}</p>
+      <p className="expired_list">
+        {new Date(props.drug.expireDate).toLocaleDateString()}
+      </p>
       <p className="expired_list">{props.drug.name}</p>
       <p className="expired_list">
         <button
@@ -264,33 +289,60 @@ export default (props) => {
   const [checkingExpiration, setCheckingExpiration] = useState(false);
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
-  const [drugs, setDrugs] = useState(storeDrugs);
-  const [drugsLength, setDrugsLength] = useState(setDrugs.length); // just to nofity the app there is change
+  const [drugs, setDrugs] = useState([]);
+  const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
+  useEffect(() => {
+    let drugsFetched = [];
+    axios.get(`${baseUrl}/drugs`).then((response) => {
+      setDrugs(response.data.drugs);
+    });
+  }, []);
 
   const handleUpdate = (index) => {
     setEditing(true);
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
-  const handleUpdateDone = (newPrice, newAmount) => {
+  const handleUpdateDone = (newPrice, newAmount, drugId) => {
     selecteDrug.price = newPrice;
     selecteDrug.amount = newAmount;
     drugs[selectedIndex] = selecteDrug;
     setEditing(false);
+    axios
+      .patch(`${baseUrl}/drug`, { drugId, newPrice, newAmount })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
   };
-  const handleDiscard = (indexSelected) => {
+  const handleDiscard = (indexSelected, drugId) => {
+    console.log(drugId);
     drugs.splice(indexSelected, 1);
     setDrugs(drugs);
     setDrugsLength(drugs.length);
+    axios
+      .delete(`${baseUrl}/drug/${drugId}`)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
     if (getExpiredDrugs().length == 0) setCheckingExpiration(false);
   };
-  const handleDiscardAll = (indexsSelected) => {
-    indexsSelected.forEach((indexSelected) => {
-      drugs.splice(indexSelected, 1);
+  const handleDiscardAll = (expiredDrugs) => {
+    let drugIds = "";
+    expiredDrugs.forEach((expiredDrug) => {
+      drugs.splice(expiredDrug.index, 1);
+      drugIds += ":" + expiredDrug.drugId;
     });
     setDrugs(drugs);
     setDrugsLength(drugs.length);
     setCheckingExpiration(false);
+    axios
+      .delete(`${baseUrl}/drugs/${drugIds}`)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
   };
   const getSelectedDrug = (index) => {
     return drugs[index];
@@ -303,7 +355,6 @@ export default (props) => {
     });
     return expiredDrugs;
   };
-
   return (
     <div className="coordinator_page">
       <div className="coordinator_main">

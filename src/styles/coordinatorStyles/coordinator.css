@@ -215,6 +215,7 @@
   left: 50%;
   transform: translate(-50%);
   letter-spacing: 00.1rem;
+  font-size: 2rem;
 }
 .expired_drugs .close_check {
   position: absolute;
