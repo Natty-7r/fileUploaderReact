@@ -5,20 +5,34 @@
   /* margin: 1rem 3% 0rem; */
   display: flex;
 }
+/* -----------------------------------dashboard left  */
 .whole_page .page_dashboard {
   background-color: white;
   /* border-right: solid thin var(--lightDarkBlue); */
-  flex-basis: 15%;
+  flex-basis: 20%;
   padding: 2rem 0.5rem;
+  display: flex;
+  flex-flow: column;
+  max-height: 90vh;
 }
 .page_dashboard .dashboard_profile {
   padding: 0rem 0rem 0rem 2rem;
+  flex-basis: 30%;
+  border-bottom: solid var(--whiteBlue);
 }
 .dashboard_profile .profile_image {
   width: 7rem;
   aspect-ratio: 1/1;
-  background-color: red;
   border-radius: 50%;
+  position: relative;
+}
+.profile_image img {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .dashboard_profile .profile_name {
   text-transform: uppercase;
@@ -29,8 +43,40 @@
   color: var(--grayColor);
   padding-left: 25%;
 }
+.page_dashboard .dashboard_menus {
+  flex-basis: 70%;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.4rem;
+}
+.dashboard_menus .btn_menu {
+  padding: 1.2rem 0.8rem;
+  padding-left: 20%;
+  text-align: left;
+  text-transform: capitalize;
+  letter-spacing: 0.1rem;
+  width: 90%;
+  border-radius: 0.2rem;
+  color: var(--grayColor);
+  /* border: solid thin var(--lightDarkBlue); */
+}
+.dashboard_menus .btn_menu:hover {
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
+  transform: translateX(1rem);
+  font-weight: bold;
+}
+.dashboard_menus .btn_menu-active {
+  font-weight: bold;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
+  transform: translateX(1rem);
+}
+
+/* -----------------------------------dashboard left  ends  */
+
 .main_page {
-  flex-basis: 85%;
+  flex-basis: 80%;
   padding: 0rem 1rem;
 }
 .whole_page .overview {

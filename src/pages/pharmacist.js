@@ -1,6 +1,8 @@
 import "../styles/coordinatorStyles/pharmacist.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { user } from "../constants/images";
+
 const baseUrl = "http://localhost:8080/pharmacist";
 
 const DrugList = function (props) {
@@ -297,16 +299,26 @@ export default (props) => {
     <div className="whole_page">
       <div className="page_dashboard">
         <div className="dashboard_profile">
-          <div className="profile_image"></div>
+          <div className="profile_image">
+            <img
+              src={user}
+              alt="user"
+            />
+          </div>
           <div className="profile_name">jalleta </div>
         </div>
-        <button className="btn_menu"> available drugs </button>
-        <button className="btn_menu">check expired drugs </button>
-        <button className="btn_menu">generate report </button>
-        <button className="btn_menu">send requrest </button>
-        <button className="btn_menu">update profile</button>
-        <button className="btn_menu">notification </button>
-        <button className="btn_menu">checking Expiration</button>
+        <div className="dashboard_menus">
+          <button className="btn_menu btn_menu-active">
+            {" "}
+            available drugs{" "}
+          </button>
+          <button className="btn_menu">check expired drugs </button>
+          <button className="btn_menu">generate report </button>
+          <button className="btn_menu">send requrest </button>
+          <button className="btn_menu">update profile</button>
+          <button className="btn_menu">notification </button>
+          <button className="btn_menu">checking Expiration</button>
+        </div>
       </div>
       <div className="main_page">
         <div className="overview">
