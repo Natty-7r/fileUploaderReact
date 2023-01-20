@@ -1,74 +1,7 @@
-import "../styles/coordinatorStyles/coordinator.css";
+import "../styles/coordinatorStyles/pharmacist.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-const baseUrl = "http://localhost:8080/coordinator";
-
-const storeDrugs = [
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/41",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "paracetamol",
-    price: 25,
-    amount: 60,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-];
+const baseUrl = "http://localhost:8080/pharmacist";
 
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
@@ -82,10 +15,7 @@ const DrugList = function (props) {
       <p className="list list_name list-e_date ">
         {new Date(props.drug.expireDate).toLocaleDateString()}{" "}
       </p>
-      <p className="list list_name list-supplier">{props.drug.supplier}</p>
-      <p className="list list_name list-s_date">
-        {new Date(props.drug.suppliedDate).toLocaleDateString()}{" "}
-      </p>
+
       <p className="list list_name list-btn ">
         {
           <ListButton
@@ -123,7 +53,7 @@ const ListButton = (props) => {
       <button
         className=" list_btn list_btn-update "
         onClick={handleUpdate}>
-        update info
+        sell drug
       </button>
     );
   }
@@ -364,8 +294,21 @@ export default (props) => {
     setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
   };
   return (
-    <div className="coordinator_page">
-      <div className="coordinator_main">
+    <div className="whole_page">
+      <div className="page_dashboard">
+        <div className="dashboard_profile">
+          <div className="profile_image"></div>
+          <div className="profile_name">jalleta </div>
+        </div>
+        <button className="btn_menu"> available drugs </button>
+        <button className="btn_menu">check expired drugs </button>
+        <button className="btn_menu">generate report </button>
+        <button className="btn_menu">send requrest </button>
+        <button className="btn_menu">update profile</button>
+        <button className="btn_menu">notification </button>
+        <button className="btn_menu">checking Expiration</button>
+      </div>
+      <div className="main_page">
         <div className="overview">
           <div className="summary">
             <p className="summary_name">total drugs in stock </p>
@@ -414,8 +357,7 @@ export default (props) => {
             <p className="list list_name list-price">price </p>
             <p className="list list_name list-amount">amount </p>
             <p className="list list_name list-e_date">expired date </p>
-            <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
+
             <p className="list list_name"> </p>
           </div>
           <div

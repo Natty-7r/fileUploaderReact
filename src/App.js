@@ -14,6 +14,8 @@ import Admin from "./pages/admin";
 import Signup from "./pages/signup.";
 import Login from "./pages/login.js";
 import Coordinator from "./pages/coordinator";
+import pharmacist from "./pages/pharmacist";
+import Pharmacist from "./pages/pharmacist";
 
 const storeDrugs = {
   drugs: [1, 2, 3, 4, 5, 6, 7, 8],
