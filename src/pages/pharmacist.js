@@ -24,7 +24,7 @@ const DrugList = function (props) {
             index={props.index}
             drugId={props.drug._id}
             expired={expired}
-            handleUpdate={props.handleUpdate}
+            handleSell={props.handleSell}
             handleDiscard={props.handleDiscard}
           />
         }
@@ -34,8 +34,8 @@ const DrugList = function (props) {
 };
 const ListButton = (props) => {
   const index = props.index;
-  const handleUpdate = () => {
-    props.handleUpdate(index);
+  const handleSell = () => {
+    props.handleSell(index);
   };
   const handleDiscard = () => {
     props.handleDiscard(index, props.drugId);
@@ -54,27 +54,33 @@ const ListButton = (props) => {
     return (
       <button
         className=" list_btn list_btn-update "
-        onClick={handleUpdate}>
+        onClick={handleSell}>
         sell drug
       </button>
     );
   }
 };
 
-const UpdateDrugInfo = (props) => {
+const SellDrug = (props) => {
   let amount = props?.selecteDrug?.amount;
-  let price = props?.selecteDrug?.price;
   const drugId = props?.selecteDrug?._id;
-  const updatePrice = (e) => {
-    price = e.target.value;
+  let amountToSell;
+  const [errorMsg, setErrorMsg] = useState(false);
+
+  const getAmount = (e) => {
+    amountToSell = e.target.value;
   };
-  const updateAmount = (e) => {
-    amount = e.target.value;
+  const handleSellDone = () => {
+    if (amountToSell > amount) {
+      setErrorMsg(true);
+      setTimeout(() => {
+        setErrorMsg(false);
+      }, 2000);
+    } else {
+      props.handleSellDone(amount - amountToSell, drugId);
+    }
   };
-  const handleUpdateDone = () => {
-    props.handleUpdateDone(price, amount, drugId);
-  };
-  const handleCloseUpdating = () => {
+  const handleCloseSell = () => {
     props.setEditing(false);
   };
   if (!props.editing) return null;
@@ -83,33 +89,31 @@ const UpdateDrugInfo = (props) => {
       <div className="update_druginfo">
         <button
           className="close_check"
-          onClick={handleCloseUpdating}>
+          onClick={handleCloseSell}>
           {" "}
           X
         </button>
+        {errorMsg ? (
+          <div className="sell_error">
+            <p>No sufficient drug</p>
+            <button className="btn">send request</button>
+          </div>
+        ) : null}
+
         <p className="drug_name">{"diclone"}</p>
-        <div className="info">
-          <label htmlFor="">price</label>
-          <input
-            type="text"
-            className="info_input input_price"
-            defaultValue={price}
-            onChange={updatePrice}
-          />
-        </div>
+
         <div className="info">
           <label htmlFor="">amount</label>
           <input
             type="text"
             className="info_input input_amount"
-            onChange={updateAmount}
-            defaultValue={amount}
+            onChange={getAmount}
           />
         </div>
         <button
           className="btn btn_updateInfo"
-          onClick={handleUpdateDone}>
-          update{" "}
+          onClick={handleSellDone}>
+          sell drug{" "}
         </button>
       </div>
     );
@@ -179,9 +183,8 @@ const ExpiredDrugsList = (props) => {
   }
 };
 const ExpiredDrug = (props) => {
-  let index = props.index;
   const handleDiscard = () => {
-    props.handleDiscard(index, props.drug._id);
+    props.handleDiscard(props.drug.index, props.drug._id);
   };
   return (
     <div className="expired_lists">
@@ -212,10 +215,12 @@ export default (props) => {
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
   const [drugs, setDrugs] = useState([]);
+  const [drugsInTable, setDrugsInTable] = useState();
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
+      setDrugsInTable(response.data.drugs);
       setDrugs(response.data.drugs);
       createSummary();
     });
@@ -225,22 +230,27 @@ export default (props) => {
     createSummary();
   }, [drugs]);
 
-  const handleUpdate = (index) => {
+  const handleSell = (index) => {
     setEditing(true);
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
-  const handleUpdateDone = (newPrice, newAmount, drugId) => {
-    selecteDrug.price = newPrice;
+  const handleSellDone = (newAmount, drugId) => {
     selecteDrug.amount = newAmount;
     drugs[selectedIndex] = selecteDrug;
     setEditing(false);
-    axios
-      .patch(`${baseUrl}/drug`, { drugId, newPrice, newAmount })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
+    if (newAmount != 0) {
+      axios
+        .patch(`${baseUrl}/drug`, { drugId, newAmount })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+    }
+    if (newAmount == 0) {
+      // if all sold discard the drug
+      handleDiscard(selecteDrug, drugId);
+    }
   };
   const handleDiscard = (indexSelected, drugId) => {
     drugs.splice(indexSelected, 1);
@@ -295,6 +305,35 @@ export default (props) => {
     });
     setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
   };
+  const searchDrug = (drugName) => {
+    const searchedDrugs = drugs.filter((drug, index) => {
+      drug.index = index;
+      return drug.name == drugName.trim();
+    });
+    if (searchedDrugs.length == 0) {
+      console.log("000000000000000000000000000");
+    } else {
+      setDrugsInTable(searchedDrugs);
+    }
+    return searchedDrugs;
+  };
+  const seeAllDrugs = () => {
+    setDrugsInTable(drugs);
+  };
+
+  const handleFocus = (e) => {
+    e.target.value = "";
+  };
+  const handleBlur = (e) => {
+    e.target.value = "search";
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key == "Enter") {
+      const drugName = e.target.value;
+      searchDrug(drugName.trim());
+    }
+  };
   return (
     <div className="whole_page">
       <div className="page_dashboard">
@@ -308,16 +347,24 @@ export default (props) => {
           <div className="profile_name">jalleta </div>
         </div>
         <div className="dashboard_menus">
-          <button className="btn_menu btn_menu-active">
+          <button
+            className="btn_menu btn_menu-active"
+            onClick={seeAllDrugs}>
             {" "}
             available drugs{" "}
           </button>
-          <button className="btn_menu">check expired drugs </button>
+          <button
+            className={`btn_menu ${
+              checkingExpiration ? "btn_menu-active " : ""
+            }`}
+            onClick={setCheckingExpiration.bind(true)}>
+            check expired drugs{" "}
+          </button>
           <button className="btn_menu">generate report </button>
           <button className="btn_menu">send requrest </button>
-          <button className="btn_menu">update profile</button>
           <button className="btn_menu">notification </button>
-          <button className="btn_menu">checking Expiration</button>
+
+          <button className="btn_menu">update profile</button>
         </div>
       </div>
       <div className="main_page">
@@ -340,20 +387,22 @@ export default (props) => {
           </div>
         </div>
         <div className="actions">
-          <button className="btn btn_action btn_action-add">
-            Add new drugs
-          </button>
-          <button
-            className="btn btn_action btn_action-check"
-            onClick={setCheckingExpiration.bind(true)}>
-            check expired drugs
-          </button>
+          <div className="search_bar">
+            <input
+              type="text"
+              className=" search_input"
+              defaultValue={"search"}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
         </div>
         <div className="druglist">
-          <UpdateDrugInfo
+          <SellDrug
             editing={editing}
             setEditing={setEditing}
-            handleUpdateDone={handleUpdateDone}
+            handleSellDone={handleSellDone}
             selecteDrug={selecteDrug}
           />
           <ExpiredDrugsList
@@ -382,12 +431,12 @@ export default (props) => {
                 No drug was found in the stock!
               </h1>
             ) : (
-              drugs.map((drug, index) => (
+              drugsInTable.map((drug, index) => (
                 <DrugList
                   drug={drug}
                   index={index}
                   key={index}
-                  handleUpdate={handleUpdate}
+                  handleSell={handleSell}
                   handleDiscard={handleDiscard}
                 />
               ))

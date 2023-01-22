@@ -5,80 +5,12 @@
   /* margin: 1rem 3% 0rem; */
   display: flex;
 }
-/* -----------------------------------dashboard left  */
-.whole_page .page_dashboard {
-  background-color: white;
-  /* border-right: solid thin var(--lightDarkBlue); */
-  flex-basis: 20%;
-  padding: 2rem 0.5rem;
-  display: flex;
-  flex-flow: column;
-  max-height: 90vh;
-}
-.page_dashboard .dashboard_profile {
-  padding: 0rem 0rem 0rem 2rem;
-  flex-basis: 30%;
-  border-bottom: solid var(--whiteBlue);
-}
-.dashboard_profile .profile_image {
-  width: 7rem;
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  position: relative;
-}
-.profile_image img {
-  position: absolute;
-  top: 0rem;
-  left: 0rem;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.dashboard_profile .profile_name {
-  text-transform: uppercase;
-  margin-top: 1rem;
-  letter-spacing: 0.1erm;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--grayColor);
-  padding-left: 25%;
-}
-.page_dashboard .dashboard_menus {
-  flex-basis: 70%;
-  display: flex;
-  flex-flow: column;
-  justify-content: space-around;
-  align-items: center;
-  gap: 0.4rem;
-}
-.dashboard_menus .btn_menu {
-  padding: 1.2rem 0.8rem;
-  padding-left: 20%;
-  text-align: left;
-  text-transform: capitalize;
-  letter-spacing: 0.1rem;
-  width: 90%;
-  border-radius: 0.2rem;
-  color: var(--grayColor);
-  /* border: solid thin var(--lightDarkBlue); */
-}
-.dashboard_menus .btn_menu:hover {
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
-  transform: translateX(1rem);
-  font-weight: bold;
-}
-.dashboard_menus .btn_menu-active {
-  font-weight: bold;
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
-  transform: translateX(1rem);
-}
-
-/* -----------------------------------dashboard left  ends  */
 
 .main_page {
   flex-basis: 80%;
-  padding: 0rem 1rem;
+  /* padding: 0rem 1rem; */
 }
+/*  ------------------------------------- overview stats   */
 .whole_page .overview {
   display: flex;
   padding: 1rem 0rem;
@@ -109,11 +41,29 @@
   font-size: 2.2rem;
   color: var(--lightDarkBlue);
 }
+
+/*  ------------------------------------- overview ends   */
+
+/*  ------------------------------------- actions  starts   */
 .whole_page .actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin: 1rem;
+}
+.search_input {
+  height: 3.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 2rem;
+  border-radius: 5rem;
+  border: solid thin #33415541;
+  outline: none;
+  letter-spacing: 0.05rem;
+  width: 20rem;
+  transition: all 0.1s;
+}
+.search_input:focus {
+  border: solid thin #33415567;
+  width: 30rem;
 }
 .actions .btn {
   text-transform: capitalize;
@@ -122,9 +72,15 @@
 .actions .btn:hover {
   opacity: 0.9;
 }
+
+/*  ------------------------------------- actions  ends  ---------------------------- */
+
+/*  ------------------------------------- druglist  stats -------------------------  */
 .whole_page .druglist {
   /* padding: auto 2rem; */
+  position: relative;
 }
+
 .druglist .list_header {
   display: flex;
   justify-content: space-around;
@@ -216,9 +172,9 @@
 
 /*  update drug information  */
 .update_druginfo {
-  width: 40%;
   position: absolute;
-  top: 50%;
+  width: 50%;
+  top: 10%;
   left: 50%;
   transform: translate(-50%);
   background-color: var(--white);
@@ -240,7 +196,27 @@
   top: 5%;
   color: red;
 }
-
+.sell_error {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  width: 70%;
+  height: 60%;
+  transform: translate(-50%);
+  z-index: 5;
+  background-color: var(--whiteBlue);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.173);
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.sell_error p {
+  color: red;
+  font-size: 1.8rem;
+  letter-spacing: 0.1rem;
+}
 .info {
   margin-bottom: 1rem;
 }
@@ -273,9 +249,9 @@
 .expired_drugs {
   width: 70%;
   max-height: 45vh;
-  min-height: 25vh;
+  min-height: 30vh;
   position: absolute;
-  top: 50%;
+  top: 7%;
   left: 50%;
   transform: translate(-50%);
   background-color: var(--white);
@@ -318,11 +294,14 @@
   overflow-y: auto;
   display: flex;
   flex-flow: column;
+  overflow-y: auto;
 }
 .expired_list_body .expired_lists {
+  overflow-y: auto;
   display: flex;
   justify-content: space-around;
   gap: 0.2rem;
+  min-height: 3rem;
 }
 .expired_list {
   display: flex;

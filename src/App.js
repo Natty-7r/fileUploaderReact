@@ -32,7 +32,7 @@ function App(props) {
         <Route
           path="/"
           element={
-            <Pharmacist
+            <Coordinator
               storeDrugs={storeDrugs}
               loginHandler={loginHandler}
             />

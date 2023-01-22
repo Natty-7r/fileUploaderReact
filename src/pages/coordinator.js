@@ -1,6 +1,9 @@
 import "../styles/coordinatorStyles/coordinator.css";
+import "../styles/coordinatorStyles/dashboard.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { user } from "../constants/images";
+
 const baseUrl = "http://localhost:8080/coordinator";
 
 const storeDrugs = [
@@ -280,12 +283,15 @@ export default (props) => {
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
   const [drugs, setDrugs] = useState([]);
+  const [drugsInTable, setDrugsInTable] = useState();
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
       setDrugs(response.data.drugs);
+      setDrugsInTable(response.data.drugs);
       createSummary();
+      console.log(response.data);
     });
   }, []);
 
@@ -363,9 +369,43 @@ export default (props) => {
     });
     setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
   };
+  const seeAllDrugs = () => {
+    setDrugsInTable(drugs);
+  };
   return (
-    <div className="coordinator_page">
-      <div className="coordinator_main">
+    <div className="whole_page coordinator_page">
+      <div className="page_dashboard">
+        <div className="dashboard_profile">
+          <div className="profile_image">
+            <img
+              src={user}
+              alt="user"
+            />
+          </div>
+          <div className="profile_name">jalleta </div>
+        </div>
+        <div className="dashboard_menus">
+          <button
+            className="btn_menu btn_menu-active"
+            onClick={seeAllDrugs}>
+            {" "}
+            available drugs{" "}
+          </button>
+          <button
+            className={`btn_menu ${
+              checkingExpiration ? "btn_menu-active " : ""
+            }`}
+            onClick={setCheckingExpiration.bind(true)}>
+            check expired drugs{" "}
+          </button>
+          <button className="btn_menu">generate report </button>
+          <button className="btn_menu">send requrest </button>
+          <button className="btn_menu">notification </button>
+
+          <button className="btn_menu">update profile</button>
+        </div>
+      </div>
+      <div className="main_page">
         <div className="overview">
           <div className="summary">
             <p className="summary_name">total drugs in stock </p>
@@ -383,16 +423,6 @@ export default (props) => {
             <p className="summary_name">pending drugs </p>
             <p className="summary_value">500</p>
           </div>
-        </div>
-        <div className="actions">
-          <button className="btn btn_action btn_action-add">
-            Add new drugs
-          </button>
-          <button
-            className="btn btn_action btn_action-check"
-            onClick={setCheckingExpiration.bind(true)}>
-            check expired drugs
-          </button>
         </div>
         <div className="druglist">
           <UpdateDrugInfo
