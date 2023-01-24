@@ -1,0 +1,13 @@
+.page_slide {
+}
+.page_slide .slide_header {
+  display: flex;
+  justify-content: ;
+  padding: 1rem;
+  padding-left: 5%;
+  font-size: 2rem;
+  letter-spacing: 0.05rem;
+  text-transform: capitalize;
+  background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+  color: white;
+}

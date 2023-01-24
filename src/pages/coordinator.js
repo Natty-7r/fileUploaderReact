@@ -1,77 +1,11 @@
 import "../styles/coordinatorStyles/coordinator.css";
 import "../styles/coordinatorStyles/dashboard.css";
+import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 
 const baseUrl = "http://localhost:8080/coordinator";
-
-const storeDrugs = [
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/41",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "paracetamol",
-    price: 25,
-    amount: 60,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-  {
-    name: "diclone",
-    price: 15,
-    amount: 50,
-    supplier: "Abo store",
-    expireDate: "12/12/42",
-    suppliedDate: "13/13/13",
-  },
-];
 
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
@@ -186,93 +120,6 @@ const UpdateDrugInfo = (props) => {
     );
 };
 
-const ExpiredDrugsList = (props) => {
-  if (!props.checkingExpiration) return null;
-  const expriredDrugs = props.expiredDrugs.map((drug) => {
-    return { index: drug.index, drugId: drug._id };
-  });
-  const s = expriredDrugs.sort((a, b) => b.index - a.index); // sorting in descending order by index in drugs
-
-  const handleDiscardAll = () => {
-    props.handleDiscardAll(expriredDrugs);
-  };
-  const handleCloseChecking = () => {
-    props.setCheckingExpiration(false);
-  };
-
-  if (props.checkingExpiration) {
-    if (props.expiredDrugs.length == 0) {
-      return (
-        <div className="expired_drugs">
-          <p
-            className="close_check"
-            onClick={handleCloseChecking}>
-            {" "}
-            X{" "}
-          </p>
-          <h1 className="no_data_header">no drug expired found !</h1>
-        </div>
-      );
-    } else
-      return (
-        <div className="expired_drugs">
-          <p
-            className="close_check"
-            onClick={handleCloseChecking}>
-            {" "}
-            X{" "}
-          </p>
-          <div className="expired_list_header">
-            <p className="expired_list">no</p>
-            <p className="expired_list">name</p>
-            <p className="expired_list">expire date</p>
-            <p className="expired_list">expired before</p>
-            <p className="expired_list">
-              {" "}
-              <button
-                className="btn expired_list_btn expired_list_btn-discardAll"
-                onClick={handleDiscardAll}>
-                discard All{" "}
-              </button>
-            </p>
-          </div>
-          <div className="expired_list_body">
-            {props.expiredDrugs.map((drug, order) => (
-              <ExpiredDrug
-                drug={drug}
-                order={order}
-                handleDiscard={props.handleDiscard}
-              />
-            ))}
-          </div>
-        </div>
-      );
-  }
-};
-const ExpiredDrug = (props) => {
-  let index = props.index;
-  const handleDiscard = () => {
-    props.handleDiscard(index, props.drug._id);
-  };
-  return (
-    <div className="expired_lists">
-      <p className="expired_list">{props.order + 1}</p>
-      <p className="expired_list">{props.drug.name}</p>
-      <p className="expired_list">
-        {new Date(props.drug.expireDate).toLocaleDateString()}
-      </p>
-      <p className="expired_list">{props.drug.name}</p>
-      <p className="expired_list">
-        <button
-          className=" btn expired_list_btn expired_list_btn-discard"
-          onClick={handleDiscard}>
-          discard{" "}
-        </button>
-      </p>{" "}
-    </div>
-  );
-};
-
 export default (props) => {
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
@@ -282,22 +129,25 @@ export default (props) => {
   const [summary, setSummary] = useState([0, 0, 0]);
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
-  const [drugs, setDrugs] = useState([]);
+  const [availbleDrugs, setAvailbleDrugs] = useState([]);
+  const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [drugsInTable, setDrugsInTable] = useState();
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
+  const [currentSlide, setCurrentSlide] = useState("request"); // to track the the dashboard menu and slide
+
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
-      setDrugs(response.data.drugs);
-      setDrugsInTable(response.data.drugs);
+      setAvailbleDrugs(response.data.availbleDrugs);
+      setDrugsInTable(response.data.availbleDrugs);
+      setExpiredDrugs(response.data.expiredDrugs);
       createSummary();
-      console.log(response.data);
     });
   }, []);
 
   useEffect(() => {
     createSummary();
-  }, [drugs]);
+  }, [availbleDrugs]);
 
   const handleUpdate = (index) => {
     setEditing(true);
@@ -307,7 +157,7 @@ export default (props) => {
   const handleUpdateDone = (newPrice, newAmount, drugId) => {
     selecteDrug.price = newPrice;
     selecteDrug.amount = newAmount;
-    drugs[selectedIndex] = selecteDrug;
+    availbleDrugs[selectedIndex] = selecteDrug;
     setEditing(false);
     axios
       .patch(`${baseUrl}/drug`, { drugId, newPrice, newAmount })
@@ -317,9 +167,9 @@ export default (props) => {
       .catch((error) => console.log(error));
   };
   const handleDiscard = (indexSelected, drugId) => {
-    drugs.splice(indexSelected, 1);
-    setDrugs(drugs);
-    setDrugsLength(drugs.length);
+    expiredDrugs.splice(indexSelected, 1);
+    setExpiredDrugs(expiredDrugs);
+    setDrugsLength(availbleDrugs.length);
     createSummary();
     axios
       .delete(`${baseUrl}/drug/${drugId}`)
@@ -329,48 +179,170 @@ export default (props) => {
       .catch((error) => console.log(error));
     if (getExpiredDrugs().length == 0) setCheckingExpiration(false);
   };
-  const handleDiscardAll = (expiredDrugs) => {
+  const handleDiscardAll = () => {
     let drugIds = "";
     expiredDrugs.forEach((expiredDrug) => {
-      drugs.splice(expiredDrug.index, 1);
-      drugIds += ":" + expiredDrug.drugId;
+      drugIds += ":" + expiredDrug._id;
     });
-    setDrugs(drugs);
-    setDrugsLength(drugs.length);
-    setCheckingExpiration(false);
     axios
       .delete(`${baseUrl}/drugs/${drugIds}`)
       .then((response) => {
         console.log(response);
       })
       .catch((error) => console.log(error));
+    setExpiredDrugs([]);
+    setCheckingExpiration(false);
+  };
+  const handleCheckExpiration = () => {
+    // setCheckingExpiration(true);
+    setCurrentSlide("expired");
   };
   const getSelectedDrug = (index) => {
-    return drugs[index];
+    console.log(index);
+    if (currentSlide == "available") return availbleDrugs[index];
+    if (currentSlide == "expired") return expiredDrugs[index];
   };
   const getExpiredDrugs = () => {
-    const expiredDrugs = drugs.filter((drug, index) => {
-      drug.index = index;
-      const expireDate = new Date(drug.expireDate);
-      return expireDate < new Date();
-    });
+    // const expiredDrugs = drugs.filter((drug, index) => {
+    //   drug.index = index;
+    //   const expireDate = new Date(drug.expireDate);
+    //   return expireDate < new Date();
+    // });
     return expiredDrugs;
   };
   const createSummary = () => {
-    drugs.forEach((drug) => {
-      const expireDate = new Date(drug.expireDate);
-
-      if (expireDate < new Date()) {
-        totalExpiredDrugs += drug.amount;
-      } else {
-        totalAvailbleDrugs += drug.amount;
-      }
-      totalDrugs += drug.amount;
+    availbleDrugs.forEach((drug) => {
+      totalAvailbleDrugs += drug.amount;
     });
+    expiredDrugs.forEach((drug) => {
+      totalExpiredDrugs += drug.amount;
+    });
+    totalDrugs += totalAvailbleDrugs + totalExpiredDrugs;
     setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
   };
   const seeAllDrugs = () => {
-    setDrugsInTable(drugs);
+    setDrugsInTable(availbleDrugs);
+    setCurrentSlide("available");
+  };
+  const SlideContent = () => {
+    if (currentSlide == "available")
+      return (
+        <div className="drguList">
+          <div className="list_header">
+            <p className="list list_name list-no">No </p>
+            <p className="list list_name list-name">Name </p>
+            <p className="list list_name list-price">price </p>
+            <p className="list list_name list-amount">amount </p>
+            <p className="list list_name list-e_date">expired date </p>
+            <p className="list list_name list-supplier">supplier </p>
+            <p className="list list_name list-s_date">supllied date </p>
+            <p className="list list_name"> </p>
+          </div>
+          <div
+            className={`list_body ${
+              editing || checkingExpiration ? "blurred" : ""
+            }`}>
+            {availbleDrugs.length == 0 ? (
+              <h1 className="no_data_header">
+                {" "}
+                No drug was found in the stock!
+              </h1>
+            ) : (
+              availbleDrugs.map((drug, index) => (
+                <DrugList
+                  drug={drug}
+                  index={index}
+                  key={index}
+                  handleUpdate={handleUpdate}
+                  handleDiscard={handleDiscard}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      );
+    if (currentSlide == "expired")
+      return (
+        <div className="drguList">
+          <div className="list_header">
+            <p className="list list_name list-no">No </p>
+            <p className="list list_name list-name">Name </p>
+            <p className="list list_name list-price">price </p>
+            <p className="list list_name list-amount">amount </p>
+            <p className="list list_name list-e_date">expired date </p>
+            <p className="list list_name list-supplier">supplier </p>
+            <p className="list list_name list-s_date">supllied date </p>
+            <p className="list list_name list_name_discardAll">
+              {" "}
+              <button
+                className="btn expired_list_btn expired_list_btn-discardAll"
+                onClick={handleDiscardAll}>
+                discard All{" "}
+              </button>{" "}
+            </p>
+          </div>
+          <div
+            className={`list_body ${
+              editing || checkingExpiration ? "blurred" : ""
+            }`}>
+            {expiredDrugs.length == 0 ? (
+              <h1 className="no_data_header">
+                {" "}
+                No drug was found in the stock!
+              </h1>
+            ) : (
+              expiredDrugs.map((drug, index) => (
+                <DrugList
+                  drug={drug}
+                  index={index}
+                  key={index}
+                  handleUpdate={handleUpdate}
+                  handleDiscard={handleDiscard}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      );
+    if (currentSlide == "request")
+      return (
+        <div className="request_slide">
+          <h1 className="slide_header">send drug request</h1>
+          <div className="request_content">
+            <div className="requests">
+              <div className="request">
+                <div className="request_info">
+                  <label htmlFor="">name </label>
+                  <input
+                    type="text"
+                    className="info_input input_name"
+                    // onChange={updatePrice}
+                  />
+                </div>
+                <div className="request_info">
+                  <label htmlFor="">amount</label>
+                  <input
+                    type="text"
+                    className="info_input input_amount"
+                  />
+                </div>
+              </div>
+              <div className="request_btns">
+                <button
+                  className="btn btn_updateInfo"
+                  onClick={handleUpdateDone}>
+                  + add{" "}
+                </button>
+                <button
+                  className="btn btn_updateInfo"
+                  onClick={handleUpdateDone}>
+                  send request{" "}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
   };
   return (
     <div className="whole_page coordinator_page">
@@ -386,16 +358,18 @@ export default (props) => {
         </div>
         <div className="dashboard_menus">
           <button
-            className="btn_menu btn_menu-active"
+            className={`btn_menu ${
+              currentSlide == "available" ? "btn_menu-active " : ""
+            }`}
             onClick={seeAllDrugs}>
             {" "}
             available drugs{" "}
           </button>
           <button
             className={`btn_menu ${
-              checkingExpiration ? "btn_menu-active " : ""
+              currentSlide == "expired" ? "btn_menu-active " : ""
             }`}
-            onClick={setCheckingExpiration.bind(true)}>
+            onClick={handleCheckExpiration}>
             check expired drugs{" "}
           </button>
           <button className="btn_menu">generate report </button>
@@ -431,45 +405,10 @@ export default (props) => {
             handleUpdateDone={handleUpdateDone}
             selecteDrug={selecteDrug}
           />
-          <ExpiredDrugsList
-            checkingExpiration={checkingExpiration}
-            expiredDrugs={getExpiredDrugs()}
-            setCheckingExpiration={setCheckingExpiration}
-            handleDiscardAll={handleDiscardAll}
-            handleDiscard={handleDiscard}
-          />
-          <div className="list_header">
-            <p className="list list_name list-no">No </p>
-            <p className="list list_name list-name">Name </p>
-            <p className="list list_name list-price">price </p>
-            <p className="list list_name list-amount">amount </p>
-            <p className="list list_name list-e_date">expired date </p>
-            <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name"> </p>
+
+          <div className="page_slide">
+            <SlideContent />
           </div>
-          <div
-            className={`list_body ${
-              editing || checkingExpiration ? "blurred" : ""
-            }`}>
-            {drugs.length == 0 ? (
-              <h1 className="no_data_header">
-                {" "}
-                No drug was found in the stock!
-              </h1>
-            ) : (
-              drugs.map((drug, index) => (
-                <DrugList
-                  drug={drug}
-                  index={index}
-                  key={index}
-                  handleUpdate={handleUpdate}
-                  handleDiscard={handleDiscard}
-                />
-              ))
-            )}
-          </div>
-          <div className="list_footer"></div>
         </div>
       </div>
     </div>

@@ -94,7 +94,7 @@
   border-bottom: solid var(--grayColor);
 }
 .blurred {
-  filter: blur(2rem);
+  filter: blur(0.1rem);
 }
 .list_body .lists {
   margin-bottom: 0.2rem;
@@ -174,7 +174,7 @@
 .update_druginfo {
   position: absolute;
   width: 50%;
-  top: 10%;
+  top: 20%;
   left: 50%;
   transform: translate(-50%);
   background-color: var(--white);

@@ -6,6 +6,7 @@
   display: flex;
   flex-flow: column;
   max-height: 90vh;
+  height: 90vh;
 }
 .page_dashboard .dashboard_profile {
   padding: 0rem 0rem 0rem 2rem;
