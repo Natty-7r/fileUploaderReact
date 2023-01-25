@@ -133,7 +133,7 @@ export default (props) => {
   const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [drugsInTable, setDrugsInTable] = useState();
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("request"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("available"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
@@ -224,6 +224,9 @@ export default (props) => {
     setDrugsInTable(availbleDrugs);
     setCurrentSlide("available");
   };
+  const handleSendRequest = () => {
+    setCurrentSlide("request");
+  };
   const RequestResult = (props) => {
     const handleRemove = () => {
       props.handleRemove(props.index);
@@ -235,7 +238,7 @@ export default (props) => {
         <p
           className="request_btn request_btn-remove"
           onClick={handleRemove}>
-          X
+          cancel request
         </p>
       </div>
     );
@@ -428,7 +431,13 @@ export default (props) => {
             check expired drugs{" "}
           </button>
           <button className="btn_menu">generate report </button>
-          <button className="btn_menu">send requrest </button>
+          <button
+            className={`btn_menu ${
+              currentSlide == "request" ? "btn_menu-active " : ""
+            }`}
+            onClick={handleSendRequest}>
+            send requrest{" "}
+          </button>
           <button className="btn_menu">notification </button>
 
           <button className="btn_menu">update profile</button>
