@@ -233,8 +233,12 @@ export default (props) => {
     };
     return (
       <div className="request_result">
-        <p className="request_name">Name :{props.request.name}</p>
-        <p className="request_amount">Amount ::{props.request.amount}</p>
+        <p className="request_name">
+          <span>name</span> {props.request.name}
+        </p>
+        <p className="request_amount">
+          <span>amount</span> {props.request.amount}
+        </p>
         <p
           className="request_btn request_btn-remove"
           onClick={handleRemove}>
@@ -258,7 +262,11 @@ export default (props) => {
               />
             ))}
           </div>
-          <button className="btn btn_request-send">send request</button>
+          <button
+            className="btn btn_request-send"
+            onClick={props.handleSendRequestDone}>
+            send request
+          </button>
         </div>
       );
   };
@@ -271,6 +279,7 @@ export default (props) => {
       currentRequests.push({ name, amount });
       setRequests(currentRequests);
       R(currentRequests.length);
+
       document.querySelector(".input_name-request").value = "";
       document.querySelector(".input_amount-request").value = "";
     };
@@ -285,6 +294,19 @@ export default (props) => {
     };
     const handleAddAmount = (e) => {
       amount = e.target.value;
+    };
+    const handleSendRequestDone = () => {
+      setRequests([]);
+      R(0);
+      axios
+        .post(`${baseUrl}/request`, {
+          from: "coordinator",
+          requests: requestResults,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
     };
 
     if (currentSlide == "available")
@@ -397,6 +419,7 @@ export default (props) => {
             <RequestResultContent
               requestResults={requestResults}
               handleRemove={handleRemoveRequest}
+              handleSendRequestDone={handleSendRequestDone}
             />
           </div>
         </div>
