@@ -224,7 +224,66 @@ export default (props) => {
     setDrugsInTable(availbleDrugs);
     setCurrentSlide("available");
   };
+  const RequestResult = (props) => {
+    const handleRemove = () => {
+      props.handleRemove(props.index);
+    };
+    return (
+      <div className="request_result">
+        <p className="request_name">Name :{props.request.name}</p>
+        <p className="request_amount">Amount ::{props.request.amount}</p>
+        <p
+          className="request_btn request_btn-remove"
+          onClick={handleRemove}>
+          X
+        </p>
+      </div>
+    );
+  };
+  const RequestResultContent = (props) => {
+    if (props.requestResults.length == 0) return null;
+    else
+      return (
+        <div className="request_main">
+          <div className="request_results">
+            {props.requestResults.map((request, index) => (
+              <RequestResult
+                index={index}
+                key={index}
+                request={request}
+                handleRemove={props.handleRemove}
+              />
+            ))}
+          </div>
+          <button className="btn btn_request-send">send request</button>
+        </div>
+      );
+  };
   const SlideContent = () => {
+    const [requestResults, setRequests] = useState([]);
+    const [r, R] = useState(0);
+    let name, amount;
+    const handleAddRequest = () => {
+      const currentRequests = requestResults;
+      currentRequests.push({ name, amount });
+      setRequests(currentRequests);
+      R(currentRequests.length);
+      document.querySelector(".input_name-request").value = "";
+      document.querySelector(".input_amount-request").value = "";
+    };
+    const handleRemoveRequest = (index) => {
+      const currentRequests = requestResults;
+      currentRequests.splice(index, 1);
+      setRequests(currentRequests);
+      R(currentRequests.length);
+    };
+    const handleAddName = (e) => {
+      name = e.target.value;
+    };
+    const handleAddAmount = (e) => {
+      amount = e.target.value;
+    };
+
     if (currentSlide == "available")
       return (
         <div className="drguList">
@@ -264,7 +323,7 @@ export default (props) => {
     if (currentSlide == "expired")
       return (
         <div className="drguList">
-          <div className="list_header">
+          <div className="list_header list_header-expired">
             <p className="list list_name list-no">No </p>
             <p className="list list_name list-name">Name </p>
             <p className="list list_name list-price">price </p>
@@ -309,37 +368,33 @@ export default (props) => {
         <div className="request_slide">
           <h1 className="slide_header">send drug request</h1>
           <div className="request_content">
-            <div className="requests">
-              <div className="request">
-                <div className="request_info">
-                  <label htmlFor="">name </label>
-                  <input
-                    type="text"
-                    className="info_input input_name"
-                    // onChange={updatePrice}
-                  />
-                </div>
-                <div className="request_info">
-                  <label htmlFor="">amount</label>
-                  <input
-                    type="text"
-                    className="info_input input_amount"
-                  />
-                </div>
+            <div className="request_form">
+              <div className="request_info">
+                <label htmlFor="">name </label>
+                <input
+                  type="text"
+                  className="info_input input_name input_name-request"
+                  onChange={handleAddName}
+                />
               </div>
-              <div className="request_btns">
-                <button
-                  className="btn btn_updateInfo"
-                  onClick={handleUpdateDone}>
-                  + add{" "}
-                </button>
-                <button
-                  className="btn btn_updateInfo"
-                  onClick={handleUpdateDone}>
-                  send request{" "}
-                </button>
+              <div className="request_info">
+                <label htmlFor="">amount</label>
+                <input
+                  type="text"
+                  className="info_input input_amount  input_amount-request"
+                  onChange={handleAddAmount}
+                />
               </div>
+              <button
+                className="btn btn_request-add"
+                onClick={handleAddRequest}>
+                + add{" "}
+              </button>
             </div>
+            <RequestResultContent
+              requestResults={requestResults}
+              handleRemove={handleRemoveRequest}
+            />
           </div>
         </div>
       );

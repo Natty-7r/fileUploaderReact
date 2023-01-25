@@ -103,6 +103,10 @@
   padding: 1rem;
 }
 
+.list_header-expired .list {
+  padding: 0.2rem !important;
+}
+
 /*  defining the size of each colum*/
 
 .list-no {
@@ -211,19 +215,22 @@
 }
 
 /*  */
-.requests {
-  padding: 1% 5%;
+
+.request_content {
+  padding: 1rem;
 }
-.request {
+
+.request_form {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 3rem;
-  width: 100%;
+  width: 80%;
   background-color: var(--white);
   box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.153);
   border-radius: 0.4rem;
-  padding: 01rem;
+  padding: 1rem 1rem 2rem 1rem;
+  margin: auto;
 }
 .request_info {
   width: 35%;
@@ -238,7 +245,7 @@
   padding-left: 0.8rem;
   font-weight: 600;
   border: solid thin var(--grayColor);
-  border-radius: 0.2rem;
+  border-radius: 0.5rem;
 }
 .request_info label {
   font-size: 1.6rem;
@@ -246,9 +253,42 @@
   display: block;
   margin-bottom: 0.2rem;
   letter-spacing: 0.07rem;
+  color: var(--grayColor);
+  font-weight: 600;
 }
-.request .btn {
+.request_form .btn {
   width: fit-content;
-  /* font-size: 1rem; */
-  /* height: 1rem; */
+}
+.request_form .btn_request-add {
+  margin-top: 2%;
+}
+.request_results {
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 1rem auto 0.5rem;
+  padding: 2%;
+  width: 80%;
+  min-height: 37vh;
+  max-height: 40vh;
+  overflow-y: scroll;
+  background-color: var(--white);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.153);
+}
+.request_result {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+  min-height: 4rem;
+  background-color: var(--whiteBlue);
+  font-size: 2rem;
+  text-transform: capitalize;
+  padding: 0.5rem;
+}
+.request_result .request_btn {
+  color: red;
+}
+.btn_request-send {
+  float: right;
 }
