@@ -28,4 +28,10 @@ section {
 a {
   color: inherit;
 }
+.btn {
+  transition: all 0.3s;
+}
+.btn:active {
+  transform: scale(0.9999);
+}
 /* ----------------general declarations ends  ------------- */

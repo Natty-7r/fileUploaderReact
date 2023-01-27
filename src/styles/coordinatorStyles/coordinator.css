@@ -231,6 +231,36 @@
   border-radius: 0.4rem;
   padding: 1rem 1rem 2rem 1rem;
   margin: auto;
+  position: relative;
+}
+.request_error {
+  display: none;
+  position: absolute;
+  top: 0rem;
+  left: 20%;
+  width: 60%;
+  text-align: center;
+  padding: 2%;
+  background-color: var(--whiteBlue);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.201);
+  color: red;
+  z-index: 5;
+  font-size: 2rem;
+  animation: slidDown 0.3s;
+}
+.request_error-visible {
+  display: block;
+}
+@keyframes slidDown {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+    transform-origin: top left;
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 .request_info {
   width: 35%;
@@ -262,6 +292,7 @@
 .request_form .btn_request-add {
   margin-top: 2%;
 }
+
 .request_results {
   display: flex;
   flex-flow: column;
@@ -296,6 +327,10 @@
   color: var(--grayColor);
   padding-right: 1rem;
 }
+.request_result .request_btn-remove:hover {
+  background-color: var(--grayColor);
+  color: var(--white);
+}
 .request_result .request_btn {
   color: red;
   border: solid thin var(--grayColor);
@@ -309,4 +344,89 @@
 }
 .btn_request-send {
   float: right;
+}
+
+.notification_slide {
+  /* position: relative; */
+}
+.notificaton_content {
+  height: 60vh;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 2%;
+}
+.notification {
+  width: 90%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  border-left: solid var(--grayColor);
+  background-color: white;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.11);
+  padding: 01rem 2%;
+}
+.notification_image {
+  flex-basis: 6%;
+  aspect-ratio: 1/1;
+  position: relative;
+  border-radius: 50%;
+}
+.notification_image img {
+  border-radius: 50%;
+  position: absolute;
+  top: 0rem;
+  left: orem;
+  width: 100%;
+  height: 100%;
+}
+.notification_massage {
+  flex-basis: 75%;
+}
+.notification_massage .notification_massage_header {
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+}
+.notification_massage .notification_massage_content {
+  font-size: 1.4rem;
+  text-transform: capitalize;
+  padding-left: 0.3rem;
+}
+.btn_notificaion {
+  width: fit-content;
+}
+.incoming {
+  height: 60vh;
+  max-height: 60vh;
+  display: flex;
+  flex-flow: column;
+}
+
+.incoming_header {
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05rem;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+.incoming_header .header_decore {
+  display: block;
+  width: 7%;
+  height: 0.15rem;
+  background-color: var(--grayColor);
+}
+.incoming .btn {
+  align-self: flex-end;
+  margin-right: 2rem;
+}
+.incoming_content {
+  background-color: white;
+  flex-basis: 90%;
+  padding: 1% 5%;
+  background-color: var(--whiteBlue);
+}
+.incoming_content .drug_ist {
+  background-color: red !important;
 }

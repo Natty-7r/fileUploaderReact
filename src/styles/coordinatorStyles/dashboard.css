@@ -36,6 +36,12 @@
   color: var(--grayColor);
   padding-left: 5%;
 }
+.profile_role {
+  display: block;
+  font-weight: 100;
+  letter-spacing: 0.05em;
+  font-size: 50%;
+}
 .page_dashboard .dashboard_menus {
   padding-top: 2rem;
   flex-basis: 70%;

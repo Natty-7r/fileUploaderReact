@@ -1,9 +1,9 @@
 import "../styles/coordinatorStyles/coordinator.css";
-import "../styles/coordinatorStyles/dashboard.css";
 import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
+import Dashboard from "../components/dashboard";
 
 const baseUrl = "http://localhost:8080/coordinator";
 
@@ -133,7 +133,7 @@ export default (props) => {
   const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [drugsInTable, setDrugsInTable] = useState();
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("available"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("notification"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
@@ -224,6 +224,10 @@ export default (props) => {
     setDrugsInTable(availbleDrugs);
     setCurrentSlide("available");
   };
+  const handleSeeNotification = () => {
+    setDrugsInTable(availbleDrugs);
+    setCurrentSlide("notification");
+  };
   const handleSendRequest = () => {
     setCurrentSlide("request");
   };
@@ -239,11 +243,11 @@ export default (props) => {
         <p className="request_amount">
           <span>amount</span> {props.request.amount}
         </p>
-        <p
+        <button
           className="request_btn request_btn-remove"
           onClick={handleRemove}>
           cancel request
-        </p>
+        </button>
       </div>
     );
   };
@@ -272,11 +276,30 @@ export default (props) => {
   };
   const SlideContent = () => {
     const [requestResults, setRequests] = useState([]);
+    const [errorMsg, setErrorMsg] = useState(false);
     const [r, R] = useState(0);
-    let name, amount;
     const handleAddRequest = () => {
+      let name = document.querySelector(".input_name-request").value;
+      let amount = +document.querySelector(".input_amount-request").value;
       const currentRequests = requestResults;
-      currentRequests.push({ name, amount });
+      if (name.length < 3) {
+        document.querySelector(".request_error").textContent =
+          "Please enter valid drug amount !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 1000);
+        return;
+      } else if (!Number.isInteger(amount)) {
+        document.querySelector(".request_error").textContent =
+          "Please enter valid drug amount !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 1000);
+        return;
+      }
+      currentRequests.push({ name, amount, from: "coordinator" });
       setRequests(currentRequests);
       R(currentRequests.length);
 
@@ -289,18 +312,12 @@ export default (props) => {
       setRequests(currentRequests);
       R(currentRequests.length);
     };
-    const handleAddName = (e) => {
-      name = e.target.value;
-    };
-    const handleAddAmount = (e) => {
-      amount = e.target.value;
-    };
+
     const handleSendRequestDone = () => {
       setRequests([]);
       R(0);
       axios
         .post(`${baseUrl}/request`, {
-          from: "coordinator",
           requests: requestResults,
         })
         .then((response) => {
@@ -394,12 +411,18 @@ export default (props) => {
           <h1 className="slide_header">send drug request</h1>
           <div className="request_content">
             <div className="request_form">
+              <div
+                className={`request_error ${
+                  errorMsg ? "request_error-visible" : ""
+                }`}>
+                hey bad inputs man{" "}
+              </div>
               <div className="request_info">
                 <label htmlFor="">name </label>
                 <input
                   type="text"
                   className="info_input input_name input_name-request"
-                  onChange={handleAddName}
+                  // onChange={handleAddName}
                 />
               </div>
               <div className="request_info">
@@ -407,7 +430,7 @@ export default (props) => {
                 <input
                   type="text"
                   className="info_input input_amount  input_amount-request"
-                  onChange={handleAddAmount}
+                  // onChange={handleAddAmount}
                 />
               </div>
               <button
@@ -424,48 +447,38 @@ export default (props) => {
           </div>
         </div>
       );
+    if (currentSlide == "notification")
+      return (
+        <div className="notification_slide">
+          <h1 className="slide_header">notification</h1>
+          <div className="notificaton_content">
+            <div className="notification">
+              <div className="notification_image">
+                <img src={user} />
+              </div>
+              <div className="notification_massage">
+                <div className="notification_massage_header">
+                  expired drugs{" "}
+                </div>
+                <div className="notification_massage_content">
+                  ther ave been 50 drugs found int the stock{" "}
+                </div>
+              </div>
+              <button className="btn btn_notificaion">check </button>
+            </div>
+          </div>
+        </div>
+      );
   };
   return (
     <div className="whole_page coordinator_page">
-      <div className="page_dashboard">
-        <div className="dashboard_profile">
-          <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
-          </div>
-          <div className="profile_name">jalleta </div>
-        </div>
-        <div className="dashboard_menus">
-          <button
-            className={`btn_menu ${
-              currentSlide == "available" ? "btn_menu-active " : ""
-            }`}
-            onClick={seeAllDrugs}>
-            {" "}
-            available drugs{" "}
-          </button>
-          <button
-            className={`btn_menu ${
-              currentSlide == "expired" ? "btn_menu-active " : ""
-            }`}
-            onClick={handleCheckExpiration}>
-            check expired drugs{" "}
-          </button>
-          <button className="btn_menu">generate report </button>
-          <button
-            className={`btn_menu ${
-              currentSlide == "request" ? "btn_menu-active " : ""
-            }`}
-            onClick={handleSendRequest}>
-            send requrest{" "}
-          </button>
-          <button className="btn_menu">notification </button>
-
-          <button className="btn_menu">update profile</button>
-        </div>
-      </div>
+      <Dashboard
+        currentSlide={currentSlide}
+        seeAllDrugs={seeAllDrugs}
+        handleCheckExpiration={handleCheckExpiration}
+        handleSeeNotification={handleSeeNotification}
+        handleSendRequest={handleSendRequest}
+      />
       <div className="main_page">
         <div className="overview">
           <div className="summary">
