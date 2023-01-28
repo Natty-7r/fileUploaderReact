@@ -60,20 +60,58 @@
   width: 90%;
   border-radius: 0.2rem;
   color: var(--grayColor);
-  /* border: solid thin var(--lightDarkBlue); */
+  border-radius: 50rem;
+}
+.dashboard_menus .btn_notification {
+  position: relative;
+  border: solid thin var(--golden);
+}
+.notification_number {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  padding: 5%;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  border: solid orange;
+  z-index: 3;
+  background-color: white;
+  z-index: 3;
+}
+.notification_blink {
+  z-index: 1;
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  padding: 5%;
+  width: 3.5rem;
+  padding: 5%;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background-color: rgba(255, 166, 0, 0.5);
+  animation: blink 01s infinite;
+}
+@keyframes blink {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
 }
 .dashboard_menus .btn_menu:hover {
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
-  transform: translateX(1rem);
-  font-weight: bold;
-  border: solid thin #33415527;
-  border-radius: 50rem;
+  border: solid thin var(--golden);
 }
 .dashboard_menus .btn_menu-active {
   font-weight: bold;
   box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.079);
   transform: translateX(1rem);
-  border: solid thin #33415527;
+  border: solid thin var(--golden);
   border-radius: 5rem;
 }
 

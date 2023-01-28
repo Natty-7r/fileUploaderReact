@@ -120,10 +120,56 @@ const UpdateDrugInfo = (props) => {
     );
 };
 
+const Notification = (props) => {
+  const ExpireNotification = () => {
+    let totalExpiredDrugs = 0;
+    let expiredTypes = props.expiredDrugs.length;
+    props.expiredDrugs.forEach((drug) => {
+      totalExpiredDrugs += drug.amount;
+    });
+    if (props.expiredDrugs.length == 0)
+      return <h1 className="no_data_header">Notification stack empty </h1>;
+    if (props.expiredDrugs.length > 0)
+      return (
+        <div className="notification">
+          <div className="notification_image">
+            <img src={user} />
+          </div>
+          <div className="notification_massage">
+            <div className="notification_massage_header">expired drugs </div>
+            <div className="notification_massage_content">
+              There are
+              <span className="expired_amount">{totalExpiredDrugs}</span>{" "}
+              expired drugs found from
+              <span className="expired_amount">{expiredTypes}</span>
+              types of drug
+            </div>
+          </div>
+          <button
+            className="btn btn_notificaion"
+            onClick={props.handleCheckExpiration}>
+            check expired{" "}
+          </button>
+        </div>
+      );
+  };
+
+  return (
+    <div className="notificaton_content">
+      <ExpireNotification
+        expiredDrugs={props.expiredDrugs}
+        handleCheckExpiration={props.handleCheckExpiration}
+      />
+    </div>
+  );
+};
+
 export default (props) => {
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
     totalExpiredDrugs = 0;
+  let expiredSummary = "";
+  const [notificationNum, setNotificationNum] = useState(0);
   const [editing, setEditing] = useState(false);
   const [checkingExpiration, setCheckingExpiration] = useState(false);
   const [summary, setSummary] = useState([0, 0, 0]);
@@ -147,7 +193,7 @@ export default (props) => {
 
   useEffect(() => {
     createSummary();
-  }, [availbleDrugs]);
+  }, [availbleDrugs, expiredDrugs]);
 
   const handleUpdate = (index) => {
     setEditing(true);
@@ -171,6 +217,7 @@ export default (props) => {
     setExpiredDrugs(expiredDrugs);
     setDrugsLength(availbleDrugs.length);
     createSummary();
+
     axios
       .delete(`${baseUrl}/drug/${drugId}`)
       .then((response) => {
@@ -180,6 +227,9 @@ export default (props) => {
     if (getExpiredDrugs().length == 0) setCheckingExpiration(false);
   };
   const handleDiscardAll = () => {
+    setExpiredDrugs([]);
+    createSummary();
+    setCheckingExpiration(false);
     let drugIds = "";
     expiredDrugs.forEach((expiredDrug) => {
       drugIds += ":" + expiredDrug._id;
@@ -190,8 +240,6 @@ export default (props) => {
         console.log(response);
       })
       .catch((error) => console.log(error));
-    setExpiredDrugs([]);
-    setCheckingExpiration(false);
   };
   const handleCheckExpiration = () => {
     // setCheckingExpiration(true);
@@ -211,6 +259,7 @@ export default (props) => {
     return expiredDrugs;
   };
   const createSummary = () => {
+    countNotificaitonNumber();
     availbleDrugs.forEach((drug) => {
       totalAvailbleDrugs += drug.amount;
     });
@@ -218,6 +267,7 @@ export default (props) => {
       totalExpiredDrugs += drug.amount;
     });
     totalDrugs += totalAvailbleDrugs + totalExpiredDrugs;
+
     setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
   };
   const seeAllDrugs = () => {
@@ -451,28 +501,27 @@ export default (props) => {
       return (
         <div className="notification_slide">
           <h1 className="slide_header">notification</h1>
-          <div className="notificaton_content">
-            <div className="notification">
-              <div className="notification_image">
-                <img src={user} />
-              </div>
-              <div className="notification_massage">
-                <div className="notification_massage_header">
-                  expired drugs{" "}
-                </div>
-                <div className="notification_massage_content">
-                  ther ave been 50 drugs found int the stock{" "}
-                </div>
-              </div>
-              <button className="btn btn_notificaion">check </button>
-            </div>
-          </div>
+          <Notification
+            expiredDrugs={expiredDrugs}
+            totalExpiredDrugs={totalAvailbleDrugs}
+            handleCheckExpiration={handleCheckExpiration}
+            notificationNum={props.notificationNum}
+          />
         </div>
       );
+  };
+
+  const countNotificaitonNumber = () => {
+    let notificationNumber = 0;
+    if (expiredDrugs.length > 0) {
+      notificationNumber++;
+    }
+    setNotificationNum(notificationNumber);
   };
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        notificationNum={notificationNum}
         currentSlide={currentSlide}
         seeAllDrugs={seeAllDrugs}
         handleCheckExpiration={handleCheckExpiration}
@@ -507,7 +556,7 @@ export default (props) => {
           />
 
           <div className="page_slide">
-            <SlideContent />
+            <SlideContent notificationNum={notificationNum} />
           </div>
         </div>
       </div>

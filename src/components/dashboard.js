@@ -41,10 +41,16 @@ export default (props) => {
         </button>
         <button
           className={`btn_menu ${
-            props.currentSlide == "notification" ? "btn_menu-active " : ""
-          }`}
+            props.notificationNum ? " btn_notification" : ""
+          } ${props.currentSlide == "notification" ? "btn_menu-active " : ""}`}
           onClick={props.handleSeeNotification}>
           notification{" "}
+          {props.notificationNum ? (
+            <div>
+              <p className="notification_blink"></p>
+              <p className="notification_number">{props.notificationNum} </p>
+            </div>
+          ) : null}
         </button>
 
         <button className="btn_menu">update profile</button>
