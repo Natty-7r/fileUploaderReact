@@ -10,8 +10,12 @@ const baseUrl = "http://localhost:8080/coordinator";
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
   const expired = expireDate < new Date();
+
   return (
-    <div className={`lists ${expired ? "expired" : ""}`}>
+    <div
+      className={`lists ${expired ? "expired" : ""}  ${
+        props.type == "pending" ? "pending" : ""
+      }`}>
       <p className="list list_name list-no">{props.index + 1}</p>
       <p className="list list_name list-name">{props.drug.name} </p>
       <p className="list list_name list-price">{props.drug.price} birr </p>
@@ -29,7 +33,9 @@ const DrugList = function (props) {
             index={props.index}
             drugId={props.drug._id}
             expired={expired}
+            type={props.type}
             handleUpdate={props.handleUpdate}
+            handleSetPrice={props.handleSetPrice}
             handleDiscard={props.handleDiscard}
           />
         }
@@ -42,10 +48,21 @@ const ListButton = (props) => {
   const handleUpdate = () => {
     props.handleUpdate(index);
   };
+  const handleSetPrice = () => {
+    props.handleSetPrice(index);
+  };
   const handleDiscard = () => {
     props.handleDiscard(index, props.drugId);
   };
-
+  if (props.type == "pending") {
+    return (
+      <button
+        className=" list_btn list_btn-discard "
+        onClick={handleSetPrice}>
+        set price
+      </button>
+    );
+  }
   if (props.expired) {
     return (
       <button
@@ -55,6 +72,7 @@ const ListButton = (props) => {
       </button>
     );
   }
+
   if (!props.expired) {
     return (
       <button
@@ -69,6 +87,7 @@ const ListButton = (props) => {
 const UpdateDrugInfo = (props) => {
   let amount = props?.selecteDrug?.amount;
   let price = props?.selecteDrug?.price;
+  console.log(props);
   const drugId = props?.selecteDrug?._id;
   const updatePrice = (e) => {
     price = e.target.value;
@@ -79,11 +98,50 @@ const UpdateDrugInfo = (props) => {
   const handleUpdateDone = () => {
     props.handleUpdateDone(price, amount, drugId);
   };
+  const handleSetPriceDone = () => {
+    props.handleSetPriceDone(price, drugId);
+  };
   const handleCloseUpdating = () => {
     props.setEditing(false);
   };
   if (!props.editing) return null;
   if (props.editing)
+    if (props.editingType == "update")
+      return (
+        <div className="update_druginfo">
+          <button
+            className="close_check"
+            onClick={handleCloseUpdating}>
+            {" "}
+            X
+          </button>
+          <p className="drug_name">{"diclone"}</p>
+          <div className="info">
+            <label htmlFor="">price</label>
+            <input
+              type="text"
+              className="info_input input_price"
+              defaultValue={price}
+              onChange={updatePrice}
+            />
+          </div>
+          <div className="info">
+            <label htmlFor="">amount</label>
+            <input
+              type="text"
+              className="info_input input_amount"
+              onChange={updateAmount}
+              defaultValue={amount}
+            />
+          </div>
+          <button
+            className="btn btn_updateInfo"
+            onClick={handleUpdateDone}>
+            update{" "}
+          </button>
+        </div>
+      );
+  if (props.editingType == "set")
     return (
       <div className="update_druginfo">
         <button
@@ -102,116 +160,229 @@ const UpdateDrugInfo = (props) => {
             onChange={updatePrice}
           />
         </div>
-        <div className="info">
-          <label htmlFor="">amount</label>
-          <input
-            type="text"
-            className="info_input input_amount"
-            onChange={updateAmount}
-            defaultValue={amount}
-          />
-        </div>
+
         <button
           className="btn btn_updateInfo"
-          onClick={handleUpdateDone}>
-          update{" "}
+          onClick={handleSetPriceDone}>
+          set{" "}
         </button>
       </div>
     );
 };
 
-const Notification = (props) => {
-  const ExpireNotification = () => {
-    let totalExpiredDrugs = 0;
-    let expiredTypes = props.expiredDrugs.length;
+const NotificationSlide = (props) => {
+  console.log(props);
+  let notificationNumber = 0,
+    notificationMessages = [];
+  let totalExpiredDrugs = 0;
+  let expiredTypes = props.expiredDrugs.length;
+  let totalPendigDrugs = 0;
+  let pendingTypes = props.pendingDrugs.length;
+
+  const countNotificaitonNumber = () => {
+    if (props.expiredDrugs.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("expiration");
+    }
+    if (props.pendingDrugs.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("new");
+    }
     props.expiredDrugs.forEach((drug) => {
       totalExpiredDrugs += drug.amount;
     });
-    if (props.expiredDrugs.length == 0)
-      return <h1 className="no_data_header">Notification stack empty </h1>;
-    if (props.expiredDrugs.length > 0)
-      return (
-        <div className="notification">
-          <div className="notification_image">
-            <img src={user} />
-          </div>
-          <div className="notification_massage">
-            <div className="notification_massage_header">expired drugs </div>
-            <div className="notification_massage_content">
-              There are
-              <span className="expired_amount">{totalExpiredDrugs}</span>{" "}
-              expired drugs found from
-              <span className="expired_amount">{expiredTypes}</span>
-              types of drug
-            </div>
-          </div>
-          <button
-            className="btn btn_notificaion"
-            onClick={props.handleCheckExpiration}>
-            check expired{" "}
-          </button>
-        </div>
-      );
+    props.pendingDrugs.forEach((drug) => {
+      totalPendigDrugs += drug.amount;
+    });
   };
+  countNotificaitonNumber();
 
+  if (notificationNumber == 0)
+    return <h1 className="no_data_header">Notification stack empty </h1>;
+  if (notificationNumber > 0)
+    return (
+      <div className="notificaton_content">
+        {notificationMessages.map((message, index) => (
+          <Notification
+            key={index}
+            type={message}
+            handleCheckExpiration={props.handleCheckExpiration}
+            handleRegistration={props.handleRegistration}
+            totalExpiredDrugs={totalExpiredDrugs}
+            totalPendigDrugs={totalPendigDrugs}
+            pendingTypes={pendingTypes}
+            expiredTypes={expiredTypes}
+          />
+        ))}
+      </div>
+    );
+};
+const Notification = (props) => {
+  console.log(props);
   return (
-    <div className="notificaton_content">
-      <ExpireNotification
-        expiredDrugs={props.expiredDrugs}
+    <div className="notification">
+      <div className="notification_image">
+        <img src={user} />
+      </div>
+      <NotificationMessage
+        type={props.type}
+        totalExpiredDrugs={props.totalExpiredDrugs}
+        totalPendigDrugs={props.totalPendigDrugs}
+        pendingTypes={props.pendingTypes}
+        expiredTypes={props.expiredTypes}
+      />
+      <NotificationButton
         handleCheckExpiration={props.handleCheckExpiration}
+        handleRegistration={props.handleRegistration}
+        type={props.type}
       />
     </div>
   );
+};
+const NotificationMessage = (props) => {
+  if (props.type == "new")
+    return (
+      <div className="notification_massage">
+        <div className="notification_massage_header">new drugs </div>
+        <div className="notification_massage_content">
+          There are
+          <span className="expired_amount">{props.totalPendigDrugs}</span>new
+          arriving drugs in from
+          <span className="expired_amount">{props.pendingTypes}</span> type of
+          drugs
+        </div>
+      </div>
+    );
+  if (props.type == "expiration")
+    return (
+      <div className="notification_massage">
+        <div className="notification_massage_header">new drugs </div>
+        <div className="notification_massage_content">
+          There are
+          <span className="expired_amount">{props.totalExpiredDrugs}</span>new
+          expired drugs from
+          <span className="expired_amount">{props.expiredTypes}</span> type of
+          drugs
+        </div>
+      </div>
+    );
+};
+const NotificationButton = (props) => {
+  if (props.type == "expiration")
+    return (
+      <button
+        className="btn btn_notificaion"
+        onClick={props.handleCheckExpiration}>
+        check expired{" "}
+      </button>
+    );
+  if (props.type == "new")
+    return (
+      <button
+        className="btn btn_notificaion"
+        onClick={props.handleRegistration}>
+        Register drugs{" "}
+      </button>
+    );
 };
 
 export default (props) => {
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
-    totalExpiredDrugs = 0;
+    totalExpiredDrugs = 0,
+    totalPendingDrugs = 0;
   let expiredSummary = "";
   const [notificationNum, setNotificationNum] = useState(0);
+  const [notificationMessages, setNotificationMessages] = useState([]);
+
   const [editing, setEditing] = useState(false);
+  const [editingType, setEditingType] = useState("");
+
   const [checkingExpiration, setCheckingExpiration] = useState(false);
-  const [summary, setSummary] = useState([0, 0, 0]);
+  const [summary, setSummary] = useState([0, 0, 0, 0]);
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
+
   const [availbleDrugs, setAvailbleDrugs] = useState([]);
+  const [pendingDrugs, setPendingDrugs] = useState([]);
   const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [drugsInTable, setDrugsInTable] = useState();
+
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   const [currentSlide, setCurrentSlide] = useState("notification"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
-      setAvailbleDrugs(response.data.availbleDrugs);
-      setDrugsInTable(response.data.availbleDrugs);
-      setExpiredDrugs(response.data.expiredDrugs);
+      setAvailbleDrugs(response.data.drugs.availbleDrugs);
+      setPendingDrugs(response.data.drugs.storeOrders);
+      setDrugsInTable(response.data.drugs.availbleDrugs);
+      setExpiredDrugs(response.data.drugs.expiredDrugs);
       createSummary();
     });
   }, []);
 
   useEffect(() => {
     createSummary();
-  }, [availbleDrugs, expiredDrugs]);
+  }, [availbleDrugs, expiredDrugs, pendingDrugs]);
 
   const handleUpdate = (index) => {
+    setEditing(true);
+    setEditingType("update");
+    setSelectedIndex(index);
+    setSelectedDrug(getSelectedDrug(index));
+  };
+  const handleSetPrice = (index) => {
+    setEditingType("set");
     setEditing(true);
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
+  const handleSetPriceDone = (newPrice) => {
+    selecteDrug.price = newPrice;
+    pendingDrugs[selectedIndex] = selecteDrug;
+    setEditing(false);
+  };
+  const handleRegistrationDone = () => {
+    const existingDrugs = [];
+    const newDrugs = [];
+
+    availbleDrugs.forEach((availbleDrug) => {
+      pendingDrugs.forEach((pendingDrug, pendingIndex) => {
+        // updai=ting existing ones
+        if (availbleDrug.name.trim() == pendingDrug.name.trim()) {
+          availbleDrug.amount += pendingDrug.amount;
+          availbleDrug.price = pendingDrug.price;
+          pendingDrugs.splice(pendingIndex, 1);
+        }
+      });
+    });
+    const updatedDrugs = availbleDrugs.concat(pendingDrugs);
+    setAvailbleDrugs(updatedDrugs); // adding new drugs
+    setPendingDrugs([]);
+
+    setCurrentSlide("available");
+    axios
+      .post(`${baseUrl}/drugs/store`, { newDrugs: updatedDrugs })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleUpdateDone = (newPrice, newAmount, drugId) => {
     selecteDrug.price = newPrice;
     selecteDrug.amount = newAmount;
     availbleDrugs[selectedIndex] = selecteDrug;
     setEditing(false);
     axios
-      .patch(`${baseUrl}/drug`, { drugId, newPrice, newAmount })
+      .patch(`${baseUrl}/drug/`, { drugId, newPrice, newAmount })
       .then((response) => {
         console.log(response);
       })
       .catch((error) => console.log(error));
   };
+
   const handleDiscard = (indexSelected, drugId) => {
     expiredDrugs.splice(indexSelected, 1);
     setExpiredDrugs(expiredDrugs);
@@ -246,9 +417,9 @@ export default (props) => {
     setCurrentSlide("expired");
   };
   const getSelectedDrug = (index) => {
-    console.log(index);
     if (currentSlide == "available") return availbleDrugs[index];
     if (currentSlide == "expired") return expiredDrugs[index];
+    if (currentSlide == "register") return pendingDrugs[index];
   };
   const getExpiredDrugs = () => {
     // const expiredDrugs = drugs.filter((drug, index) => {
@@ -266,10 +437,20 @@ export default (props) => {
     expiredDrugs.forEach((drug) => {
       totalExpiredDrugs += drug.amount;
     });
+
+    pendingDrugs.forEach((drug) => {
+      totalPendingDrugs += drug.amount;
+    });
     totalDrugs += totalAvailbleDrugs + totalExpiredDrugs;
 
-    setSummary([totalDrugs, totalAvailbleDrugs, totalExpiredDrugs]);
+    setSummary([
+      totalDrugs,
+      totalAvailbleDrugs,
+      totalExpiredDrugs,
+      totalPendingDrugs,
+    ]);
   };
+
   const seeAllDrugs = () => {
     setDrugsInTable(availbleDrugs);
     setCurrentSlide("available");
@@ -281,6 +462,13 @@ export default (props) => {
   const handleSendRequest = () => {
     setCurrentSlide("request");
   };
+  const handleAddToStock = () => {
+    setCurrentSlide("addtostock");
+  };
+  const handleRegistration = () => {
+    setCurrentSlide("register");
+  };
+
   const RequestResult = (props) => {
     const handleRemove = () => {
       props.handleRemove(props.index);
@@ -324,7 +512,21 @@ export default (props) => {
         </div>
       );
   };
-  const SlideContent = () => {
+  const countNotificaitonNumber = () => {
+    let notificationNumber = 0;
+    let notificationMessagesToadd = [];
+    if (expiredDrugs.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("expiration");
+    }
+    if (pendingDrugs.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("new");
+    }
+    setNotificationNum(notificationNumber);
+    setNotificationMessages(notificationMessagesToadd);
+  };
+  const SlideContent = (props) => {
     const [requestResults, setRequests] = useState([]);
     const [errorMsg, setErrorMsg] = useState(false);
     const [r, R] = useState(0);
@@ -412,6 +614,62 @@ export default (props) => {
           </div>
         </div>
       );
+    if (currentSlide == "register") {
+      if (pendingDrugs.length == 0)
+        return (
+          <div className="drguList registration_list">
+            <h1 className="slide_header">Drug Registration</h1>
+            <div
+              className={`list_body ${
+                editing || checkingExpiration ? "blurred" : ""
+              }`}>
+              <h1 className="no_data_header"> There is No unRegistred Drug</h1>
+            </div>
+          </div>
+        );
+      return (
+        <div className="drguList registration_list">
+          <div className="list_header">
+            <p className="list list_name list-no">No </p>
+            <p className="list list_name list-name">Name </p>
+            <p className="list list_name list-price">price </p>
+            <p className="list list_name list-amount">amount </p>
+            <p className="list list_name list-e_date">expired date </p>
+            <p className="list list_name list-supplier">supplier </p>
+            <p className="list list_name list-s_date">supllied date </p>
+            <p className="list list_name"> </p>
+          </div>
+          <div
+            className={`list_body ${
+              editing || checkingExpiration ? "blurred" : ""
+            }`}>
+            {pendingDrugs.length == 0 ? (
+              <h1 className="no_data_header">
+                {" "}
+                No drug was found in the stock!
+              </h1>
+            ) : (
+              pendingDrugs.map((drug, index) => (
+                <DrugList
+                  drug={drug}
+                  index={index}
+                  key={index}
+                  type={"pending"}
+                  handleUpdate={handleUpdate}
+                  handleSetPrice={handleSetPrice}
+                  handleDiscard={handleDiscard}
+                />
+              ))
+            )}
+          </div>
+          <button
+            className="btn btn_register"
+            onClick={handleRegistrationDone}>
+            register all{" "}
+          </button>
+        </div>
+      );
+    }
     if (currentSlide == "expired")
       return (
         <div className="drguList">
@@ -501,23 +759,19 @@ export default (props) => {
       return (
         <div className="notification_slide">
           <h1 className="slide_header">notification</h1>
-          <Notification
+          <NotificationSlide
             expiredDrugs={expiredDrugs}
             totalExpiredDrugs={totalAvailbleDrugs}
+            pendingDrugs={pendingDrugs}
+            totalPendingDrugs={totalPendingDrugs}
             handleCheckExpiration={handleCheckExpiration}
-            notificationNum={props.notificationNum}
+            notificationNum={notificationNum}
+            handleRegistration={handleRegistration}
           />
         </div>
       );
   };
 
-  const countNotificaitonNumber = () => {
-    let notificationNumber = 0;
-    if (expiredDrugs.length > 0) {
-      notificationNumber++;
-    }
-    setNotificationNum(notificationNumber);
-  };
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
@@ -527,6 +781,8 @@ export default (props) => {
         handleCheckExpiration={handleCheckExpiration}
         handleSeeNotification={handleSeeNotification}
         handleSendRequest={handleSendRequest}
+        handleAddToStock={handleAddToStock}
+        handleRegistration={handleRegistration}
       />
       <div className="main_page">
         <div className="overview">
@@ -544,14 +800,16 @@ export default (props) => {
           </div>
           <div className="summary">
             <p className="summary_name">pending drugs </p>
-            <p className="summary_value">500</p>
+            <p className="summary_value">{summary[3]}</p>
           </div>
         </div>
         <div className="druglist">
           <UpdateDrugInfo
             editing={editing}
+            editingType={editingType}
             setEditing={setEditing}
             handleUpdateDone={handleUpdateDone}
+            handleSetPriceDone={handleSetPriceDone}
             selecteDrug={selecteDrug}
           />
 

@@ -65,6 +65,17 @@
   overflow-y: auto;
   border-bottom: solid var(--grayColor);
 }
+.registration_list .list_body {
+  height: 55vh !important;
+  overflow-y: auto;
+  border-bottom: solid var(--grayColor);
+}
+.registration_list .btn_register {
+  margin-top: 1rem;
+  margin-right: 2rem;
+  margin-left: auto;
+  float: right;
+}
 .blurred {
   filter: blur(0.1rem);
 }
@@ -80,6 +91,12 @@
 }
 .list_body .expired .list {
   opacity: 0.7;
+}
+.list_body .pending {
+  background-color: white;
+}
+.list_body .pending .list {
+  opacity: 1 !important;
 }
 .list_body .expired .list-btn {
   opacity: 1;
@@ -358,6 +375,7 @@
 .notification {
   width: 90%;
   margin: auto;
+  margin-top: 1rem;
   display: flex;
   align-items: center;
   gap: 2rem;
@@ -395,12 +413,12 @@
   letter-spacing: 0.05rem;
 }
 .expired_amount {
-  padding: 0rem 0.2rem;
+  padding: 0rem 0.5rem;
   font-size: 110%;
   font-weight: 600;
 }
 .btn_notificaion {
-  width: fit-content;
+  flex-basis: 20%;
 }
 .incoming {
   height: 60vh;

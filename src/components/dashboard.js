@@ -31,13 +31,27 @@ export default (props) => {
           onClick={props.handleCheckExpiration}>
           check expired drugs{" "}
         </button>
-        <button className="btn_menu">generate report </button>
+        <button
+          className={`btn_menu ${
+            props.currentSlide == "register" ? "btn_menu-active " : ""
+          }`}
+          onClick={props.handleRegistration}>
+          Register new drugs{" "}
+        </button>
+        <button
+          className={`btn_menu ${
+            props.currentSlide == "addtostock" ? "btn_menu-active " : ""
+          }`}
+          onClick={props.handleAddToStock}>
+          add to stock{" "}
+        </button>
+
         <button
           className={`btn_menu ${
             props.currentSlide == "request" ? "btn_menu-active " : ""
           }`}
           onClick={props.handleSendRequest}>
-          send requrest{" "}
+          send request{" "}
         </button>
         <button
           className={`btn_menu ${
@@ -52,8 +66,7 @@ export default (props) => {
             </div>
           ) : null}
         </button>
-
-        <button className="btn_menu">update profile</button>
+        <button className="btn_menu">generate report </button>
       </div>
     </div>
   );
