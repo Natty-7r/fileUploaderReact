@@ -198,7 +198,11 @@ const NotificationSlide = (props) => {
   countNotificaitonNumber();
 
   if (notificationNumber == 0)
-    return <h1 className="no_data_header">Notification stack empty </h1>;
+    return (
+      <div className="notificaton_content">
+        <h1 className="no_data_header">Notification stack is empty </h1>;
+      </div>
+    );
   if (notificationNumber > 0)
     return (
       <div className="notificaton_content">

@@ -453,3 +453,7 @@
 .incoming_content .drug_ist {
   background-color: red !important;
 }
+
+.no_data_header {
+  text-transform: uppercase;
+}
