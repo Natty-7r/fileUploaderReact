@@ -260,7 +260,7 @@ const NotificationMessage = (props) => {
   if (props.type == "expiration")
     return (
       <div className="notification_massage">
-        <div className="notification_massage_header">new drugs </div>
+        <div className="notification_massage_header">expired drugs </div>
         <div className="notification_massage_content">
           There are
           <span className="expired_amount">{props.totalExpiredDrugs}</span>new
@@ -313,7 +313,7 @@ export default (props) => {
   const [drugsInTable, setDrugsInTable] = useState();
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("notification"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("addtostock"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
@@ -416,6 +416,7 @@ export default (props) => {
       })
       .catch((error) => console.log(error));
   };
+
   const handleCheckExpiration = () => {
     // setCheckingExpiration(true);
     setCurrentSlide("expired");
@@ -473,25 +474,66 @@ export default (props) => {
     setCurrentSlide("register");
   };
 
-  const RequestResult = (props) => {
+  const RequestOrderResult = (props) => {
     const handleRemove = () => {
       props.handleRemove(props.index);
     };
-    return (
-      <div className="request_result">
-        <p className="request_name">
-          <span>name</span> {props.request.name}
-        </p>
-        <p className="request_amount">
-          <span>amount</span> {props.request.amount}
-        </p>
-        <button
-          className="request_btn request_btn-remove"
-          onClick={handleRemove}>
-          cancel request
-        </button>
-      </div>
-    );
+    if (props.type == "order")
+      return (
+        <div className="request_result">
+          <p className="request_name">
+            <span>name</span> {props.request.drug.name}
+          </p>
+          <p className="request_amount">
+            <span>amount</span> {props.request.drug.amount}
+          </p>
+          <button
+            className="request_btn request_btn-remove"
+            onClick={handleRemove}>
+            cancel sending
+          </button>
+        </div>
+      );
+    if (props.type == "request")
+      return (
+        <div className="request_result">
+          <p className="request_name">
+            <span>name</span> {props.request.name}
+          </p>
+          <p className="request_amount">
+            <span>amount</span> {props.request.amount}
+          </p>
+          <button
+            className="request_btn request_btn-remove"
+            onClick={handleRemove}>
+            cancel request
+          </button>
+        </div>
+      );
+  };
+  const StockOrderResult = (props) => {
+    if (props.stockOrders.length == 0) return null;
+    else
+      return (
+        <div className="request_main">
+          <div className="request_results">
+            {props.stockOrders.map((order, index) => (
+              <RequestOrderResult
+                index={index}
+                key={index}
+                type={"order"}
+                request={order}
+                handleRemove={props.handleRemove}
+              />
+            ))}
+          </div>
+          <button
+            className="btn btn_request-send"
+            onClick={props.handleAddToStockDone}>
+            Add to stock
+          </button>
+        </div>
+      );
   };
   const RequestResultContent = (props) => {
     if (props.requestResults.length == 0) return null;
@@ -500,10 +542,11 @@ export default (props) => {
         <div className="request_main">
           <div className="request_results">
             {props.requestResults.map((request, index) => (
-              <RequestResult
+              <RequestOrderResult
                 index={index}
                 key={index}
                 request={request}
+                type={"reqeust"}
                 handleRemove={props.handleRemove}
               />
             ))}
@@ -532,8 +575,59 @@ export default (props) => {
   };
   const SlideContent = (props) => {
     const [requestResults, setRequests] = useState([]);
+    const [stockOrders, setStockOrders] = useState([]);
     const [errorMsg, setErrorMsg] = useState(false);
     const [r, R] = useState(0);
+    const handleAddToStock = () => {
+      let name = document.querySelector(".input_name-request").value;
+      let amount = +document.querySelector(".input_amount-request").value;
+      const currentOrders = stockOrders;
+      let drugFound = undefined;
+
+      let drugAvailable = false;
+      availbleDrugs.forEach((drug) => {
+        if (drug.name.trim() == name.trim()) {
+          drugAvailable = true;
+          drugFound = drug;
+        }
+      });
+      if (!drugAvailable) {
+        document.querySelector(".request_error").textContent =
+          "No Drug is Available with this name is the store !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      } else if (!Number.isInteger(amount)) {
+        alert("ddd");
+        document.querySelector(".request_error").textContent =
+          "Please Enter Valid Amount  !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      } else if (amount + 1 > drugFound.amount) {
+        document.querySelector(
+          ".request_error"
+        ).textContent = `Insufficent amount of ${
+          drugFound.name
+        } is store ,  maximum  amount is  ${drugFound.amount - 1}`;
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      }
+      drugFound.amount = amount;
+      currentOrders.push({ drug: drugFound, from: "coordinator" });
+      setStockOrders(currentOrders);
+      R(currentOrders.length);
+
+      document.querySelector(".input_name-request").value = "";
+      document.querySelector(".input_amount-request").value = "";
+    };
     const handleAddRequest = () => {
       let name = document.querySelector(".input_name-request").value;
       let amount = +document.querySelector(".input_amount-request").value;
@@ -568,6 +662,12 @@ export default (props) => {
       setRequests(currentRequests);
       R(currentRequests.length);
     };
+    const handleRemoveOrder = (index) => {
+      const currentOrders = stockOrders;
+      currentOrders.splice(index, 1);
+      setStockOrders(currentOrders);
+      R(currentOrders.length);
+    };
 
     const handleSendRequestDone = () => {
       setRequests([]);
@@ -575,6 +675,29 @@ export default (props) => {
       axios
         .post(`${baseUrl}/request`, {
           requests: requestResults,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+    };
+
+    const handleAddToStockDone = () => {
+      stockOrders.forEach((stockOrder) => {
+        availbleDrugs.forEach((availbleDrug) => {
+          alert(stockOrder.drug.amount);
+          if (stockOrder.drug.name.trim() == availbleDrug.name.trim())
+            availbleDrug.amount -= stockOrder.drug.amount;
+        });
+      });
+
+      setStockOrders([]);
+      createSummary();
+      R(0);
+      axios
+        .post(`${baseUrl}/drugs/orders`, {
+          availbleDrugs,
+          stockOrders,
         })
         .then((response) => {
           console.log(response);
@@ -755,6 +878,53 @@ export default (props) => {
               requestResults={requestResults}
               handleRemove={handleRemoveRequest}
               handleSendRequestDone={handleSendRequestDone}
+            />
+          </div>
+        </div>
+      );
+    if (currentSlide == "addtostock")
+      return (
+        <div className="request_slide">
+          <h1 className="slide_header">add to stock </h1>
+          <div className="request_content">
+            <div className="request_form">
+              <div
+                className={`request_error ${
+                  errorMsg ? "request_error-visible" : ""
+                }`}>
+                hey bad inputs man{" "}
+              </div>
+              <div className="request_info">
+                <label htmlFor="">name </label>
+                <input
+                  type="text"
+                  className="info_input input_name input_name-request"
+                  // onChange={handleAddName}
+                />
+              </div>
+              <div className="request_info">
+                <label htmlFor="">amount</label>
+                <input
+                  type="text"
+                  className="info_input input_amount  input_amount-request"
+                  // onChange={handleAddAmount}
+                />
+              </div>
+              <button
+                className="btn btn_request-add"
+                onClick={handleAddToStock}>
+                + add{" "}
+              </button>
+            </div>
+            <RequestResultContent
+              requestResults={requestResults}
+              handleRemove={handleRemoveRequest}
+              handleSendRequestDone={handleSendRequestDone}
+            />
+            <StockOrderResult
+              stockOrders={stockOrders}
+              handleRemove={handleRemoveOrder}
+              handleAddToStockDone={handleAddToStockDone}
             />
           </div>
         </div>
