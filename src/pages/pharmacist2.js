@@ -1004,6 +1004,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        user="pharmacist"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
         seeAvailableDrugsInStore={seeAvailableDrugsInStore}

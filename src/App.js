@@ -16,10 +16,8 @@ import Login from "./pages/login.js";
 import Coordinator from "./pages/coordinator";
 import pharmacist from "./pages/pharmacist";
 import Pharmacist from "./pages/pharmacist";
+import Pharmacist2 from "./pages/pharmacist2";
 
-const storeDrugs = {
-  drugs: [1, 2, 3, 4, 5, 6, 7, 8],
-};
 function App(props) {
   const loginHandler = () => {
     console.log("login clicked");
@@ -31,12 +29,7 @@ function App(props) {
         {" "}
         <Route
           path="/"
-          element={
-            <Coordinator
-              storeDrugs={storeDrugs}
-              loginHandler={loginHandler}
-            />
-          }
+          element={<Pharmacist2 loginHandler={loginHandler} />}
         />
         <Route
           path="/"
