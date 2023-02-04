@@ -310,7 +310,7 @@ export default (props) => {
   const [expiredDrugs, setExpiredDrugs] = useState([]);
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("addtostock"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("availableStore"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
@@ -1004,6 +1004,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        user="coordinator"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
         seeAvailableDrugsInStore={seeAvailableDrugsInStore}

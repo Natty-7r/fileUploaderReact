@@ -152,6 +152,7 @@
   text-transform: capitalize;
   letter-spacing: 0.05rem;
 }
+
 .list .list_btn-update:hover {
   background-color: var(--grayColor);
   color: var(--white);
@@ -165,6 +166,11 @@
   background: var(--white);
   color: var(--grayColor);
   margin: auto;
+}
+.list .list_btn-name {
+  text-align: center;
+  background-color: orange !important;
+  color: var(--white);
 }
 .list .expired_list_btn-discardAll:hover {
   background-color: orange;

@@ -2,7 +2,7 @@ import { user } from "../constants/images";
 import "../styles/coordinatorStyles/dashboard.css";
 
 export default (props) => {
-  if (props.user == "")
+  if (props.user == "coordinator")
     return (
       <div className="page_dashboard">
         <div className="dashboard_profile">
