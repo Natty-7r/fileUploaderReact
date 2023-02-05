@@ -7,6 +7,8 @@
   flex-flow: column;
   max-height: 90vh;
   height: 90vh;
+  border-right: solid thin var(--whiteBlue);
+  margin-right: 0.1rem;
 }
 .page_dashboard .dashboard_profile {
   padding: 0rem 0rem 0rem 2rem;

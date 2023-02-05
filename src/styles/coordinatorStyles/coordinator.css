@@ -19,7 +19,7 @@
   flex-flow: column;
   align-items: center;
   gap: 0.5rem;
-  padding: 2rem 3rem;
+  padding: 2rem 2rem;
   background-color: var(--white);
   border-radius: 0.5rem;
   box-shadow: 0rem 10rem 20rem rgba(101, 98, 98, 0.131);
@@ -242,6 +242,11 @@
 .request_content {
   padding: 1rem;
 }
+.addToStock {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
 
 .request_form {
   display: flex;
@@ -250,11 +255,82 @@
   gap: 3rem;
   width: 80%;
   background-color: var(--white);
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.153);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.0153);
   border-radius: 0.4rem;
   padding: 1rem 1rem 2rem 1rem;
   margin: auto;
   position: relative;
+}
+.addToStock .requested_drugs_card {
+  padding: 0.5rem;
+  flex-basis: 40%;
+  height: 20vh;
+  background-color: var(--white);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.03);
+}
+.addToStock .requested_drugs_card .requested_drug_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0rem 0.4rem;
+  border-bottom: solid thin var(--grayColor);
+  font-size: 1.2rem;
+  padding: 0.4rem 0.8rem;
+  text-transform: uppercase;
+  background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+  color: var(--white);
+}
+.requested_drug_header .requested_drug_header-title {
+  font-size: 1.2rem;
+}
+.requested_drug_header p {
+}
+.requested_drug_header .btn {
+  width: fit-content;
+  font-size: 1rem;
+  background: none;
+  padding: 0.4rem 0.8rem;
+  border: solid thin var(--white);
+  font-weight: bold;
+}
+.requested_drug_header .btn:hover {
+  background-color: var(--white);
+  background-color: white;
+  color: var(--grayColor);
+}
+.addToStock .requested_drugs_card-hidden {
+  display: none;
+}
+
+.requested_drugs {
+  height: 15vh;
+  overflow-y: scroll;
+  padding: 0.4rem;
+}
+.requested_drugs .requested_drug {
+  display: flex;
+  margin-bottom: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-height: 3rem;
+  background-color: var(--whiteBlue);
+  font-size: 1.4rem;
+  text-transform: capitalize;
+  padding: 0.2rem 2%;
+  border: solid thin var(--golden);
+}
+.requested_drugs .requested_drug span {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+.addToStock .request_form {
+  flex-basis: 60%;
+  height: 20vh;
+}
+.addToStock .request_form-full {
+  flex-basis: 80%;
+  height: auto;
 }
 .request_error {
   display: none;
@@ -324,22 +400,26 @@
   margin: 1rem auto 0.5rem;
   padding: 2%;
   width: 80%;
-  min-height: 37vh;
-  max-height: 40vh;
+  min-height: 30vh;
+  max-height: 30vh;
   overflow-y: scroll;
   background-color: var(--white);
   box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.153);
+}
+.request_results-big {
+  min-height: 35vh;
+  max-height: 35vh;
 }
 .request_result {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  min-height: 4rem;
+  min-height: 3rem;
   background-color: var(--whiteBlue);
-  font-size: 2rem;
+  font-size: 1.6rem;
   text-transform: capitalize;
-  padding: 0.5rem 5%;
+  padding: 0.2rem 2%;
   border: solid thin var(--golden);
 }
 .request_result p {

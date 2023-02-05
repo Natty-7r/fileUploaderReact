@@ -166,7 +166,7 @@ const NotificationSlide = (props) => {
   if (notificationNumber == 0)
     return (
       <div className="notificaton_content">
-        <h1 className="no_data_header">Notification stack is empty </h1>;
+        <h1 className="no_data_header">There is nothing to notify ! </h1>;
       </div>
     );
   if (notificationNumber > 0)
@@ -690,7 +690,7 @@ export default (props) => {
             {expiredDrugs.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
-                No drug was found in the store !
+                No expired drug is found in the stock !
               </h1>
             ) : (
               expiredDrugs.map((drug, index) => (
