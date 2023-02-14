@@ -4,45 +4,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
-
+import DrugList from "../components/pharCoordComponents/druglist";
 const baseUrl = "http://localhost:8080/pharmacist";
 
-const DrugList = function (props) {
-  const expireDate = new Date(props.drug.expireDate);
-  const expired = expireDate < new Date();
-
-  return (
-    <div
-      className={`lists ${expired ? "expired" : ""}  ${
-        props.type == "pending" ? "pending" : ""
-      }`}>
-      <p className="list list_name list-no">{props.index + 1}</p>
-      <p className="list list_name list-name">{props.drug.name} </p>
-      <p className="list list_name list-price">{props.drug.price} birr </p>
-      <p className="list list_name list-amount">{props.drug.amount} </p>
-      <p className="list list_name list-e_date ">
-        {new Date(props.drug.expireDate).toLocaleDateString()}{" "}
-      </p>
-      <p className="list list_name list-supplier">{props.drug.supplier}</p>
-      <p className="list list_name list-s_date">
-        {new Date(props.drug.suppliedDate).toLocaleDateString()}{" "}
-      </p>
-      <p className="list list_name list-btn ">
-        {
-          <ListButton
-            index={props.index}
-            drugId={props.drug._id}
-            expired={expired}
-            type={props.type}
-            handleSell={props.handleSell}
-            handleSetPrice={props.handleSetPrice}
-            handleDiscard={props.handleDiscard}
-          />
-        }
-      </p>
-    </div>
-  );
-};
 const ListButton = (props) => {
   const index = props.index;
   const handleSell = () => {
@@ -52,8 +16,9 @@ const ListButton = (props) => {
     props.handleSetPrice(index);
   };
   const handleDiscard = () => {
-    props.handleDiscard(index, props.drugId);
+    props.handleDiscard(index, props.drugCode);
   };
+
   if (props.type == "pending") {
     return <p className=" list_btn list_btn-name">new</p>;
   }
@@ -80,7 +45,7 @@ const ListButton = (props) => {
 
 const SellDrug = (props) => {
   let amount = props?.selecteDrug?.amount;
-  const drugId = props?.selecteDrug?._id;
+  const drugCode = props?.selecteDrug?.drugCode;
   let amountToSell;
   const [errorMsg, setErrorMsg] = useState(false);
 
@@ -94,7 +59,7 @@ const SellDrug = (props) => {
         setErrorMsg(false);
       }, 2000);
     } else {
-      props.handleSellDone(amount - amountToSell, drugId);
+      props.handleSellDone(amount - amountToSell, drugCode);
     }
   };
   const handleCloseSell = () => {
@@ -287,7 +252,7 @@ export default (props) => {
       setExpiredDrugs(response.data.drugs.expiredDrugs);
       createSummary();
     });
-  });
+  }, []);
 
   useEffect(() => {
     createSummary();
@@ -298,13 +263,13 @@ export default (props) => {
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
-  const handleSellDone = (newAmount, drugId) => {
+  const handleSellDone = (newAmount, drugCode) => {
     selecteDrug.amount = newAmount;
     availbleStockDrugs[selectedIndex] = selecteDrug;
     setEditing(false);
     if (newAmount != 0) {
       axios
-        .patch(`${baseUrl}/drug`, { drugId, newAmount })
+        .patch(`${baseUrl}/drug`, { drugCode, newAmount })
         .then((response) => {
           console.log(response);
         })
@@ -312,18 +277,18 @@ export default (props) => {
     }
     if (newAmount == 0) {
       // if all sold discard the drug
-      handleDiscard(selecteDrug, drugId);
+      handleDiscard(selecteDrug, drugCode);
     }
   };
 
-  const handleDiscard = (indexSelected, drugId) => {
+  const handleDiscard = (indexSelected, drugCode) => {
     expiredDrugs.splice(indexSelected, 1);
     setExpiredDrugs(expiredDrugs);
     setDrugsLength(availbleStockDrugs.length);
     createSummary();
 
     axios
-      .delete(`${baseUrl}/drug/${drugId}`)
+      .delete(`${baseUrl}/drug/${drugCode}`)
       .then((response) => {
         console.log(response);
       })
@@ -334,12 +299,12 @@ export default (props) => {
     setExpiredDrugs([]);
     createSummary();
     setCheckingExpiration(false);
-    let drugIds = "";
+    let drugCodes = "";
     expiredDrugs.forEach((expiredDrug) => {
-      drugIds += ":" + expiredDrug._id;
+      drugCodes += ":" + expiredDrug.drugCode;
     });
     axios
-      .delete(`${baseUrl}/drugs/${drugIds}`)
+      .delete(`${baseUrl}/drugs/${drugCodes}`)
       .then((response) => {
         console.log(response);
       })
@@ -396,7 +361,7 @@ export default (props) => {
 
   const handleRegistrationDone = () => {
     const existingDrugs = [];
-    const newDrugs = [];
+    let newDrugs = [];
 
     availbleStockDrugs.forEach((availbleDrug) => {
       stockOrders.forEach((pendingDrug, pendingIndex) => {
@@ -409,12 +374,13 @@ export default (props) => {
       });
     });
     const updatedDrugs = availbleStockDrugs.concat(stockOrders);
+    newDrugs = updatedDrugs.concat(expiredDrugs);
     setAvailbleStockDrugs(updatedDrugs); // adding new drugs
     setStockOrders([]);
 
     setCurrentSlide("availableStock");
     axios
-      .post(`${baseUrl}/drugs/register`, { newDrugs: updatedDrugs })
+      .post(`${baseUrl}/drugs/register`, { newDrugs: newDrugs })
       .then((response) => {
         console.log(response);
       })
@@ -601,6 +567,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
+                  type="sell"
                   handleSell={handleSell}
                   handleDiscard={handleDiscard}
                 />

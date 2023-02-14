@@ -41,7 +41,6 @@ export default (props) => {
 
   useEffect(() => {
     axios.get(`${baseUrl}/drugs`).then((response) => {
-      console.log(response);
       setAvailbleDrugs(response.data.drugs.availbleStoreDrugs);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
       setStoreOrders(response.data.drugs.storeOrders);
@@ -53,7 +52,13 @@ export default (props) => {
 
   useEffect(() => {
     createSummary();
-  }, [availbleDrugs, expiredDrugs, storeOrders, stockRequests]);
+  }, [
+    availbleDrugs,
+    expiredDrugs,
+    storeOrders,
+    stockRequests,
+    availbleStockDrugs,
+  ]);
 
   const handleUpdate = (index) => {
     setEditing(true);
@@ -67,7 +72,6 @@ export default (props) => {
     availbleDrugs[selectedIndex] = selecteDrug;
     setEditing(false);
     createSummary();
-    console.log(selecteDrug);
 
     axios
       .patch(`${baseUrl}/drug/`, {
@@ -212,6 +216,8 @@ export default (props) => {
   };
   const RequestOrderResult = (props) => {
     const handleRemove = () => {
+      console.log("cc");
+      console.log(props.index);
       props.handleRemove(props.index);
     };
     if (props.type == "order")
@@ -377,10 +383,20 @@ export default (props) => {
           drugOrder = Object.assign({}, drug);
         }
       });
+      console.log(drugOrder);
       if (!drugAvailable) {
         // if drug did not match
         document.querySelector(".request_error").textContent =
           "No Drug is Available with this name is the store !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      } else if (amount == "") {
+        // if the amount entered is not number
+        document.querySelector(".request_error").textContent =
+          "Please Enter Valid Amount  !";
         setErrorMsg(true);
         setTimeout(() => {
           setErrorMsg(false);
@@ -432,16 +448,16 @@ export default (props) => {
         availbleDrugs.forEach((availbleDrug) => {
           if (stockOrder.name.trim() == availbleDrug.name.trim())
             availbleDrug.amount -= stockOrder.amount;
-          delete stockOrder.drugCode;
         });
       });
+      const totalStoreDrugs = availbleDrugs.concat(expiredDrugs);
 
       setStockOrders([]);
       createSummary();
 
       axios
         .post(`${baseUrl}/drugs/order`, {
-          availbleDrugs,
+          availbleDrugs: totalStoreDrugs,
           stockOrders,
         })
         .then((response) => {
@@ -471,6 +487,15 @@ export default (props) => {
           setErrorMsg(false);
         }, 1000);
         return;
+      } else if (amount == "") {
+        // if the amount entered is not number
+        document.querySelector(".request_error").textContent =
+          "Please Enter Valid Amount  !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
       } else if (!Number.isInteger(amount)) {
         document.querySelector(".request_error").textContent =
           "Please enter valid drug amount !";
@@ -497,9 +522,9 @@ export default (props) => {
       const currentOrders = stockOrders;
       currentOrders.splice(index, 1);
       setStockOrders(currentOrders);
-      setRequstNumber(currentOrders.length);
+      let orderNumber = orderedNumber;
+      setOrderedNumber(--orderNumber);
     };
-
     const handleSendRequestDone = () => {
       setRequests([]);
       setRequstNumber(0);
@@ -533,7 +558,7 @@ export default (props) => {
             {availbleDrugs.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
-                No drug was found in the stock!
+                No drug was found in the store!
               </h1>
             ) : (
               availbleDrugs.map((drug, index) => (
@@ -567,7 +592,7 @@ export default (props) => {
             className={`list_body ${
               editing || checkingExpiration ? "blurred" : ""
             }`}>
-            {availbleDrugs.length == 0 ? (
+            {availbleStockDrugs.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
                 No drug was found in the stock!
@@ -586,6 +611,7 @@ export default (props) => {
           </div>
         </div>
       );
+
     if (currentSlide == "register") {
       if (storeOrders.length == 0)
         return (

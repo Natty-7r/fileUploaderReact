@@ -1,7 +1,12 @@
+import { useState } from "react";
 const ListButton = (props) => {
   const index = props.index;
   const handleUpdate = () => {
     props.handleUpdate(index);
+  };
+  const handleSell = () => {
+    console.log(index);
+    props.handleSell(index);
   };
   const handleSetPrice = () => {
     props.handleSetPrice(index);
@@ -15,6 +20,15 @@ const ListButton = (props) => {
         className=" list_btn list_btn-discard "
         onClick={handleSetPrice}>
         set price
+      </button>
+    );
+  }
+  if (props.type == "sell") {
+    return (
+      <button
+        className=" list_btn list_btn-update "
+        onClick={handleSell}>
+        sell drug
       </button>
     );
   }
@@ -38,7 +52,63 @@ const ListButton = (props) => {
     );
   }
 };
+const SellDrug = (props) => {
+  let amount = props?.selecteDrug?.amount;
+  const drugCode = props?.selecteDrug?.drugCode;
+  let amountToSell;
+  const [errorMsg, setErrorMsg] = useState(false);
 
+  const getAmount = (e) => {
+    amountToSell = e.target.value;
+  };
+  const handleSellDone = () => {
+    if (amountToSell > amount) {
+      setErrorMsg(true);
+      setTimeout(() => {
+        setErrorMsg(false);
+      }, 2000);
+    } else {
+      props.handleSellDone(amount - amountToSell, drugCode);
+    }
+  };
+  const handleCloseSell = () => {
+    props.setEditing(false);
+  };
+  if (!props.editing) return null;
+  if (props.editing)
+    return (
+      <div className="update_druginfo">
+        <button
+          className="close_check"
+          onClick={handleCloseSell}>
+          {" "}
+          X
+        </button>
+        {errorMsg ? (
+          <div className="sell_error">
+            <p>No sufficient drug</p>
+            <button className="btn">send request</button>
+          </div>
+        ) : null}
+
+        <p className="drug_name">{"diclone"}</p>
+
+        <div className="info">
+          <label htmlFor="">amount</label>
+          <input
+            type="text"
+            className="info_input input_amount"
+            onChange={getAmount}
+          />
+        </div>
+        <button
+          className="btn btn_updateInfo"
+          onClick={handleSellDone}>
+          sell drug{" "}
+        </button>
+      </div>
+    );
+};
 export default (props) => {
   const expireDate = new Date(props.drug.expireDate);
   const expired = expireDate < new Date();
@@ -66,6 +136,7 @@ export default (props) => {
             drugCode={props.drug.drugCode}
             expired={expired}
             type={props.type}
+            handleSell={props.handleSell}
             handleUpdate={props.handleUpdate}
             handleSetPrice={props.handleSetPrice}
             handleDiscard={props.handleDiscard}
