@@ -402,7 +402,7 @@ export default (props) => {
           setErrorMsg(false);
         }, 3000);
         return;
-      } else if (!Number.isInteger(amount)) {
+      } else if (!Number.isInteger(+amount)) {
         // if the amount entered is not number
         document.querySelector(".request_error").textContent =
           "Please Enter Valid Amount  !";

@@ -15,16 +15,35 @@ const SellDrug = (props) => {
   let amount = props?.selecteDrug?.amount;
   const drugCode = props?.selecteDrug?.drugCode;
   let amountToSell;
-  const [errorMsg, setErrorMsg] = useState(false);
+  const [errorType, setErrorType] = useState(0);
+  const [errorMsgContent, setErrorMsgContent] = useState("");
 
   const getAmount = (e) => {
-    amountToSell = e.target.value;
+    amountToSell = e.target.value.trim();
   };
+  amountToSell = document.querySelector(".input_amount-sell")?.value;
   const handleSellDone = () => {
-    if (amountToSell > amount) {
-      setErrorMsg(true);
+    console.log(amountToSell);
+
+    if (amountToSell == undefined) {
+      setErrorMsgContent("Invalid  amount ");
+      setErrorType(1);
       setTimeout(() => {
-        setErrorMsg(false);
+        setErrorType(0);
+      }, 2000);
+      return;
+    } else if (!Number.isInteger(+amountToSell)) {
+      setErrorMsgContent("Invalid  amount ");
+      setErrorType(1);
+      setTimeout(() => {
+        setErrorType(0);
+      }, 2000);
+      return;
+    } else if (amountToSell > amount) {
+      setErrorMsgContent("Insufficent amount ");
+      setErrorType(2);
+      setTimeout(() => {
+        setErrorType(0);
       }, 2000);
     } else {
       props.handleSellDone(amount - amountToSell, drugCode);
@@ -32,6 +51,10 @@ const SellDrug = (props) => {
   };
   const handleCloseSell = () => {
     props.setEditing(false);
+  };
+  const handleSendRequest = () => {
+    handleCloseSell();
+    props.handleSendRequest();
   };
   if (!props.editing) return null;
   if (props.editing)
@@ -43,10 +66,16 @@ const SellDrug = (props) => {
           {" "}
           X
         </button>
-        {errorMsg ? (
+        {errorType != 0 ? (
           <div className="sell_error">
-            <p>No sufficient drug</p>
-            <button className="btn">send request</button>
+            <p>{errorMsgContent}</p>
+            {errorType == 2 ? (
+              <button
+                onClick={handleSendRequest}
+                className="btn">
+                send request
+              </button>
+            ) : null}
           </div>
         ) : null}
 
@@ -56,7 +85,7 @@ const SellDrug = (props) => {
           <label htmlFor="">amount</label>
           <input
             type="text"
-            className="info_input input_amount"
+            className="info_input input_amount  input_amount-sell"
             onChange={getAmount}
           />
         </div>
@@ -96,7 +125,7 @@ export default (props) => {
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
-      console.log(response);
+      // console.log(response);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
       setStockOrders(response.data.drugs.stockOrders);
       setExpiredDrugs(response.data.drugs.expiredDrugs);
@@ -618,6 +647,7 @@ export default (props) => {
         </div>
         <div className="druglist">
           <SellDrug
+            handleSendRequest={handleSendRequest}
             editing={editing}
             editingType={editingType}
             setEditing={setEditing}
