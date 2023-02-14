@@ -14,7 +14,11 @@ const ListButton = (props) => {
   const handleDiscard = () => {
     props.handleDiscard(index, props.drugCode);
   };
-  if (props.type == "pending") {
+
+  if (props.type == "pendingAccept") {
+    return <p className=" list_btn list_btn-name">new</p>;
+  }
+  if (props.type == "pendingSet") {
     return (
       <button
         className=" list_btn list_btn-discard "

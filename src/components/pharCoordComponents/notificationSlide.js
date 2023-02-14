@@ -103,27 +103,45 @@ export default (props) => {
   let requestTypes = props.stockRequests.length;
 
   const countNotificaitonNumber = () => {
-    if (props.expiredDrugs.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("expiration");
+    if (props.user == "coordinator") {
+      if (props.expiredDrugs.length > 0) {
+        notificationNumber++;
+        notificationMessages.push("expiration");
+      }
+      if (props.storeOrders.length > 0) {
+        notificationNumber++;
+        notificationMessages.push("new");
+      }
+      if (props.stockRequests.length > 0) {
+        notificationNumber++;
+        notificationMessages.push("request");
+      }
+      props.expiredDrugs.forEach((drug) => {
+        totalExpiredDrugs += drug.amount;
+      });
+      props.storeOrders.forEach((drug) => {
+        totalPendigDrugs += drug.amount;
+      });
+      props.stockRequests.forEach((drug) => {
+        totalRequestedDrugs += drug.amount;
+      });
     }
-    if (props.storeOrders.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("new");
+    if (props.user == "pharmacist") {
+      if (props.expiredDrugs.length > 0) {
+        notificationNumber++;
+        notificationMessages.push("expiration");
+      }
+      if (props.stockOrders.length > 0) {
+        notificationNumber++;
+        notificationMessages.push("new");
+      }
+      props.expiredDrugs.forEach((drug) => {
+        totalExpiredDrugs += drug.amount;
+      });
+      props.stockOrders.forEach((drug) => {
+        totalPendigDrugs += drug.amount;
+      });
     }
-    if (props.stockRequests.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("request");
-    }
-    props.expiredDrugs.forEach((drug) => {
-      totalExpiredDrugs += drug.amount;
-    });
-    props.storeOrders.forEach((drug) => {
-      totalPendigDrugs += drug.amount;
-    });
-    props.stockRequests.forEach((drug) => {
-      totalRequestedDrugs += drug.amount;
-    });
   };
   countNotificaitonNumber();
 

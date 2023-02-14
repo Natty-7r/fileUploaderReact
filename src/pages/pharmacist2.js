@@ -5,43 +5,11 @@ import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
 import DrugList from "../components/pharCoordComponents/druglist";
+import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
+import Overview from "../components/pharCoordComponents/overview";
+import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
+
 const baseUrl = "http://localhost:8080/pharmacist";
-
-const ListButton = (props) => {
-  const index = props.index;
-  const handleSell = () => {
-    props.handleSell(index);
-  };
-  const handleSetPrice = () => {
-    props.handleSetPrice(index);
-  };
-  const handleDiscard = () => {
-    props.handleDiscard(index, props.drugCode);
-  };
-
-  if (props.type == "pending") {
-    return <p className=" list_btn list_btn-name">new</p>;
-  }
-  if (props.expired) {
-    return (
-      <button
-        className=" list_btn list_btn-discard "
-        onClick={handleDiscard}>
-        discard drug
-      </button>
-    );
-  }
-
-  if (!props.expired) {
-    return (
-      <button
-        className=" list_btn list_btn-update "
-        onClick={handleSell}>
-        sell drug
-      </button>
-    );
-  }
-};
 
 const SellDrug = (props) => {
   let amount = props?.selecteDrug?.amount;
@@ -98,124 +66,6 @@ const SellDrug = (props) => {
           sell drug{" "}
         </button>
       </div>
-    );
-};
-
-const NotificationSlide = (props) => {
-  let notificationNumber = 0,
-    notificationMessages = [];
-  let totalExpiredDrugs = 0;
-  let expiredTypes = props.expiredDrugs.length;
-  let totalPendigDrugs = 0;
-  let pendingTypes = props.stockOrders.length;
-
-  const countNotificaitonNumber = () => {
-    if (props.expiredDrugs.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("expiration");
-    }
-    if (props.stockOrders.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("new");
-    }
-    props.expiredDrugs.forEach((drug) => {
-      totalExpiredDrugs += drug.amount;
-    });
-    props.stockOrders.forEach((drug) => {
-      totalPendigDrugs += drug.amount;
-    });
-  };
-  countNotificaitonNumber();
-
-  if (notificationNumber == 0)
-    return (
-      <div className="notificaton_content">
-        <h1 className="no_data_header">There is nothing to notify ! </h1>;
-      </div>
-    );
-  if (notificationNumber > 0)
-    return (
-      <div className="notificaton_content">
-        {notificationMessages.map((message, index) => (
-          <Notification
-            key={index}
-            type={message}
-            handleCheckExpiration={props.handleCheckExpiration}
-            handleRegistration={props.handleRegistration}
-            totalExpiredDrugs={totalExpiredDrugs}
-            totalPendigDrugs={totalPendigDrugs}
-            pendingTypes={pendingTypes}
-            expiredTypes={expiredTypes}
-          />
-        ))}
-      </div>
-    );
-};
-const Notification = (props) => {
-  return (
-    <div className="notification">
-      <div className="notification_image">
-        <img src={user} />
-      </div>
-      <NotificationMessage
-        type={props.type}
-        totalExpiredDrugs={props.totalExpiredDrugs}
-        totalPendigDrugs={props.totalPendigDrugs}
-        pendingTypes={props.pendingTypes}
-        expiredTypes={props.expiredTypes}
-      />
-      <NotificationButton
-        handleCheckExpiration={props.handleCheckExpiration}
-        handleRegistration={props.handleRegistration}
-        type={props.type}
-      />
-    </div>
-  );
-};
-const NotificationMessage = (props) => {
-  if (props.type == "new")
-    return (
-      <div className="notification_massage">
-        <div className="notification_massage_header">new drugs </div>
-        <div className="notification_massage_content">
-          There are
-          <span className="expired_amount">{props.totalPendigDrugs}</span>new
-          arriving drugs in from
-          <span className="expired_amount">{props.pendingTypes}</span> type of
-          drugs
-        </div>
-      </div>
-    );
-  if (props.type == "expiration")
-    return (
-      <div className="notification_massage">
-        <div className="notification_massage_header">expired drugs </div>
-        <div className="notification_massage_content">
-          There are
-          <span className="expired_amount">{props.totalExpiredDrugs}</span>new
-          expired drugs from
-          <span className="expired_amount">{props.expiredTypes}</span> type of
-          drugs
-        </div>
-      </div>
-    );
-};
-const NotificationButton = (props) => {
-  if (props.type == "expiration")
-    return (
-      <button
-        className="btn btn_notificaion"
-        onClick={props.handleCheckExpiration}>
-        check expired{" "}
-      </button>
-    );
-  if (props.type == "new")
-    return (
-      <button
-        className="btn btn_notificaion"
-        onClick={props.handleRegistration}>
-        Register drugs{" "}
-      </button>
     );
 };
 
@@ -616,7 +466,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
-                  type={"pending"}
+                  type={"pendingAccept"}
                   handleDiscard={handleDiscard}
                 />
               ))
@@ -719,9 +569,12 @@ export default (props) => {
         <div className="notification_slide">
           <h1 className="slide_header">notification</h1>
           <NotificationSlide
+            user={"pharmacist"}
             expiredDrugs={expiredDrugs}
             totalExpiredDrugs={totalAvailbleDrugs}
             stockOrders={stockOrders}
+            storeOrders={[]}
+            stockRequests={[]}
             totalPendingDrugs={totalPendingDrugs}
             handleCheckExpiration={handleCheckExpiration}
             notificationNum={notificationNum}
