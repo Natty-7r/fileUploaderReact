@@ -626,24 +626,10 @@ export default (props) => {
         handleRegistration={handleRegistration}
       />
       <div className="main_page">
-        <div className="overview">
-          <div className="summary">
-            <p className="summary_name">total drugs in stock </p>
-            <p className="summary_value">{summary[0]}</p>
-          </div>
-          <div className="summary">
-            <p className="summary_name">availbles drugs </p>
-            <p className="summary_value">{summary[1]}</p>
-          </div>
-          <div className="summary">
-            <p className="summary_name">expired drugs </p>
-            <p className="summary_value">{summary[2]}</p>
-          </div>
-          <div className="summary">
-            <p className="summary_name">pending drugs </p>
-            <p className="summary_value">{summary[3]}</p>
-          </div>
-        </div>
+        <Overview
+          user="pharmacist"
+          summary={summary}
+        />
         <div className="druglist">
           <SellDrug
             handleSendRequest={handleSendRequest}
