@@ -7,7 +7,6 @@ import Dashboard from "../components/dashboard";
 import DrugList from "../components/pharCoordComponents/druglist";
 import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
 import Overview from "../components/pharCoordComponents/overview";
-import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
 
 const baseUrl = "http://localhost:8080/pharmacist";
 
