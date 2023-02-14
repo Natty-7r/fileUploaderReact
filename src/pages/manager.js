@@ -8,7 +8,7 @@ import DrugList from "../components/pharCoordComponents/druglist";
 import Overview from "../components/pharCoordComponents/overview";
 import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
 
-const baseUrl = "http://localhost:8080/coordinator";
+const baseUrl = "http://localhost:8080/manager";
 
 export default (props) => {
   let totalDrugs = 0,
@@ -41,6 +41,7 @@ export default (props) => {
 
   useEffect(() => {
     axios.get(`${baseUrl}/drugs`).then((response) => {
+      console.log(response);
       setAvailbleDrugs(response.data.drugs.availbleStoreDrugs);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
       setStoreOrders(response.data.drugs.storeOrders);
@@ -849,7 +850,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
-        user="coordinator"
+        user="manager"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
         seeAvailableDrugsInStore={seeAvailableDrugsInStore}

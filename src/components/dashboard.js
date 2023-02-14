@@ -165,26 +165,34 @@ export default (props) => {
         <div className="dashboard_menus">
           <button
             className={`btn_menu ${
-              props.currentSlide == "availableStock" ? "btn_menu-active " : ""
-            }`}
-            onClick={props.seeAvailableDrugsInStock}>
-            {" "}
-            availables in stock{" "}
-          </button>
-          <button
-            className={`btn_menu ${
               props.currentSlide == "availableStore" ? "btn_menu-active " : ""
             }`}
             onClick={props.seeAvailableDrugsInStore}>
             {" "}
-            availables in store{" "}
+            drugs in store{" "}
           </button>
           <button
             className={`btn_menu ${
-              props.currentSlide == "request" ? "btn_menu-active " : ""
+              props.currentSlide == "availableStock" ? "btn_menu-active " : ""
             }`}
-            onClick={props.handleSendRequest}>
-            send Order{" "}
+            onClick={props.seeAvailableDrugsInStock}>
+            {" "}
+            durgs in stock{" "}
+          </button>
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "expired" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.handleCheckExpiration}>
+            sold drugs{" "}
+          </button>
+
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "addtostock" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.handleAddToStock}>
+            add to stock{" "}
           </button>
 
           <button
@@ -192,10 +200,8 @@ export default (props) => {
               props.currentSlide == "request" ? "btn_menu-active " : ""
             }`}
             onClick={props.handleSendRequest}>
-            accepted list{" "}
+            send order{" "}
           </button>
-
-          <button className="btn_menu">generate report </button>
           <button
             className={`btn_menu ${
               props.notificationNum ? " btn_notification" : ""
@@ -211,6 +217,7 @@ export default (props) => {
               </div>
             ) : null}
           </button>
+          <button className="btn_menu">generate report </button>
         </div>
       </div>
     );

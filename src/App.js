@@ -14,9 +14,7 @@ import Admin from "./pages/admin";
 import Signup from "./pages/signup.";
 import Login from "./pages/login.js";
 import Coordinator from "./pages/coordinator";
-import pharmacist from "./pages/pharmacist";
 import Pharmacist from "./pages/pharmacist";
-import Pharmacist2 from "./pages/pharmacist2";
 import Manager from "./pages/manager";
 
 function App(props) {
@@ -30,7 +28,7 @@ function App(props) {
         {" "}
         <Route
           path="/"
-          element={<Pharmacist2 loginHandler={loginHandler} />}
+          element={<Manager loginHandler={loginHandler} />}
         />
         <Route
           path="/"

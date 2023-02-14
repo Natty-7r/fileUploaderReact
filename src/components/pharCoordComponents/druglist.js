@@ -131,7 +131,9 @@ export default (props) => {
       </p>
       <p className="list list_name list-supplier">{props.drug.supplier}</p>
       <p className="list list_name list-s_date">
-        {new Date(props.drug.suppliedDate).toLocaleDateString()}{" "}
+        {new Date(
+          props.drug.suppliedDate || props.drug.soldDate
+        ).toLocaleDateString()}{" "}
       </p>
       <p className="list list_name list-btn ">
         {

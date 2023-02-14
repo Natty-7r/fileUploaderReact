@@ -34,4 +34,11 @@ a {
 .btn:active {
   transform: scale(0.9999);
 }
+.whole_page {
+  display: flex;
+}
+.main_page {
+  flex-basis: 80%;
+}
+
 /* ----------------general declarations ends  ------------- */
