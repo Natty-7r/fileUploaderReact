@@ -17,6 +17,7 @@ import Coordinator from "./pages/coordinator";
 import pharmacist from "./pages/pharmacist";
 import Pharmacist from "./pages/pharmacist";
 import Pharmacist2 from "./pages/pharmacist2";
+import Manager from "./pages/manager";
 
 function App(props) {
   const loginHandler = () => {

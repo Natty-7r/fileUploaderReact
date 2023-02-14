@@ -220,8 +220,8 @@ export default (props) => {
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
-      setDrugsInTable(response.data.drugs);
-      setDrugs(response.data.drugs);
+      setDrugsInTable(response.data.drugs.availbleStockDrugs);
+      setDrugs(response.data.drugs.availbleStockDrugs);
       createSummary();
     });
   }, []);

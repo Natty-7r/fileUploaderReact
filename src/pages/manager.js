@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
 
-const baseUrl = "http://localhost:8080/pharmacist";
+const baseUrl = "http://localhost:8080/coordinator";
 
 const DrugList = function (props) {
   const expireDate = new Date(props.drug.expireDate);
@@ -34,7 +34,7 @@ const DrugList = function (props) {
             drugId={props.drug._id}
             expired={expired}
             type={props.type}
-            handleSell={props.handleSell}
+            handleUpdate={props.handleUpdate}
             handleSetPrice={props.handleSetPrice}
             handleDiscard={props.handleDiscard}
           />
@@ -45,8 +45,8 @@ const DrugList = function (props) {
 };
 const ListButton = (props) => {
   const index = props.index;
-  const handleSell = () => {
-    props.handleSell(index);
+  const handleUpdate = () => {
+    props.handleUpdate(index);
   };
   const handleSetPrice = () => {
     props.handleSetPrice(index);
@@ -55,7 +55,13 @@ const ListButton = (props) => {
     props.handleDiscard(index, props.drugId);
   };
   if (props.type == "pending") {
-    return <p className=" list_btn list_btn-name">new</p>;
+    return (
+      <button
+        className=" list_btn list_btn-discard "
+        onClick={handleSetPrice}>
+        set price
+      </button>
+    );
   }
   if (props.expired) {
     return (
@@ -71,66 +77,93 @@ const ListButton = (props) => {
     return (
       <button
         className=" list_btn list_btn-update "
-        onClick={handleSell}>
-        sell drug
+        onClick={handleUpdate}>
+        update info
       </button>
     );
   }
 };
 
-const SellDrug = (props) => {
+const UpdateDrugInfo = (props) => {
   let amount = props?.selecteDrug?.amount;
+  let price = props?.selecteDrug?.price;
   const drugId = props?.selecteDrug?._id;
-  let amountToSell;
-  const [errorMsg, setErrorMsg] = useState(false);
-
-  const getAmount = (e) => {
-    amountToSell = e.target.value;
+  const updatePrice = (e) => {
+    price = e.target.value;
   };
-  const handleSellDone = () => {
-    if (amountToSell > amount) {
-      setErrorMsg(true);
-      setTimeout(() => {
-        setErrorMsg(false);
-      }, 2000);
-    } else {
-      props.handleSellDone(amount - amountToSell, drugId);
-    }
+  const updateAmount = (e) => {
+    amount = e.target.value;
   };
-  const handleCloseSell = () => {
+  const handleUpdateDone = () => {
+    props.handleUpdateDone(price, amount, drugId);
+  };
+  const handleSetPriceDone = () => {
+    props.handleSetPriceDone(price, drugId);
+  };
+  const handleCloseUpdating = () => {
     props.setEditing(false);
   };
   if (!props.editing) return null;
   if (props.editing)
+    if (props.editingType == "update")
+      return (
+        <div className="update_druginfo">
+          <button
+            className="close_check"
+            onClick={handleCloseUpdating}>
+            {" "}
+            X
+          </button>
+          <p className="drug_name">{"diclone"}</p>
+          <div className="info">
+            <label htmlFor="">price</label>
+            <input
+              type="text"
+              className="info_input input_price"
+              defaultValue={price}
+              onChange={updatePrice}
+            />
+          </div>
+          <div className="info">
+            <label htmlFor="">amount</label>
+            <input
+              type="text"
+              className="info_input input_amount"
+              onChange={updateAmount}
+              defaultValue={amount}
+            />
+          </div>
+          <button
+            className="btn btn_updateInfo"
+            onClick={handleUpdateDone}>
+            update{" "}
+          </button>
+        </div>
+      );
+  if (props.editingType == "set")
     return (
       <div className="update_druginfo">
         <button
           className="close_check"
-          onClick={handleCloseSell}>
+          onClick={handleCloseUpdating}>
           {" "}
           X
         </button>
-        {errorMsg ? (
-          <div className="sell_error">
-            <p>No sufficient drug</p>
-            <button className="btn">send request</button>
-          </div>
-        ) : null}
-
         <p className="drug_name">{"diclone"}</p>
-
         <div className="info">
-          <label htmlFor="">amount</label>
+          <label htmlFor="">price</label>
           <input
             type="text"
-            className="info_input input_amount"
-            onChange={getAmount}
+            className="info_input input_price"
+            defaultValue={price}
+            onChange={updatePrice}
           />
         </div>
+
         <button
           className="btn btn_updateInfo"
-          onClick={handleSellDone}>
-          sell drug{" "}
+          onClick={handleSetPriceDone}>
+          set{" "}
         </button>
       </div>
     );
@@ -142,22 +175,31 @@ const NotificationSlide = (props) => {
   let totalExpiredDrugs = 0;
   let expiredTypes = props.expiredDrugs.length;
   let totalPendigDrugs = 0;
-  let pendingTypes = props.stockOrders.length;
+  let pendingTypes = props.storeOrders.length;
+  let totalRequestedDrugs = 0;
+  let requestTypes = props.stockRequests.length;
 
   const countNotificaitonNumber = () => {
     if (props.expiredDrugs.length > 0) {
       notificationNumber++;
       notificationMessages.push("expiration");
     }
-    if (props.stockOrders.length > 0) {
+    if (props.storeOrders.length > 0) {
       notificationNumber++;
       notificationMessages.push("new");
+    }
+    if (props.stockRequests.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("request");
     }
     props.expiredDrugs.forEach((drug) => {
       totalExpiredDrugs += drug.amount;
     });
-    props.stockOrders.forEach((drug) => {
+    props.storeOrders.forEach((drug) => {
       totalPendigDrugs += drug.amount;
+    });
+    props.stockRequests.forEach((drug) => {
+      totalRequestedDrugs += drug.amount;
     });
   };
   countNotificaitonNumber();
@@ -165,7 +207,7 @@ const NotificationSlide = (props) => {
   if (notificationNumber == 0)
     return (
       <div className="notificaton_content">
-        <h1 className="no_data_header">There is nothing to notify ! </h1>;
+        <h1 className="no_data_header">Notification stack is empty </h1>;
       </div>
     );
   if (notificationNumber > 0)
@@ -181,12 +223,16 @@ const NotificationSlide = (props) => {
             totalPendigDrugs={totalPendigDrugs}
             pendingTypes={pendingTypes}
             expiredTypes={expiredTypes}
+            totalRequestedDrugs={totalRequestedDrugs}
+            requestTypes={requestTypes}
+            handleGoToAddToStock={props.handleGoToAddToStock}
           />
         ))}
       </div>
     );
 };
 const Notification = (props) => {
+  console.log(props);
   return (
     <div className="notification">
       <div className="notification_image">
@@ -198,10 +244,13 @@ const Notification = (props) => {
         totalPendigDrugs={props.totalPendigDrugs}
         pendingTypes={props.pendingTypes}
         expiredTypes={props.expiredTypes}
+        requestTypes={props.requestTypes}
+        totalRequestedDrugs={props.totalRequestedDrugs}
       />
       <NotificationButton
         handleCheckExpiration={props.handleCheckExpiration}
         handleRegistration={props.handleRegistration}
+        handleGoToAddToStock={props.handleGoToAddToStock}
         type={props.type}
       />
     </div>
@@ -234,6 +283,20 @@ const NotificationMessage = (props) => {
         </div>
       </div>
     );
+
+  if (props.type == "request")
+    return (
+      <div className="notification_massage">
+        <div className="notification_massage_header">stock requests </div>
+        <div className="notification_massage_content">
+          There is request from stock for
+          <span className="expired_amount">{props.totalRequestedDrugs}</span>
+          drugs from
+          <span className="expired_amount">{props.requestTypes}</span> type of
+          drugs
+        </div>
+      </div>
+    );
 };
 const NotificationButton = (props) => {
   if (props.type == "expiration")
@@ -252,13 +315,22 @@ const NotificationButton = (props) => {
         Register drugs{" "}
       </button>
     );
+  if (props.type == "request")
+    return (
+      <button
+        className="btn btn_notificaion"
+        onClick={props.handleGoToAddToStock}>
+        see request{" "}
+      </button>
+    );
 };
 
 export default (props) => {
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
     totalExpiredDrugs = 0,
-    totalPendingDrugs = 0;
+    totalPendingDrugs = 0,
+    totalStockRequest = 0;
   let expiredSummary = "";
   const [notificationNum, setNotificationNum] = useState(0);
   const [notificationMessages, setNotificationMessages] = useState([]);
@@ -271,55 +343,70 @@ export default (props) => {
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
 
+  const [availbleDrugs, setAvailbleDrugs] = useState([]);
   const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
-  const [stockOrders, setStockOrders] = useState([]);
+  const [storeOrders, setStoreOrders] = useState([]);
+  const [stockRequests, setStockRequest] = useState([]);
   const [expiredDrugs, setExpiredDrugs] = useState([]);
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("availableStock"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("availableStore"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/drugs`).then((response) => {
       console.log(response);
+      setAvailbleDrugs(response.data.drugs.availbleStoreDrugs);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
-      setStockOrders(response.data.drugs.stockOrders);
+      setStoreOrders(response.data.drugs.storeOrders);
+      setStockRequest(response.data.drugs.stockRequests);
       setExpiredDrugs(response.data.drugs.expiredDrugs);
       createSummary();
     });
-  });
+  }, []);
 
   useEffect(() => {
     createSummary();
-  }, [availbleStockDrugs, expiredDrugs, stockOrders]);
+  }, [availbleDrugs, expiredDrugs, storeOrders, stockRequests]);
 
-  const handleSell = (index) => {
+  const handleUpdate = (index) => {
+    setEditing(true);
+    setEditingType("update");
+    setSelectedIndex(index);
+    setSelectedDrug(getSelectedDrug(index));
+  };
+  const handleUpdateDone = (newPrice, newAmount, drugId) => {
+    selecteDrug.price = +newPrice;
+    selecteDrug.amount = +newAmount;
+    availbleDrugs[selectedIndex] = selecteDrug;
+    setEditing(false);
+    createSummary();
+    console.log(selecteDrug);
+
+    axios
+      .patch(`${baseUrl}/drug/`, { drugId, newPrice, newAmount, currentSlide })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleSetPrice = (index) => {
+    setEditingType("set");
     setEditing(true);
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
-  const handleSellDone = (newAmount, drugId) => {
-    selecteDrug.amount = newAmount;
-    availbleStockDrugs[selectedIndex] = selecteDrug;
+  const handleSetPriceDone = (newPrice) => {
+    selecteDrug.price = newPrice;
+    storeOrders[selectedIndex] = selecteDrug;
     setEditing(false);
-    if (newAmount != 0) {
-      axios
-        .patch(`${baseUrl}/drug`, { drugId, newAmount })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => console.log(error));
-    }
-    if (newAmount == 0) {
-      // if all sold discard the drug
-      handleDiscard(selecteDrug, drugId);
-    }
   };
 
   const handleDiscard = (indexSelected, drugId) => {
     expiredDrugs.splice(indexSelected, 1);
     setExpiredDrugs(expiredDrugs);
-    setDrugsLength(availbleStockDrugs.length);
+    setDrugsLength(availbleDrugs.length);
     createSummary();
 
     axios
@@ -347,22 +434,26 @@ export default (props) => {
   };
 
   const getSelectedDrug = (index) => {
+    if (currentSlide == "availableStore") return availbleDrugs[index];
     if (currentSlide == "availableStock") return availbleStockDrugs[index];
     if (currentSlide == "expired") return expiredDrugs[index];
-    if (currentSlide == "register") return stockOrders[index];
+    if (currentSlide == "register") return storeOrders[index];
   };
 
   const createSummary = () => {
     countNotificaitonNumber();
-    availbleStockDrugs.forEach((drug) => {
+    availbleDrugs.forEach((drug) => {
       totalAvailbleDrugs += drug.amount;
     });
     expiredDrugs.forEach((drug) => {
       totalExpiredDrugs += drug.amount;
     });
 
-    stockOrders.forEach((drug) => {
+    storeOrders.forEach((drug) => {
       totalPendingDrugs += drug.amount;
+    });
+    stockRequests.forEach((drug) => {
+      totalStockRequest += drug.amount;
     });
     totalDrugs += totalAvailbleDrugs + totalExpiredDrugs;
 
@@ -371,6 +462,7 @@ export default (props) => {
       totalAvailbleDrugs,
       totalExpiredDrugs,
       totalPendingDrugs,
+      totalStockRequest,
     ]);
   };
 
@@ -389,7 +481,9 @@ export default (props) => {
   const handleSendRequest = () => {
     setCurrentSlide("request");
   };
-
+  const handleAddToStock = () => {
+    setCurrentSlide("addtostock");
+  };
   const handleRegistration = () => {
     setCurrentSlide("register");
   };
@@ -398,21 +492,21 @@ export default (props) => {
     const existingDrugs = [];
     const newDrugs = [];
 
-    availbleStockDrugs.forEach((availbleDrug) => {
-      stockOrders.forEach((pendingDrug, pendingIndex) => {
+    availbleDrugs.forEach((availbleDrug) => {
+      storeOrders.forEach((pendingDrug, pendingIndex) => {
         // updai=ting existing ones
         if (availbleDrug.name.trim() == pendingDrug.name.trim()) {
           availbleDrug.amount += pendingDrug.amount;
           availbleDrug.price = pendingDrug.price;
-          stockOrders.splice(pendingIndex, 1);
+          storeOrders.splice(pendingIndex, 1);
         }
       });
     });
-    const updatedDrugs = availbleStockDrugs.concat(stockOrders);
-    setAvailbleStockDrugs(updatedDrugs); // adding new drugs
-    setStockOrders([]);
+    const updatedDrugs = availbleDrugs.concat(storeOrders);
+    setAvailbleDrugs(updatedDrugs); // adding new drugs
+    setStoreOrders([]);
 
-    setCurrentSlide("availableStock");
+    setCurrentSlide("availableStore");
     axios
       .post(`${baseUrl}/drugs/register`, { newDrugs: updatedDrugs })
       .then((response) => {
@@ -457,7 +551,30 @@ export default (props) => {
         </div>
       );
   };
-
+  const StockOrderResultContent = (props) => {
+    if (props.stockOrders.length == 0) return null;
+    else
+      return (
+        <div className="request_main">
+          <div className="request_results">
+            {props.stockOrders.map((order, index) => (
+              <RequestOrderResult
+                index={index}
+                key={index}
+                type={"order"}
+                requestOrder={order}
+                handleRemove={props.handleRemove}
+              />
+            ))}
+          </div>
+          <button
+            className="btn btn_request-send"
+            onClick={props.handleAddToStockDone}>
+            Add to stock
+          </button>
+        </div>
+      );
+  };
   const RequestResultContent = (props) => {
     if (props.requestResults.length == 0) return null;
     else
@@ -490,9 +607,13 @@ export default (props) => {
       notificationNumber++;
       notificationMessages.push("expiration");
     }
-    if (stockOrders.length > 0) {
+    if (storeOrders.length > 0) {
       notificationNumber++;
       notificationMessages.push("new");
+    }
+    if (stockRequests.length > 0) {
+      notificationNumber++;
+      notificationMessages.push("request");
     }
     setNotificationNum(notificationNumber);
     setNotificationMessages(notificationMessagesToadd);
@@ -500,23 +621,153 @@ export default (props) => {
 
   const SlideContent = (props) => {
     const [requestResults, setRequests] = useState([]);
+    const [stockOrders, setStockOrders] = useState([]);
+    const [orderedNumber, setOrderedNumber] = useState(0);
     const [errorMsg, setErrorMsg] = useState(false);
     const [requstNumber, setRequstNumber] = useState(0);
+    const [stockRequestSize, setStockRequestSize] = useState(
+      stockRequests.length
+    );
+    let stockRequestExits = stockRequestSize > 0 ? true : false;
+
+    const StockRequest = (props) => {
+      const date = new Date(props.stockRequest.requestDate);
+      let dateFormatted = date.toLocaleDateString();
+
+      return (
+        <div className="requested_drug">
+          <p className="request_name">
+            <span>{props.index + 1} </span>
+          </p>
+          <p className="request_name">
+            <span>name: </span> {props.stockRequest.name}
+          </p>
+          <p className="request_amount">
+            <span>amount: </span> {props.stockRequest.amount}
+          </p>
+          <p className="request_name">
+            <span>date: </span> {dateFormatted}
+          </p>
+        </div>
+      );
+    };
+
+    const handleGoToAddToStock = () => {
+      props.handleAddToStock();
+    };
+    const handleAddToStock = () => {
+      let name = document.querySelector(".input_name-request").value;
+      let amount = +document.querySelector(".input_amount-request").value;
+      const currentOrders = stockOrders;
+      let drugOrder = undefined;
+      let amountDeficit = 0; // if drug was added to order the previous amount
+      let drugOrderIndex = null;
+      let drugAvailable = false;
+      let drugInOrder = false;
+
+      currentOrders.forEach((currentOrder, index) => {
+        // checking if it is order already
+        if (currentOrder.name.trim() == name.trim()) {
+          amountDeficit = currentOrder.amount;
+          drugOrderIndex = index;
+          drugInOrder = true;
+        }
+      });
+
+      availbleDrugs.forEach((drug) => {
+        // matching order drug name with database
+        if (drug.name.trim() == name.trim()) {
+          drugAvailable = true;
+          drugOrder = Object.assign({}, drug);
+        }
+      });
+      if (!drugAvailable) {
+        // if drug did not match
+        document.querySelector(".request_error").textContent =
+          "No Drug is Available with this name is the store !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      } else if (!Number.isInteger(amount)) {
+        // if the amount entered is not number
+        document.querySelector(".request_error").textContent =
+          "Please Enter Valid Amount  !";
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      } else if (amount + amountDeficit + 1 > drugOrder.amount) {
+        //  if  the amount required is way more greater
+        document.querySelector(
+          ".request_error"
+        ).textContent = `Insufficent amount of ${
+          drugOrder.name
+        } is store ,  maximum  amount is  ${
+          drugOrder.amount - amountDeficit - 1
+        }`;
+        setErrorMsg(true);
+        setTimeout(() => {
+          setErrorMsg(false);
+        }, 3000);
+        return;
+      }
+      if (drugInOrder) {
+        currentOrders[drugOrderIndex].amount += amount;
+        setStockOrders(currentOrders);
+        let orderNumber = orderedNumber;
+        setOrderedNumber(++orderNumber);
+      }
+      if (!drugInOrder) {
+        drugOrder.amount = amount;
+        currentOrders.push(drugOrder);
+        setStockOrders(stockOrders);
+        let orderNumber = orderedNumber;
+        setOrderedNumber(++orderNumber);
+      }
+
+      document.querySelector(".input_name-request").value = "";
+      document.querySelector(".input_amount-request").value = "";
+    };
+    const handleAddToStockDone = () => {
+      stockOrders.forEach((stockOrder) => {
+        availbleDrugs.forEach((availbleDrug) => {
+          if (stockOrder.name.trim() == availbleDrug.name.trim())
+            availbleDrug.amount -= stockOrder.amount;
+          delete stockOrder._id;
+        });
+      });
+
+      setStockOrders([]);
+      createSummary();
+
+      axios
+        .post(`${baseUrl}/drugs/order`, {
+          availbleDrugs,
+          stockOrders,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+    };
+    const handleClearStockRequest = () => {
+      setStockRequest([]);
+      axios
+        .delete(`${baseUrl}/request`, {})
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+    };
 
     const handleAddRequest = () => {
-      let requestExist = false;
       let name = document.querySelector(".input_name-request").value;
       let amount = +document.querySelector(".input_amount-request").value;
       const currentRequests = requestResults;
       if (name.length < 3) {
-        document.querySelector(".request_error").textContent =
-          "Please enter valid drug Name  !";
-        setErrorMsg(true);
-        setTimeout(() => {
-          setErrorMsg(false);
-        }, 1000);
-        return;
-      } else if (amount == "") {
         document.querySelector(".request_error").textContent =
           "Please enter valid drug amount !";
         setErrorMsg(true);
@@ -533,24 +784,9 @@ export default (props) => {
         }, 1000);
         return;
       }
-
-      currentRequests.forEach((currentRequest, index) => {
-        // checking if it is order already
-        if (currentRequest.name.trim() == name.trim()) {
-          requestExist = true;
-          currentRequest.amount += amount;
-        }
-      });
-
-      if (requestExist) {
-        let requestNumberNOw = requstNumber;
-        setRequstNumber(++requestNumberNOw);
-      }
-      if (!requestExist) {
-        currentRequests.push({ name, amount });
-        setRequests(currentRequests);
-        setRequstNumber(currentRequests.length);
-      }
+      currentRequests.push({ name, amount });
+      setRequests(currentRequests);
+      setRequstNumber(currentRequests.length);
 
       document.querySelector(".input_name-request").value = "";
       document.querySelector(".input_amount-request").value = "";
@@ -561,18 +797,62 @@ export default (props) => {
       setRequests(currentRequests);
       setRequstNumber(currentRequests.length);
     };
+    const handleRemoveOrder = (index) => {
+      const currentOrders = stockOrders;
+      currentOrders.splice(index, 1);
+      setStockOrders(currentOrders);
+      setRequstNumber(currentOrders.length);
+    };
+
     const handleSendRequestDone = () => {
       setRequests([]);
       setRequstNumber(0);
       axios
         .post(`${baseUrl}/drugs/request`, {
-          stockRequest: requestResults,
+          storeRequest: requestResults,
         })
         .then((response) => {
           console.log(response);
         })
         .catch((error) => console.log(error));
     };
+
+    if (currentSlide == "availableStore")
+      return (
+        <div className="drguList">
+          <div className="list_header">
+            <p className="list list_name list-no">No </p>
+            <p className="list list_name list-name">Name </p>
+            <p className="list list_name list-price">price </p>
+            <p className="list list_name list-amount">amount </p>
+            <p className="list list_name list-e_date">expired date </p>
+            <p className="list list_name list-supplier">supplier </p>
+            <p className="list list_name list-s_date">supllied date </p>
+            <p className="list list_name"> </p>
+          </div>
+          <div
+            className={`list_body ${
+              editing || checkingExpiration ? "blurred" : ""
+            }`}>
+            {availbleDrugs.length == 0 ? (
+              <h1 className="no_data_header">
+                {" "}
+                No drug was found in the stock!
+              </h1>
+            ) : (
+              availbleDrugs.map((drug, index) => (
+                <DrugList
+                  drug={drug}
+                  index={index}
+                  key={index}
+                  handleUpdate={handleUpdate}
+                  handleDiscard={handleDiscard}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      );
     if (currentSlide == "availableStock")
       return (
         <div className="drguList">
@@ -590,7 +870,7 @@ export default (props) => {
             className={`list_body ${
               editing || checkingExpiration ? "blurred" : ""
             }`}>
-            {availbleStockDrugs.length == 0 ? (
+            {availbleDrugs.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
                 No drug was found in the stock!
@@ -601,7 +881,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
-                  handleSell={handleSell}
+                  handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
                 />
               ))
@@ -610,7 +890,7 @@ export default (props) => {
         </div>
       );
     if (currentSlide == "register") {
-      if (stockOrders.length == 0)
+      if (storeOrders.length == 0)
         return (
           <div className="drguList registration_list">
             <h1 className="slide_header">Drug Registration</h1>
@@ -638,18 +918,20 @@ export default (props) => {
             className={`list_body ${
               editing || checkingExpiration ? "blurred" : ""
             }`}>
-            {stockOrders.length == 0 ? (
+            {storeOrders.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
                 No drug was found in the stock!
               </h1>
             ) : (
-              stockOrders.map((drug, index) => (
+              storeOrders.map((drug, index) => (
                 <DrugList
                   drug={drug}
                   index={index}
                   key={index}
                   type={"pending"}
+                  handleUpdate={handleUpdate}
+                  handleSetPrice={handleSetPrice}
                   handleDiscard={handleDiscard}
                 />
               ))
@@ -690,7 +972,7 @@ export default (props) => {
             {expiredDrugs.length == 0 ? (
               <h1 className="no_data_header">
                 {" "}
-                No expired drug is found in the stock !
+                No drug was found in the store !
               </h1>
             ) : (
               expiredDrugs.map((drug, index) => (
@@ -698,6 +980,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
+                  handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
                 />
               ))
@@ -747,6 +1030,80 @@ export default (props) => {
           </div>
         </div>
       );
+    if (currentSlide == "addtostock")
+      return (
+        <div className="request_slide">
+          <h1 className="slide_header">add to stock </h1>
+          <div className="request_content ">
+            <div className="addToStock">
+              <div
+                className={`requested_drugs_card  ${
+                  stockRequestExits ? "" : "requested_drugs_card-hidden"
+                }`}>
+                <div className="requested_drug_header">
+                  <h1 className="requested_drug_header-title">
+                    {" "}
+                    request from stock
+                  </h1>
+                  <p>
+                    {" "}
+                    <button
+                      className="btn btn_clear_requesst"
+                      onClick={handleClearStockRequest}>
+                      clear request
+                    </button>
+                  </p>
+                </div>
+                <div className="requested_drugs ">
+                  {stockRequests.map((stockRequest, index) => (
+                    <StockRequest
+                      stockRequest={stockRequest}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div
+                className={`request_form  ${
+                  stockRequestExits ? "" : "request_form-full"
+                }`}>
+                <div
+                  className={`request_error ${
+                    errorMsg ? "request_error-visible" : ""
+                  }`}>
+                  hey bad inputs man{" "}
+                </div>
+                <div className="request_info">
+                  <label htmlFor="">name </label>
+                  <input
+                    type="text"
+                    className="info_input input_name input_name-request"
+                    // onChange={handleAddName}
+                  />
+                </div>
+                <div className="request_info">
+                  <label htmlFor="">amount</label>
+                  <input
+                    type="text"
+                    className="info_input input_amount  input_amount-request"
+                    // onChange={handleAddAmount}
+                  />
+                </div>
+                <button
+                  className="btn btn_request-add"
+                  onClick={handleAddToStock}>
+                  + add{" "}
+                </button>
+              </div>
+            </div>
+            <StockOrderResultContent
+              stockOrders={stockOrders}
+              handleRemove={handleRemoveOrder}
+              handleAddToStockDone={handleAddToStockDone}
+            />
+          </div>
+        </div>
+      );
     if (currentSlide == "notification")
       return (
         <div className="notification_slide">
@@ -754,11 +1111,13 @@ export default (props) => {
           <NotificationSlide
             expiredDrugs={expiredDrugs}
             totalExpiredDrugs={totalAvailbleDrugs}
-            stockOrders={stockOrders}
+            storeOrders={storeOrders}
             totalPendingDrugs={totalPendingDrugs}
             handleCheckExpiration={handleCheckExpiration}
             notificationNum={notificationNum}
             handleRegistration={handleRegistration}
+            stockRequests={stockRequests}
+            handleGoToAddToStock={handleGoToAddToStock}
           />
         </div>
       );
@@ -767,7 +1126,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
-        user="pharmacist"
+        user="manager"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
         seeAvailableDrugsInStore={seeAvailableDrugsInStore}
@@ -775,6 +1134,7 @@ export default (props) => {
         handleCheckExpiration={handleCheckExpiration}
         handleSeeNotification={handleSeeNotification}
         handleSendRequest={handleSendRequest}
+        handleAddToStock={handleAddToStock}
         handleRegistration={handleRegistration}
       />
       <div className="main_page">
@@ -795,18 +1155,28 @@ export default (props) => {
             <p className="summary_name">pending drugs </p>
             <p className="summary_value">{summary[3]}</p>
           </div>
+          {stockRequests ? (
+            <div className="summary">
+              <p className="summary_name">stock requests </p>
+              <p className="summary_value">{summary[4]}</p>
+            </div>
+          ) : null}
         </div>
         <div className="druglist">
-          <SellDrug
+          <UpdateDrugInfo
             editing={editing}
             editingType={editingType}
             setEditing={setEditing}
-            handleSellDone={handleSellDone}
+            handleUpdateDone={handleUpdateDone}
+            handleSetPriceDone={handleSetPriceDone}
             selecteDrug={selecteDrug}
           />
 
           <div className="page_slide">
-            <SlideContent notificationNum={notificationNum} />
+            <SlideContent
+              notificationNum={notificationNum}
+              handleAddToStock={handleAddToStock}
+            />
           </div>
         </div>
       </div>
