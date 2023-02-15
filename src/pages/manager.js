@@ -1,3 +1,4 @@
+// expried drugs means sold drugs
 import "../styles/coordinatorStyles/coordinator.css";
 import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
@@ -177,17 +178,12 @@ export default (props) => {
     storeOrders.forEach((drug) => {
       totalPendingDrugs += drug.amount;
     });
-    stockRequests.forEach((drug) => {
-      totalStockRequest += drug.amount;
-    });
-    totalDrugs += totalAvailbleDrugsInStore + totalExpiredDrugs;
 
     setSummary([
-      totalDrugs,
       totalAvailbleDrugsInStore,
+      totalAvailbleDrugsInStock,
       totalExpiredDrugs,
       totalPendingDrugs,
-      totalStockRequest,
     ]);
   };
 
@@ -760,7 +756,7 @@ export default (props) => {
       />
       <div className="main_page">
         <Overview
-          user="coordinator"
+          user="manager"
           summary={summary}
           stockRequest={stockRequests}
         />
