@@ -115,6 +115,7 @@ export default (props) => {
 
   const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
   const [stockOrders, setStockOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [expiredDrugs, setExpiredDrugs] = useState([]);
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
@@ -122,11 +123,12 @@ export default (props) => {
 
   useEffect(() => {
     let drugsFetched = [];
-    axios.get(`${baseUrl}/drugs`).then((response) => {
-      // console.log(response);
-      setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
-      setStockOrders(response.data.drugs.stockOrders);
-      setExpiredDrugs(response.data.drugs.expiredDrugs);
+    axios.get(`${baseUrl}/index`).then((response) => {
+      console.log(response);
+      // setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
+      // setStockOrders(response.data.drugs.stockOrders);
+      // setExpiredDrugs(response.data.drugs.expiredDrugs);
+      setOrders(response.data.drugs.orders);
       createSummary();
     });
   }, []);
@@ -418,39 +420,27 @@ export default (props) => {
     };
     if (currentSlide == "availableStock")
       return (
-        <div className="drguList">
-          <div className="list_header">
-            <p className="list list_name list-no">No </p>
-            <p className="list list_name list-name">Name </p>
-            <p className="list list_name list-price">price </p>
-            <p className="list list_name list-amount">amount </p>
-            <p className="list list_name list-e_date">expired date </p>
-            <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name"> </p>
-          </div>
-          <div
-            className={`list_body ${
-              editing || checkingExpiration ? "blurred" : ""
-            }`}>
-            {availbleStockDrugs.length == 0 ? (
-              <h1 className="no_data_header">
-                {" "}
-                No drug was found in the stock!
-              </h1>
-            ) : (
-              availbleStockDrugs.map((drug, index) => (
-                <DrugList
-                  drug={drug}
-                  index={index}
-                  hasLastCol={true}
-                  key={index}
-                  type="sell"
-                  handleSell={handleSell}
-                  handleDiscard={handleDiscard}
-                />
-              ))
-            )}
+        <div className="orders">
+          <h1 className="orders_header">drugs order</h1>
+          <div className="orders_main">
+            <div className="order">
+              <div className="order_left">
+                <div className="order_header"></div>
+                <div className="order_content"></div>
+                <button className="btn btn_order btn_order-detail">
+                  detail
+                </button>
+              </div>
+              <div className="order_right">
+                <p className="order_date"></p>
+                <button className="btn btn_order btn_order-accept">
+                  accept
+                </button>
+                <button className="btn btn_order btn_order-accept">
+                  reject
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       );
@@ -509,109 +499,6 @@ export default (props) => {
         </div>
       );
     }
-    if (currentSlide == "expired")
-      return (
-        <div className="drguList">
-          <div className="list_header list_header-expired">
-            <p className="list list_name list-no">No </p>
-            <p className="list list_name list-name">Name </p>
-            <p className="list list_name list-price">price </p>
-            <p className="list list_name list-amount">amount </p>
-            <p className="list list_name list-e_date">expired date </p>
-            <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name list_name_discardAll">
-              {" "}
-              <button
-                className="btn expired_list_btn expired_list_btn-discardAll"
-                onClick={handleDiscardAll}>
-                discard All{" "}
-              </button>{" "}
-            </p>
-          </div>
-          <div
-            className={`list_body ${
-              editing || checkingExpiration ? "blurred" : ""
-            }`}>
-            {expiredDrugs.length == 0 ? (
-              <h1 className="no_data_header">
-                {" "}
-                No expired drug is found in the stock !
-              </h1>
-            ) : (
-              expiredDrugs.map((drug, index) => (
-                <DrugList
-                  hasLastCol={true}
-                  drug={drug}
-                  index={index}
-                  key={index}
-                  handleDiscard={handleDiscard}
-                />
-              ))
-            )}
-          </div>
-        </div>
-      );
-    if (currentSlide == "request")
-      return (
-        <div className="request_slide">
-          <h1 className="slide_header">send drug request</h1>
-          <div className="request_content">
-            <div className="request_form">
-              <div
-                className={`request_error ${
-                  errorMsg ? "request_error-visible" : ""
-                }`}>
-                hey bad inputs man{" "}
-              </div>
-              <div className="request_info">
-                <label htmlFor="">name </label>
-                <input
-                  type="text"
-                  className="info_input input_name input_name-request"
-                  // onChange={handleAddName}
-                />
-              </div>
-              <div className="request_info">
-                <label htmlFor="">amount</label>
-                <input
-                  type="text"
-                  className="info_input input_amount  input_amount-request"
-                  // onChange={handleAddAmount}
-                />
-              </div>
-              <button
-                className="btn btn_request-add"
-                onClick={handleAddRequest}>
-                + add{" "}
-              </button>
-            </div>
-            <RequestResultContent
-              requestResults={requestResults}
-              handleRemove={handleRemoveRequest}
-              handleSendRequestDone={handleSendRequestDone}
-            />
-          </div>
-        </div>
-      );
-    if (currentSlide == "notification")
-      return (
-        <div className="notification_slide">
-          <h1 className="slide_header">notification</h1>
-          <NotificationSlide
-            user={"pharmacist"}
-            expiredDrugs={expiredDrugs}
-            totalExpiredDrugs={totalAvailbleDrugs}
-            stockOrders={stockOrders}
-            storeOrders={[]}
-            stockRequests={[]}
-            totalPendingDrugs={totalPendingDrugs}
-            handleCheckExpiration={handleCheckExpiration}
-            notificationNum={notificationNum}
-            handleRegistration={handleRegistration}
-          />
-        </div>
-      );
   };
 
   return (

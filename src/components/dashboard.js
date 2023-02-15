@@ -171,43 +171,17 @@ export default (props) => {
             {" "}
             DRUG ORDERS{" "}
           </button>
-          <button
-            className={`btn_menu ${
-              props.currentSlide == "expired" ? "btn_menu-active " : ""
-            }`}
-            onClick={props.handleCheckExpiration}>
-            check expired drugs{" "}
-          </button>
+
           <button
             className={`btn_menu ${
               props.currentSlide == "register" ? "btn_menu-active " : ""
             }`}
             onClick={props.handleRegistration}>
-            accept new drugs{" "}
+            send drugs{" "}
           </button>
 
-          <button
-            className={`btn_menu ${
-              props.currentSlide == "request" ? "btn_menu-active " : ""
-            }`}
-            onClick={props.handleSendRequest}>
-            send request{" "}
-          </button>
-          <button
-            className={`btn_menu ${
-              props.notificationNum ? " btn_notification" : ""
-            } ${
-              props.currentSlide == "notification" ? "btn_menu-active " : ""
-            }`}
-            onClick={props.handleSeeNotification}>
-            notification{" "}
-            {props.notificationNum ? (
-              <div>
-                <p className="notification_blink"></p>
-                <p className="notification_number">{props.notificationNum} </p>
-              </div>
-            ) : null}
-          </button>
+          <button className="btn_menu">accpted orders </button>
+          <button className="btn_menu">rejected orders </button>
           <button className="btn_menu">generate report </button>
         </div>
       </div>
