@@ -282,7 +282,6 @@ export default (props) => {
       notificationNumber = comments.length;
       notificationMessages.push("comments");
     }
-
     setNotificationNum(notificationNumber);
     setNotificationMessages(notificationMessagesToadd);
   };
@@ -726,9 +725,11 @@ export default (props) => {
         <div className="notification_slide">
           <h1 className="slide_header">notification</h1>
           <NotificationSlide
+            user={"manager"}
             expiredDrugs={expiredDrugs}
             totalExpiredDrugs={totalExpiredDrugs}
             storeOrders={storeOrders}
+            comments={comments}
             totalPendingDrugs={totalPendingDrugs}
             handleCheckSoldDrugs={handleCheckSoldDrugs}
             notificationNum={notificationNum}

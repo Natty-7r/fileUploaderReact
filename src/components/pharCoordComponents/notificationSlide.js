@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { user } from "../../constants/images";
 const Notification = (props) => {
-  console.log(props);
   return (
     <div className="notification">
       <div className="notification_image">
@@ -8,6 +8,8 @@ const Notification = (props) => {
       </div>
       <NotificationMessage
         type={props.type}
+        comment={props.comment || null}
+        message={props.message || null}
         totalExpiredDrugs={props.totalExpiredDrugs}
         totalPendigDrugs={props.totalPendigDrugs}
         pendingTypes={props.pendingTypes}
@@ -25,6 +27,7 @@ const Notification = (props) => {
   );
 };
 const NotificationMessage = (props) => {
+  const [detailMsg, setDetailMsg] = useState(false);
   if (props.type == "new")
     return (
       <div className="notification_massage">
@@ -35,6 +38,26 @@ const NotificationMessage = (props) => {
           arriving drugs in from
           <span className="expired_amount">{props.pendingTypes}</span> type of
           drugs
+        </div>
+      </div>
+    );
+  if (props.type == "comment")
+    return (
+      <div className="notification_massage notification_massage-detial">
+        <div className="notification_massage_header">
+          {props.comment.name} |{" "}
+          {
+            <span className="notification_massage_header-sub">
+              {props.comment.sender}
+            </span>
+          }{" "}
+        </div>
+        <div
+          className={`notification_massage_content ${
+            detailMsg ? " notification_massage_content-comment" : ""
+          }`}>
+          {" "}
+          {props.comment.message}
         </div>
       </div>
     );
@@ -73,6 +96,14 @@ const NotificationButton = (props) => {
         className="btn btn_notificaion"
         onClick={props.handleCheckExpiration}>
         check expired{" "}
+      </button>
+    );
+  if (props.type == "comment")
+    return (
+      <button
+        className="btn btn_notificaion btn_notificaion-comment"
+        onClick={props.handleCheckExpiration}>
+        show more{" "}
       </button>
     );
   if (props.type == "new")
@@ -142,6 +173,14 @@ export default (props) => {
         totalPendigDrugs += drug.amount;
       });
     }
+    if (props.user == "manager") {
+      if (props.comments.length > 0) {
+        props.comments.forEach((comment) => {
+          notificationNumber++;
+          notificationMessages.push("comment");
+        });
+      }
+    }
   };
   countNotificaitonNumber();
 
@@ -151,24 +190,47 @@ export default (props) => {
         <h1 className="no_data_header">Notification stack is empty </h1>;
       </div>
     );
-  if (notificationNumber > 0)
-    return (
-      <div className="notificaton_content">
-        {notificationMessages.map((message, index) => (
-          <Notification
-            key={index}
-            type={message}
-            handleCheckExpiration={props.handleCheckExpiration}
-            handleRegistration={props.handleRegistration}
-            totalExpiredDrugs={totalExpiredDrugs}
-            totalPendigDrugs={totalPendigDrugs}
-            pendingTypes={pendingTypes}
-            expiredTypes={expiredTypes}
-            totalRequestedDrugs={totalRequestedDrugs}
-            requestTypes={requestTypes}
-            handleGoToAddToStock={props.handleGoToAddToStock}
-          />
-        ))}
-      </div>
-    );
+  if (notificationNumber > 0) {
+    if (props.user == "manager")
+      return (
+        <div className="notificaton_content">
+          {props.comments.map((comment, index) => (
+            <Notification
+              key={index}
+              type={"comment"}
+              comment={comment}
+              handleCheckExpiration={props.handleCheckExpiration}
+              handleRegistration={props.handleRegistration}
+              totalExpiredDrugs={totalExpiredDrugs}
+              totalPendigDrugs={totalPendigDrugs}
+              pendingTypes={pendingTypes}
+              expiredTypes={expiredTypes}
+              totalRequestedDrugs={totalRequestedDrugs}
+              requestTypes={requestTypes}
+              handleGoToAddToStock={props.handleGoToAddToStock}
+            />
+          ))}
+        </div>
+      );
+    else
+      return (
+        <div className="notificaton_content">
+          {notificationMessages.map((message, index) => (
+            <Notification
+              key={index}
+              type={message}
+              handleCheckExpiration={props.handleCheckExpiration}
+              handleRegistration={props.handleRegistration}
+              totalExpiredDrugs={totalExpiredDrugs}
+              totalPendigDrugs={totalPendigDrugs}
+              pendingTypes={pendingTypes}
+              expiredTypes={expiredTypes}
+              totalRequestedDrugs={totalRequestedDrugs}
+              requestTypes={requestTypes}
+              handleGoToAddToStock={props.handleGoToAddToStock}
+            />
+          ))}
+        </div>
+      );
+  }
 };

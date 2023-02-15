@@ -500,9 +500,21 @@
   text-transform: capitalize;
   margin-bottom: 0.5rem;
 }
+.notification_massage .notification_massage_header-sub {
+  font-size: 60%;
+  font-weight: 100;
+  letter-spacing: 0.08rem;
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+}
 .notification_massage .notification_massage_content {
   font-size: 1.4rem;
   padding-left: 0.3rem;
+  letter-spacing: 0.05rem;
+}
+.notification_massage .notification_massage_content-comment {
+  font-size: 1.4rem;
+  padding-left: 1rem;
   letter-spacing: 0.05rem;
 }
 .expired_amount {
@@ -512,6 +524,15 @@
 }
 .btn_notificaion {
   flex-basis: 20%;
+}
+.btn_notificaion-comment {
+  background: none;
+  color: var(--grayColor);
+  border: solid thin orange;
+}
+.btn_notificaion-comment:hover {
+  background: none;
+  border: solid orange;
 }
 .incoming {
   height: 60vh;
