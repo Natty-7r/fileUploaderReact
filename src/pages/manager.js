@@ -31,6 +31,7 @@ export default (props) => {
 
   const [availbleDrugs, setAvailbleDrugs] = useState([]);
   const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
+  const [comments, setComments] = useState([]);
   const [storeOrders, setStoreOrders] = useState([]);
   const [stockRequests, setStockRequest] = useState([]);
   const [expiredDrugs, setExpiredDrugs] = useState([]);
@@ -42,7 +43,9 @@ export default (props) => {
   useEffect(() => {
     axios.get(`${baseUrl}/drugs`).then((response) => {
       console.log(response);
+
       setAvailbleDrugs(response.data.drugs.availbleStoreDrugs);
+      setComments(response.data.drugs.comments);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
       setStoreOrders(response.data.drugs.storeOrders);
       setStockRequest(response.data.drugs.stockRequests);
@@ -274,18 +277,12 @@ export default (props) => {
   const countNotificaitonNumber = () => {
     let notificationNumber = 0;
     let notificationMessagesToadd = [];
-    if (expiredDrugs.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("expiration");
+
+    if (comments.length > 0) {
+      notificationNumber = comments.length;
+      notificationMessages.push("comments");
     }
-    if (storeOrders.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("new");
-    }
-    if (stockRequests.length > 0) {
-      notificationNumber++;
-      notificationMessages.push("request");
-    }
+
     setNotificationNum(notificationNumber);
     setNotificationMessages(notificationMessagesToadd);
   };
