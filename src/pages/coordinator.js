@@ -157,7 +157,7 @@ export default (props) => {
 
     setSummary([
       totalDrugs,
-      totalAvailbleDrugsInStore,
+      totalAvailbleDrugsInStock,
       totalExpiredDrugs,
       totalPendingDrugs,
       totalStockRequest,
