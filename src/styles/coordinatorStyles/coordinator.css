@@ -142,6 +142,13 @@
 .list-btn {
   width: fit-content;
 }
+.noLastCol .list {
+  flex-basis: 18% !important;
+  padding: 1.2rem 0rem 1.2rem 1.2rem;
+}
+.noLastCol .list-no {
+  flex-basis: 5% !important;
+}
 .list-btn .btn {
 }
 .list .list_btn {

@@ -36,6 +36,15 @@ const ListButton = (props) => {
       </button>
     );
   }
+  if (props.type == "sold") {
+    return (
+      <button
+        className=" list_btn list_btn-update "
+        onClick={handleDiscard}>
+        clear history
+      </button>
+    );
+  }
   if (props.expired) {
     return (
       <button
@@ -135,20 +144,22 @@ export default (props) => {
           props.drug.suppliedDate || props.drug.soldDate
         ).toLocaleDateString()}{" "}
       </p>
-      <p className="list list_name list-btn ">
-        {
-          <ListButton
-            index={props.index}
-            drugCode={props.drug.drugCode}
-            expired={expired}
-            type={props.type}
-            handleSell={props.handleSell}
-            handleUpdate={props.handleUpdate}
-            handleSetPrice={props.handleSetPrice}
-            handleDiscard={props.handleDiscard}
-          />
-        }
-      </p>
+      {props.hasLastCol ? (
+        <p className="list list_name list-btn ">
+          {
+            <ListButton
+              index={props.index}
+              drugCode={props.drug.drugCode}
+              expired={expired}
+              type={props.type}
+              handleSell={props.handleSell}
+              handleUpdate={props.handleUpdate}
+              handleSetPrice={props.handleSetPrice}
+              handleDiscard={props.handleDiscard}
+            />
+          }
+        </p>
+      ) : null}
     </div>
   );
 };

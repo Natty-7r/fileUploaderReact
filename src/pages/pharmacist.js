@@ -443,6 +443,7 @@ export default (props) => {
                 <DrugList
                   drug={drug}
                   index={index}
+                  hasLastCol={true}
                   key={index}
                   type="sell"
                   handleSell={handleSell}
@@ -492,6 +493,7 @@ export default (props) => {
                 <DrugList
                   drug={drug}
                   index={index}
+                  hasLastCol={true}
                   key={index}
                   type={"pendingAccept"}
                   handleDiscard={handleDiscard}
@@ -539,6 +541,7 @@ export default (props) => {
             ) : (
               expiredDrugs.map((drug, index) => (
                 <DrugList
+                  hasLastCol={true}
                   drug={drug}
                   index={index}
                   key={index}

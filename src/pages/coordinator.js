@@ -565,6 +565,7 @@ export default (props) => {
                 <DrugList
                   drug={drug}
                   index={index}
+                  hasLastCol={true}
                   key={index}
                   handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
@@ -602,6 +603,7 @@ export default (props) => {
                 <DrugList
                   drug={drug}
                   index={index}
+                  hasLastCol={true}
                   key={index}
                   handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
@@ -652,6 +654,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
+                  hasLastCol={true}
                   type={"pending"}
                   handleUpdate={handleUpdate}
                   handleSetPrice={handleSetPrice}
@@ -703,6 +706,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
+                  hasLastCol={true}
                   handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
                 />

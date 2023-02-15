@@ -183,16 +183,8 @@ export default (props) => {
             className={`btn_menu ${
               props.currentSlide == "expired" ? "btn_menu-active " : ""
             }`}
-            onClick={props.handleCheckExpiration}>
+            onClick={props.handleCheckSoldDrugs}>
             sold drugs{" "}
-          </button>
-
-          <button
-            className={`btn_menu ${
-              props.currentSlide == "addtostock" ? "btn_menu-active " : ""
-            }`}
-            onClick={props.handleAddToStock}>
-            add to stock{" "}
           </button>
 
           <button
@@ -202,6 +194,7 @@ export default (props) => {
             onClick={props.handleSendRequest}>
             send order{" "}
           </button>
+
           <button
             className={`btn_menu ${
               props.notificationNum ? " btn_notification" : ""
@@ -217,6 +210,7 @@ export default (props) => {
               </div>
             ) : null}
           </button>
+
           <button className="btn_menu">generate report </button>
         </div>
       </div>

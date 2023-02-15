@@ -67,20 +67,11 @@ export default (props) => {
     setSelectedIndex(index);
     setSelectedDrug(getSelectedDrug(index));
   };
-  const handleUpdateDone = (newPrice, newAmount, drugCode) => {
-    selecteDrug.price = +newPrice;
-    selecteDrug.amount = +newAmount;
-    availbleDrugs[selectedIndex] = selecteDrug;
-    setEditing(false);
+  const handleUpdateDone = (drugCode) => {
     createSummary();
 
     axios
-      .patch(`${baseUrl}/drug/`, {
-        drugCode,
-        newPrice,
-        newAmount,
-        currentSlide,
-      })
+      .delete(`${baseUrl}/drug/${drugCode}`)
       .then((response) => {
         console.log(response);
       })
@@ -133,6 +124,7 @@ export default (props) => {
     if (currentSlide == "availableStore") return availbleDrugs[index];
     if (currentSlide == "availableStock") return availbleStockDrugs[index];
     if (currentSlide == "expired") return expiredDrugs[index];
+    if (currentSlide == "sold drugs") return expiredDrugs[index];
     if (currentSlide == "register") return storeOrders[index];
   };
 
@@ -173,8 +165,8 @@ export default (props) => {
   const seeAvailableDrugsInStock = () => {
     setCurrentSlide("availableStock");
   };
-  const handleCheckExpiration = () => {
-    setCurrentSlide("expired");
+  const handleCheckSoldDrugs = () => {
+    setCurrentSlide("sold drugs");
   };
   const handleSeeNotification = () => {
     setCurrentSlide("notification");
@@ -250,30 +242,6 @@ export default (props) => {
             className="request_btn request_btn-remove"
             onClick={handleRemove}>
             cancel request
-          </button>
-        </div>
-      );
-  };
-  const StockOrderResultContent = (props) => {
-    if (props.stockOrders.length == 0) return null;
-    else
-      return (
-        <div className="request_main">
-          <div className="request_results">
-            {props.stockOrders.map((order, index) => (
-              <RequestOrderResult
-                index={index}
-                key={index}
-                type={"order"}
-                requestOrder={order}
-                handleRemove={props.handleRemove}
-              />
-            ))}
-          </div>
-          <button
-            className="btn btn_request-send"
-            onClick={props.handleAddToStockDone}>
-            Add to stock
           </button>
         </div>
       );
@@ -541,7 +509,7 @@ export default (props) => {
 
     if (currentSlide == "availableStore") {
       return (
-        <div className="drguList">
+        <div className="drguList noLastCol">
           <div className="list_header">
             <p className="list list_name list-no">No </p>
             <p className="list list_name list-name">Name </p>
@@ -550,7 +518,6 @@ export default (props) => {
             <p className="list list_name list-e_date">expired date </p>
             <p className="list list_name list-supplier">supplier </p>
             <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name"> </p>
           </div>
           <div
             className={`list_body ${
@@ -567,6 +534,7 @@ export default (props) => {
                   drug={drug}
                   index={index}
                   key={index}
+                  hasLastCol={false}
                   handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
                 />
@@ -578,7 +546,7 @@ export default (props) => {
     }
     if (currentSlide == "availableStock")
       return (
-        <div className="drguList">
+        <div className="drguList noLastCol">
           <div className="list_header">
             <p className="list list_name list-no">No </p>
             <p className="list list_name list-name">Name </p>
@@ -587,7 +555,6 @@ export default (props) => {
             <p className="list list_name list-e_date">expired date </p>
             <p className="list list_name list-supplier">supplier </p>
             <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name"> </p>
           </div>
           <div
             className={`list_body ${
@@ -603,6 +570,7 @@ export default (props) => {
                 <DrugList
                   drug={drug}
                   index={index}
+                  hasLastCol={false}
                   key={index}
                   handleUpdate={handleUpdate}
                   handleDiscard={handleDiscard}
@@ -669,9 +637,9 @@ export default (props) => {
         </div>
       );
     }
-    if (currentSlide == "expired")
+    if (currentSlide == "sold drugs")
       return (
-        <div className="drguList">
+        <div className="drguList ">
           <div className="list_header list_header-expired">
             <p className="list list_name list-no">No </p>
             <p className="list list_name list-name">Name </p>
@@ -679,13 +647,13 @@ export default (props) => {
             <p className="list list_name list-amount">amount </p>
             <p className="list list_name list-e_date">expired date </p>
             <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
+            <p className="list list_name list-s_date">sold date </p>
             <p className="list list_name list_name_discardAll">
               {" "}
               <button
                 className="btn expired_list_btn expired_list_btn-discardAll"
                 onClick={handleDiscardAll}>
-                discard All{" "}
+                clear All{" "}
               </button>{" "}
             </p>
           </div>
@@ -702,6 +670,8 @@ export default (props) => {
               expiredDrugs.map((drug, index) => (
                 <DrugList
                   drug={drug}
+                  type="sold"
+                  hasLastCol={true}
                   index={index}
                   key={index}
                   handleUpdate={handleUpdate}
@@ -715,7 +685,7 @@ export default (props) => {
     if (currentSlide == "request")
       return (
         <div className="request_slide">
-          <h1 className="slide_header">send drug request</h1>
+          <h1 className="slide_header">send Order</h1>
           <div className="request_content">
             <div className="request_form">
               <div
@@ -754,80 +724,6 @@ export default (props) => {
           </div>
         </div>
       );
-    if (currentSlide == "addtostock")
-      return (
-        <div className="request_slide">
-          <h1 className="slide_header">add to stock </h1>
-          <div className="request_content ">
-            <div className="addToStock">
-              <div
-                className={`requested_drugs_card  ${
-                  stockRequestExits ? "" : "requested_drugs_card-hidden"
-                }`}>
-                <div className="requested_drug_header">
-                  <h1 className="requested_drug_header-title">
-                    {" "}
-                    request from stock
-                  </h1>
-                  <p>
-                    {" "}
-                    <button
-                      className="btn btn_clear_requesst"
-                      onClick={handleClearStockRequest}>
-                      clear request
-                    </button>
-                  </p>
-                </div>
-                <div className="requested_drugs ">
-                  {stockRequests.map((stockRequest, index) => (
-                    <StockRequest
-                      stockRequest={stockRequest}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div
-                className={`request_form  ${
-                  stockRequestExits ? "" : "request_form-full"
-                }`}>
-                <div
-                  className={`request_error ${
-                    errorMsg ? "request_error-visible" : ""
-                  }`}>
-                  hey bad inputs man{" "}
-                </div>
-                <div className="request_info">
-                  <label htmlFor="">name </label>
-                  <input
-                    type="text"
-                    className="info_input input_name input_name-request"
-                    // onChange={handleAddName}
-                  />
-                </div>
-                <div className="request_info">
-                  <label htmlFor="">amount</label>
-                  <input
-                    type="text"
-                    className="info_input input_amount  input_amount-request"
-                    // onChange={handleAddAmount}
-                  />
-                </div>
-                <button
-                  className="btn btn_request-add"
-                  onClick={handleAddToStock}>
-                  + add{" "}
-                </button>
-              </div>
-            </div>
-            <StockOrderResultContent
-              stockOrders={stockOrders}
-              handleRemove={handleRemoveOrder}
-              handleAddToStockDone={handleAddToStockDone}
-            />
-          </div>
-        </div>
-      );
     if (currentSlide == "notification")
       return (
         <div className="notification_slide">
@@ -837,7 +733,7 @@ export default (props) => {
             totalExpiredDrugs={totalExpiredDrugs}
             storeOrders={storeOrders}
             totalPendingDrugs={totalPendingDrugs}
-            handleCheckExpiration={handleCheckExpiration}
+            handleCheckSoldDrugs={handleCheckSoldDrugs}
             notificationNum={notificationNum}
             handleRegistration={handleRegistration}
             stockRequests={stockRequests}
@@ -855,7 +751,7 @@ export default (props) => {
         currentSlide={currentSlide}
         seeAvailableDrugsInStore={seeAvailableDrugsInStore}
         seeAvailableDrugsInStock={seeAvailableDrugsInStock}
-        handleCheckExpiration={handleCheckExpiration}
+        handleCheckSoldDrugs={handleCheckSoldDrugs}
         handleSeeNotification={handleSeeNotification}
         handleSendRequest={handleSendRequest}
         handleAddToStock={handleAddToStock}
