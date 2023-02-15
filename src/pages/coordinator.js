@@ -824,6 +824,7 @@ export default (props) => {
               </div>
             </div>
             <StockOrderResultContent
+              type=""
               stockOrders={stockOrders}
               handleRemove={handleRemoveOrder}
               handleAddToStockDone={handleAddToStockDone}
@@ -836,6 +837,7 @@ export default (props) => {
         <div className="notification_slide">
           <h1 className="slide_header">notification</h1>
           <NotificationSlide
+            user="coordinator"
             expiredDrugs={expiredDrugs}
             totalExpiredDrugs={totalExpiredDrugs}
             storeOrders={storeOrders}

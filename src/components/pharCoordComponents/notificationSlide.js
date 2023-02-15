@@ -1,13 +1,18 @@
 import { useState } from "react";
+import { GrCheckboxSelected } from "react-icons/fa";
 import { user } from "../../constants/images";
+import "../../styles/coordinatorStyles/notification.css";
 const Notification = (props) => {
   return (
-    <div className="notification">
+    <div className={`notification notification-${props.type}`}>
       <div className="notification_image">
         <img src={user} />
       </div>
       <NotificationMessage
+        index={props.index}
         type={props.type}
+        handleChangeCommentStatus={props.handleChangeCommentStatus}
+        handleRemoveComment={props.handleRemoveComment}
         comment={props.comment || null}
         message={props.message || null}
         totalExpiredDrugs={props.totalExpiredDrugs}
@@ -27,7 +32,34 @@ const Notification = (props) => {
   );
 };
 const NotificationMessage = (props) => {
+  const commentIndex = props.index;
   const [detailMsg, setDetailMsg] = useState(false);
+
+  const [status, setStatus] = useState(props?.comment?.status);
+  const handleChangeStatus = () => {
+    props.handleChangeCommentStatus(commentIndex);
+  };
+  const handleRemoveComment = () => {
+    props.handleRemoveComment(commentIndex);
+  };
+
+  const formatDates = function (dateAccepted) {
+    const date = new Date(dateAccepted);
+    let now = new Date();
+
+    const dayLong = Math.abs(Math.round((date - now) / (1000 * 60 * 60 * 24)));
+
+    let dateDisplayed;
+    if (dayLong == 0) dateDisplayed = "Today";
+    else if (dayLong == 1) dateDisplayed = "Yesterday";
+    else if (dayLong <= 7) dateDisplayed = `${dayLong}  days ago`;
+    else if (dayLong <= 30) dateDisplayed = `${dayLong % 7} weeks ago`;
+    else if (dayLong == 30) dateDisplayed = `last month `;
+    else if (dayLong <= 365) dateDisplayed = `${dayLong % 30} month ago`;
+    // else dateDisplayed = Intl.DateTimeFormat("am-Et").format(now);
+
+    return dateDisplayed;
+  };
   if (props.type == "new")
     return (
       <div className="notification_massage">
@@ -43,21 +75,34 @@ const NotificationMessage = (props) => {
     );
   if (props.type == "comment")
     return (
-      <div className="notification_massage notification_massage-detial">
+      <div className="notification_massage notification_massage-comment">
         <div className="notification_massage_header">
-          {props.comment.name} |{" "}
-          {
-            <span className="notification_massage_header-sub">
-              {props.comment.sender}
+          <div className="left_message">
+            <span className="sender_name">{props.comment.name}</span>
+            <span className="comment_content">{props.comment.message}</span>
+          </div>
+          <div className="right_message">
+            <span className="comment_date">
+              {formatDates(props.comment.createdAt)}
             </span>
-          }{" "}
+          </div>
         </div>
-        <div
-          className={`notification_massage_content ${
-            detailMsg ? " notification_massage_content-comment" : ""
-          }`}>
-          {" "}
-          {props.comment.message}
+        <div className="notification_massage_subheader">
+          <div className="left_message">
+            <span className="sender_type">{props.comment.sender}</span>
+            <button
+              className=" btn-remove-comment"
+              onClick={handleRemoveComment}>
+              remove
+            </button>
+          </div>
+          <div className="right_message">
+            <button
+              className={`read_link${status == "read" ? "-read" : ""}`}
+              onClick={handleChangeStatus}>
+              {status}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -98,14 +143,7 @@ const NotificationButton = (props) => {
         check expired{" "}
       </button>
     );
-  if (props.type == "comment")
-    return (
-      <button
-        className="btn btn_notificaion btn_notificaion-comment"
-        onClick={props.handleCheckExpiration}>
-        show more{" "}
-      </button>
-    );
+  if (props.type == "comment") return null;
   if (props.type == "new")
     return (
       <button
@@ -197,8 +235,11 @@ export default (props) => {
           {props.comments.map((comment, index) => (
             <Notification
               key={index}
+              index={index}
               type={"comment"}
               comment={comment}
+              handleChangeCommentStatus={props.handleChangeCommentStatus}
+              handleRemoveComment={props.handleRemoveComment}
               handleCheckExpiration={props.handleCheckExpiration}
               handleRegistration={props.handleRegistration}
               totalExpiredDrugs={totalExpiredDrugs}
