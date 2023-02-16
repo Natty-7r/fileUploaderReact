@@ -120,8 +120,11 @@
   justify-content: space-between;
   width: 100%;
 }
+.notification_massage-comment .notification_massage_header .left_message {
+  width: 90%;
+}
 .notification_massage-comment .notification_massage_header .sender_name {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: var(--grayColor);
   color: darkblue;
   text-transform: none;
@@ -132,8 +135,9 @@
   color: black;
   font-weight: 600;
   font-size: 1.4rem;
-  text-transform: capitalize;
+  text-transform: none;
   padding-right: 0.5rem;
+  flex-basis: 70%;
 }
 .notification_massage-comment .notification_massage_subheader {
   display: flex;
@@ -161,7 +165,7 @@
   opacity: 0.5;
   text-decoration: none;
   color: red;
-  opacity: 0.8;
+  opacity: 1;
   margin-left: 0.4rem;
 }
 

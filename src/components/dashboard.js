@@ -219,7 +219,7 @@ export default (props) => {
           </button>
           <button
             className={`btn_menu ${
-              props.currentSlide == "expired" ? "btn_menu-active " : ""
+              props.currentSlide == "sold drugs" ? "btn_menu-active " : ""
             }`}
             onClick={props.handleCheckSoldDrugs}>
             sold drugs{" "}

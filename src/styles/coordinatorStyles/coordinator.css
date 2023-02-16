@@ -56,6 +56,7 @@
   display: flex;
   justify-content: space-around;
   background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+  background-image: linear-gradient(to right bottom, #4d1d95f3, rgb(16, 4, 38));
   color: white;
   /* padding-right: 1.3%; */
 }

@@ -1,5 +1,5 @@
 // import "../styles/coordinatorStyles/coordinator.css";
-// import "../styles/coordinatorStyles/slide.css";
+import "../styles/coordinatorStyles/supplier.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
@@ -425,20 +425,27 @@ export default (props) => {
           <div className="orders_main">
             <div className="order">
               <div className="order_left">
-                <div className="order_header"></div>
-                <div className="order_content"></div>
-                <button className="btn btn_order btn_order-detail">
-                  detail
-                </button>
+                <div className="order_header">order one </div>
+                <p className="order_content ">
+                  <span className="order_content_value order_content_value-type">
+                    {12}
+                  </span>{" "}
+                  types type of drugs{" "}
+                </p>
+                <p className="order_content ">
+                  {" "}
+                  <span className="order_content_value order_content_value-type">
+                    {" "}
+                    {12}
+                  </span>{" "}
+                  total drugs 
+                </p>
+                <button className=" btn_order btn_order-detail">detail</button>
               </div>
               <div className="order_right">
-                <p className="order_date"></p>
-                <button className="btn btn_order btn_order-accept">
-                  accept
-                </button>
-                <button className="btn btn_order btn_order-accept">
-                  reject
-                </button>
+                <p className="order_date">12/12/12</p>
+                <button className=" btn_order btn_order-accept">accept</button>
+                <button className=" btn_order btn_order-accept">reject</button>
               </div>
             </div>
           </div>
