@@ -30,6 +30,12 @@ a {
 }
 .btn {
   transition: all 0.3s;
+
+  background-image: linear-gradient(
+    to right bottom,
+    #4d1d95f3,
+    rgb(16, 4, 38)
+  ) !important;
 }
 .btn:active {
   transform: scale(0.9999);

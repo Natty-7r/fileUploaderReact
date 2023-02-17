@@ -165,24 +165,42 @@ export default (props) => {
         <div className="dashboard_menus">
           <button
             className={`btn_menu ${
-              props.currentSlide == "availableStock" ? "btn_menu-active " : ""
+              props.currentSlide == "orders" ? "btn_menu-active " : ""
             }`}
-            onClick={props.seeAvailableDrugsInStock}>
+            onClick={props.onOrders}>
             {" "}
             DRUG ORDERS{" "}
           </button>
 
           <button
             className={`btn_menu ${
-              props.currentSlide == "register" ? "btn_menu-active " : ""
+              props.currentSlide == "sendOrders" ? "btn_menu-active " : ""
             }`}
-            onClick={props.handleRegistration}>
+            onClick={props.onSendOrders}>
             send drugs{" "}
           </button>
 
-          <button className="btn_menu">accpted orders </button>
-          <button className="btn_menu">rejected orders </button>
-          <button className="btn_menu">generate report </button>
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "acceptedOrders" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.onAcceptedOrders}>
+            accpted orders{" "}
+          </button>
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "rejectedOrdres" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.onRejectedOrders}>
+            rejected orders{" "}
+          </button>
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "comments" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.onComment}>
+            comments{" "}
+          </button>
         </div>
       </div>
     );

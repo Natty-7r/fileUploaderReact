@@ -74,4 +74,25 @@ export default (props) => {
         </div>
       </div>
     );
+  if (props.user == "supplier")
+    return (
+      <div className="overview">
+        <div className="summary">
+          <p className="summary_name">total drugs ordered</p>
+          <p className="summary_value">{props.summary[0]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name"> types of drugs ordered </p>
+          <p className="summary_value">{props.summary[1]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name">accepted orders </p>
+          <p className="summary_value">{props.summary[2]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name">rejected oreders </p>
+          <p className="summary_value">{props.summary[3]}</p>
+        </div>
+      </div>
+    );
 };

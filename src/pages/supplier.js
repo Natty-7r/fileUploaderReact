@@ -2,6 +2,8 @@
 import "../styles/coordinatorStyles/supplier.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import moment from "moment/moment";
+import DatePicker from "react-datepicker";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
 import DrugList from "../components/pharCoordComponents/druglist";
@@ -96,11 +98,31 @@ const SellDrug = (props) => {
       </div>
     );
 };
+const formatDates = function (dateAccepted) {
+  const date = new Date(dateAccepted);
+  let now = new Date();
+
+  const dayLong = Math.abs(Math.round((date - now) / (1000 * 60 * 60 * 24)));
+
+  let dateDisplayed;
+  if (dayLong == 0) dateDisplayed = "Today";
+  else if (dayLong == 1) dateDisplayed = "Yesterday";
+  else if (dayLong <= 7) dateDisplayed = `${dayLong}  days ago`;
+  else if (dayLong <= 30) dateDisplayed = `${dayLong % 7} weeks ago`;
+  else if (dayLong == 30) dateDisplayed = `last month `;
+  else if (dayLong <= 365) dateDisplayed = `${dayLong % 30} month ago`;
+  // else dateDisplayed = Intl.DateTimeFormat("am-Et").format(now);
+
+  return dateDisplayed;
+};
 export default (props) => {
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
     totalExpiredDrugs = 0,
-    totalPendingDrugs = 0;
+    totalPendingDrugs = 0,
+    totalDrugsOrderd,
+    orderedrugs;
+  let orderdate;
   let expiredSummary = "";
   const [notificationNum, setNotificationNum] = useState(0);
   const [notificationMessages, setNotificationMessages] = useState([]);
@@ -115,20 +137,22 @@ export default (props) => {
 
   const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
   const [stockOrders, setStockOrders] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([]); // to mean pending orders
+  const [accpredOrders, setAcceptedOrders] = useState([]); // to mean pending orders
+  const [rejectedOrders, setRejectedOrders] = useState([]); // to mean pending orders
   const [expiredDrugs, setExpiredDrugs] = useState([]);
+  const [overviewVisible, setOverviewVisible] = useState(true);
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
-  const [currentSlide, setCurrentSlide] = useState("availableStock"); // to track the the dashboard menu and slide
+  const [currentSlide, setCurrentSlide] = useState("sendOrders"); // to track the the dashboard menu and slide
 
   useEffect(() => {
     let drugsFetched = [];
     axios.get(`${baseUrl}/index`).then((response) => {
       console.log(response);
-      // setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
-      // setStockOrders(response.data.drugs.stockOrders);
-      // setExpiredDrugs(response.data.drugs.expiredDrugs);
-      setOrders(response.data.drugs.orders);
+      setOrders(response.data.orders.pendingOrders);
+      setAcceptedOrders(response.data.orders.acceptedOrders);
+      setRejectedOrders(response.data.orders.rejectedOrders);
       createSummary();
     });
   }, []);
@@ -137,6 +161,16 @@ export default (props) => {
     createSummary();
   }, [availbleStockDrugs, expiredDrugs, stockOrders]);
 
+  const supplier = () => {
+    let totalOrders = 0;
+    orderedrugs = orders.length;
+    orders.forEach((order) => {
+      orderdate = order.requestDate;
+      totalOrders += order.amount;
+    });
+    totalDrugsOrderd = totalOrders;
+  };
+  supplier();
   const handleSell = (index) => {
     setEditing(true);
     setSelectedIndex(index);
@@ -197,45 +231,40 @@ export default (props) => {
   };
 
   const createSummary = () => {
-    countNotificaitonNumber();
-    availbleStockDrugs.forEach((drug) => {
-      totalAvailbleDrugs += drug.amount;
+    let totalOrders = 0;
+    orderedrugs = orders.length;
+    orders.forEach((order) => {
+      orderdate = order.requestDate;
+      totalOrders += order.amount;
     });
-    expiredDrugs.forEach((drug) => {
-      totalExpiredDrugs += drug.amount;
-    });
-
-    stockOrders.forEach((drug) => {
-      totalPendingDrugs += drug.amount;
-    });
-    totalDrugs += totalAvailbleDrugs + totalExpiredDrugs;
+    totalDrugsOrderd = totalOrders;
 
     setSummary([
-      totalDrugs,
-      totalAvailbleDrugs,
+      totalDrugsOrderd,
+      orders.length,
       totalExpiredDrugs,
       totalPendingDrugs,
     ]);
   };
 
-  const seeAvailableDrugsInStore = () => {
-    setCurrentSlide("availableStore");
+  const onOrders = () => {
+    setCurrentSlide("orders");
+    setOverviewVisible(true);
   };
-  const seeAvailableDrugsInStock = () => {
-    setCurrentSlide("availableStock");
+  const onSendOrders = () => {
+    setCurrentSlide("sendOrders");
+    setOverviewVisible(false);
   };
-  const handleCheckExpiration = () => {
-    setCurrentSlide("expired");
+  const onAcceptedOrders = () => {
+    setCurrentSlide("acceptedOrders");
+    setOverviewVisible(true);
   };
-  const handleSeeNotification = () => {
-    setCurrentSlide("notification");
+  const onRejectedOrders = () => {
+    setCurrentSlide("rejectedOrders");
+    setOverviewVisible(true);
   };
-  const handleSendRequest = () => {
-    setCurrentSlide("request");
-  };
-
-  const handleRegistration = () => {
-    setCurrentSlide("register");
+  const onComment = () => {
+    setCurrentSlide("comments");
   };
 
   const handleRegistrationDone = () => {
@@ -344,9 +373,27 @@ export default (props) => {
   };
 
   const SlideContent = (props) => {
+    let timer;
     const [requestResults, setRequests] = useState([]);
     const [errorMsg, setErrorMsg] = useState(false);
     const [requstNumber, setRequstNumber] = useState(0);
+
+    const [orderNumber, setOrderNumber] = useState(0);
+    const [orderResult, setOrderResult] = useState([]);
+    const [orderDetail, setOrderDetail] = useState(false);
+    const [formError, setFormError] = useState(false);
+    const [formErrorMsg, setFormErrorMsg] = useState("");
+    const handleSeeDetail = () => {
+      setOrderDetail(true);
+    };
+    const handleBackToOrders = () => {
+      setOrderDetail(false);
+    };
+    const handleRemoveOrder = (index) => {
+      orderResult.splice(index, 1);
+      setOrderResult(orderResult);
+      setOrderNumber(orderNumber - 1);
+    };
 
     const handleAddRequest = () => {
       let requestExist = false;
@@ -418,34 +465,563 @@ export default (props) => {
         })
         .catch((error) => console.log(error));
     };
-    if (currentSlide == "availableStock")
+    const OrderedDrug = (props) => {
+      const handleRemove = () => {
+        props.handleRemoveOrder(props.number);
+      };
+      return (
+        <div className="order_result_drug">
+          {" "}
+          <p className="order_result_list order_result_list-no">
+            {props.number}
+          </p>
+          <p className="order_result_list"> {props.order.name}</p>
+          <p className="order_result_list">{props.order.amount}</p>
+          <p className="order_result_list">{props.order.price}</p>
+          <p className="order_result_list">{props.order.expireDate}</p>
+          <p className="order_result_list">{props.order.supplier}</p>
+          <p className="order_result_list order_result_list-btn">
+            <button
+              className="btn_order btn_order-remove"
+              onClick={handleRemove}>
+              remove
+            </button>
+          </p>
+        </div>
+      );
+    };
+    const handleOrderDrug = () => {
+      const inputCode = document.querySelector(".input-code").value;
+      const inputName = document.querySelector(".input-name").value;
+      const inputAmount = document.querySelector(".input-amount").value;
+      const inputPrice = document.querySelector(".input-price").value;
+      const inputDate = document.querySelector(".input-date").value;
+      const inputSupplier = document.querySelector(".input-supplier").value;
+      {
+        {
+          // drug code validation
+          if (inputCode.trim() == "") {
+            setFormErrorMsg("drug code can not be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (!Number.isInteger(+inputCode)) {
+            setFormErrorMsg("drug code must be integer digit !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // drug name validation
+          if (inputName == "") {
+            setFormErrorMsg("drug name field can't be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (inputName.length < 5) {
+            setFormErrorMsg("drug name must be more than 4 charaters!");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // drug amount validation
+          if (inputAmount.trim() == "") {
+            setFormErrorMsg("drug amount  can not be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (!Number.isInteger(+inputAmount)) {
+            setFormErrorMsg("drug amount must be integer digit !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (+inputAmount <= 0) {
+            setFormErrorMsg("drug amount must be grater than zero  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // drug initial price  validation
+          if (inputPrice.trim() == "") {
+            setFormErrorMsg("drug price  can not be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (!Number.isInteger(+inputPrice)) {
+            setFormErrorMsg("drug price must be integer digit !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (+inputPrice <= 0) {
+            setFormErrorMsg("drug price must be grater than zero  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // drug supplier name  validation
+          if (inputSupplier == "") {
+            setFormErrorMsg("supplier name field can't be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          } else if (inputSupplier.length < 5) {
+            setFormErrorMsg(" supplier name  must be more than 4 charaters!");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // drug name validation
+          if (inputDate == "") {
+            setFormErrorMsg("expried date field can't be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
+        {
+          // if all validation passed
+          const order = {
+            name: inputName,
+            drugCode: inputCode,
+            amount: inputAmount,
+            price: inputPrice,
+            supplier: inputSupplier,
+            expireDate: inputDate,
+          };
+          orderResult.push(order);
+          setOrderResult(orderResult);
+          setOrderNumber(orderNumber + 1);
+        }
+      }
+    };
+    if (currentSlide == "orders")
       return (
         <div className="orders">
-          <h1 className="orders_header">drugs order</h1>
-          <div className="orders_main">
-            <div className="order">
-              <div className="order_left">
-                <div className="order_header">order one </div>
-                <p className="order_content ">
-                  <span className="order_content_value order_content_value-type">
-                    {12}
-                  </span>{" "}
-                  types type of drugs{" "}
-                </p>
-                <p className="order_content ">
-                  {" "}
-                  <span className="order_content_value order_content_value-type">
-                    {" "}
-                    {12}
-                  </span>{" "}
-                  total drugs 
-                </p>
-                <button className=" btn_order btn_order-detail">detail</button>
+          <h1 className="slide_header">Drug orders</h1>
+          {orders.length == 0 ? (
+            <h1 className="no_data_header">no orders recieved yet !</h1>
+          ) : (
+            <div className="orders_main">
+              <div
+                className={`order_detail ${
+                  orderDetail ? "order_detail_visible" : ""
+                }`}>
+                <div className="order_detail_header">
+                  <h1 className="">order detail </h1>
+                  <button
+                    className="left btn_order btn_order-detail"
+                    onClick={handleBackToOrders}>
+                    close
+                  </button>
+                </div>
+                <div className="order_detail_main">
+                  {orders.map((order) => (
+                    <div className="order_detail_content">
+                      <div className="order_drug">
+                        {" "}
+                        Drug name :
+                        <p className="order_drug-value">{order.name} </p>
+                      </div>
+                      <div className="order_drug ">
+                        {" "}
+                        requested amount :
+                        <p className="order_drug-value">{order.amount}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="order_detail_footer">
+                  <button className="left btn_order btn_order-detail">
+                    accept
+                  </button>
+                  <button className="right btn_order btn_order-reject">
+                    reject
+                  </button>
+                </div>
               </div>
-              <div className="order_right">
-                <p className="order_date">12/12/12</p>
-                <button className=" btn_order btn_order-accept">accept</button>
-                <button className=" btn_order btn_order-accept">reject</button>
+              <div
+                className={`orders_list ${
+                  orderDetail ? "orders_list-blurred" : ""
+                }`}>
+                <div className="order">
+                  <div className="order_header order_part">
+                    {" "}
+                    <div className="left">order one </div>
+                    <div className="right">{formatDates(orderdate)} </div>
+                  </div>
+                  <div className="order_content order_part">
+                    <p className="left">
+                      {" "}
+                      order for
+                      <span className="order_content_value order_content_value-type">
+                        {totalDrugsOrderd}
+                      </span>
+                      drugs from
+                      <span className="order_content_value order_content_value-type">
+                        {orderedrugs}
+                      </span>
+                      types of drugs
+                    </p>
+                    <button className="right btn_order btn_order-accept  ">
+                      accept
+                    </button>
+                  </div>
+
+                  <div className="order_bottom order_part">
+                    <button
+                      className="left btn_order btn_order-detail"
+                      onClick={handleSeeDetail}>
+                      detail
+                    </button>
+                    <button className="right btn_order btn_order-reject">
+                      reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    if (currentSlide == "sendOrders")
+      return (
+        <div className="send_orders">
+          <div class="order_form">
+            <div class="form">
+              <h1 class="title">Add drugs </h1>
+              <div
+                className={`form_error ${
+                  formError ? "form_error-visible" : ""
+                }`}>
+                {formErrorMsg}
+              </div>
+              <div className="form_row">
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-code"
+                    placeholder="a"
+                  />
+                  <label
+                    htmlFor=""
+                    class="label">
+                    drug code
+                  </label>
+                </div>
+
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-name"
+                    placeholder="a"
+                  />
+                  <label
+                    htmlFor=""
+                    class="label">
+                    drug name
+                  </label>
+                </div>
+              </div>
+              <div className="form_row">
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-amount"
+                    placeholder="a"
+                  />
+                  <label
+                    htmlFor=""
+                    class="label">
+                    drug amount
+                  </label>
+                </div>
+
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-price"
+                    placeholder="a"
+                  />
+                  <label
+                    htmlFor=""
+                    class="label">
+                    initail price
+                  </label>
+                </div>
+              </div>
+              <div className="form_row">
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-date"
+                    placeholder="a"
+                  />
+
+                  <label
+                    htmlFor=""
+                    class="label">
+                    expire date
+                  </label>
+                </div>
+
+                <div class="inputContainer">
+                  <input
+                    type="text"
+                    class="input input-supplier"
+                    placeholder="a"
+                  />
+                  <label
+                    htmlFor=""
+                    class="label">
+                    supplier
+                  </label>
+                </div>
+              </div>
+              <button
+                className="btn btn_add"
+                onClick={handleOrderDrug}>
+                +add
+              </button>
+            </div>
+          </div>
+          {orderResult.length > 0 ? (
+            <div className="order_result">
+              <div className="order_result_header">
+                <p className="order_result_header_list order_header_list-no">
+                  no
+                </p>
+                <p className="order_result_header_list">name</p>
+                <p className="order_result_header_list">amount</p>
+                <p className="order_result_header_list">initial price</p>
+                <p className="order_result_header_list">expried date</p>
+                <p className="order_result_header_list">supplier</p>
+                <p className="order_result_header_list"></p>
+                <p className="order_result_header_list-last"></p>
+              </div>
+              <div className="order_result_main">
+                {orderResult.map((order, number) => (
+                  <OrderedDrug
+                    handleRemoveOrder={handleRemoveOrder}
+                    order={order}
+                    number={number}
+                  />
+                ))}
+              </div>
+              <div className="order_result_footer">
+                <button className="btn btn_sendOrder">send order</button>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      );
+    if (currentSlide == "acceptedOrders")
+      return (
+        <div className="orders">
+          <h1 className="slide_header">accepted orders</h1>
+
+          <div className="orders_main">
+            <div
+              className={`order_detail ${
+                orderDetail ? "order_detail_visible" : ""
+              }`}>
+              <div className="order_detail_header">
+                <h1 className="">order detail </h1>
+                <button
+                  className="left btn_order btn_order-detail"
+                  onClick={handleBackToOrders}>
+                  close
+                </button>
+              </div>
+              <div className="order_detail_main">
+                {orders.map((order) => (
+                  <div className="order_detail_content">
+                    <div className="order_drug">
+                      {" "}
+                      Drug name :
+                      <p className="order_drug-value">{order.name} </p>
+                    </div>
+                    <div className="order_drug ">
+                      {" "}
+                      requested amount :
+                      <p className="order_drug-value">{order.amount}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="order_detail_footer">
+                <button className="right btn_order btn_order-reject">
+                  clear
+                </button>
+              </div>
+            </div>
+            <div
+              className={`orders_list ${
+                orderDetail ? "orders_list-blurred" : ""
+              }`}>
+              <div className="order">
+                <div className="order_header order_part">
+                  {" "}
+                  <div className="left">order one </div>
+                  <div className="right">{formatDates(orderdate)} </div>
+                </div>
+                <div className="order_content order_part">
+                  <p className="left">
+                    {" "}
+                    order for
+                    <span className="order_content_value order_content_value-type">
+                      {totalDrugsOrderd}
+                    </span>
+                    drugs from
+                    <span className="order_content_value order_content_value-type">
+                      {orderedrugs}
+                    </span>
+                    types of drugs
+                  </p>
+                  <p className="right  btn_order-accept  ">accepted</p>
+                </div>
+
+                <div className="order_bottom order_part">
+                  <button
+                    className="left btn_order btn_order-detail"
+                    onClick={handleSeeDetail}>
+                    detail
+                  </button>
+                  <button className="right btn_order btn_order-clear">
+                    clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    if (currentSlide == "rejectedOrders")
+      return (
+        <div className="orders">
+          <h1 className="slide_header">rejected orders</h1>
+
+          <div className="orders_main">
+            <div
+              className={`order_detail ${
+                orderDetail ? "order_detail_visible" : ""
+              }`}>
+              <div className="order_detail_header">
+                <h1 className="">order detail </h1>
+                <button
+                  className="left btn_order btn_order-detail"
+                  onClick={handleBackToOrders}>
+                  close
+                </button>
+              </div>
+              <div className="order_detail_main">
+                {orders.map((order) => (
+                  <div className="order_detail_content">
+                    <div className="order_drug">
+                      {" "}
+                      Drug name :
+                      <p className="order_drug-value">{order.name} </p>
+                    </div>
+                    <div className="order_drug ">
+                      {" "}
+                      requested amount :
+                      <p className="order_drug-value">{order.amount}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="order_detail_footer">
+                <button className="right btn_order btn_order-reject">
+                  clear
+                </button>
+              </div>
+            </div>
+            <div
+              className={`orders_list ${
+                orderDetail ? "orders_list-blurred" : ""
+              }`}>
+              <div className="order">
+                <div className="order_header order_part">
+                  {" "}
+                  <div className="left">order one </div>
+                  <div className="right">{formatDates(orderdate)} </div>
+                </div>
+                <div className="order_content order_part">
+                  <p className="left">
+                    {" "}
+                    order for
+                    <span className="order_content_value order_content_value-type">
+                      {totalDrugsOrderd}
+                    </span>
+                    drugs from
+                    <span className="order_content_value order_content_value-type">
+                      {orderedrugs}
+                    </span>
+                    types of drugs
+                  </p>
+                  <p className="right  btn_order-accept  ">rejected</p>
+                </div>
+
+                <div className="order_bottom order_part">
+                  <button
+                    className="left btn_order btn_order-detail"
+                    onClick={handleSeeDetail}>
+                    detail
+                  </button>
+                  <button className="right btn_order btn_order-clear">
+                    clear
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -514,17 +1090,22 @@ export default (props) => {
         user="supplier"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
-        seeAvailableDrugsInStore={seeAvailableDrugsInStore}
-        seeAvailableDrugsInStock={seeAvailableDrugsInStock}
-        handleCheckExpiration={handleCheckExpiration}
-        handleSeeNotification={handleSeeNotification}
-        handleSendRequest={handleSendRequest}
-        handleRegistration={handleRegistration}
+        onOrders={onOrders}
+        onAcceptedOrders={onAcceptedOrders}
+        onRejectedOrders={onRejectedOrders}
+        onComment={onComment}
+        onSendOrders={onSendOrders}
       />
       <div className="main_page">
+        {overviewVisible ? (
+          <Overview
+            user="supplier"
+            summary={[totalDrugsOrderd, orders.length, 0, 0]}
+            stockRequest={[]}
+          />
+        ) : null}
         <div className="druglist">
           <SellDrug
-            handleSendRequest={handleSendRequest}
             editing={editing}
             editingType={editingType}
             setEditing={setEditing}

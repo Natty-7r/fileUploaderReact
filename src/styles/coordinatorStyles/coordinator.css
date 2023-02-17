@@ -286,6 +286,7 @@
   padding: 0.4rem 0.8rem;
   text-transform: uppercase;
   background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+  background-image: linear-gradient(to right bottom, #4d1d95f3, rgb(16, 4, 38));
   color: var(--white);
 }
 .requested_drug_header .requested_drug_header-title {
