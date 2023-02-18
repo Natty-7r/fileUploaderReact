@@ -29,7 +29,7 @@ function App(props) {
         {" "}
         <Route
           path="/"
-          element={<Coordinator loginHandler={loginHandler} />}
+          element={<Manager loginHandler={loginHandler} />}
         />
         <Route
           path="/"

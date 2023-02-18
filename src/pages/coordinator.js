@@ -341,7 +341,6 @@ export default (props) => {
     });
 
     const StockRequest = (props) => {
-      console.log(props);
       return (
         <div className="requested_drug">
           <p className="request_name">
