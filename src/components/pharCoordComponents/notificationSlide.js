@@ -11,6 +11,7 @@ const Notification = (props) => {
       <NotificationMessage
         index={props.index}
         type={props.type}
+        user={props.user}
         handleChangeCommentStatus={props.handleChangeCommentStatus}
         handleRemoveComment={props.handleRemoveComment}
         comment={props.comment || null}
@@ -41,6 +42,9 @@ const NotificationMessage = (props) => {
   };
   const handleRemoveComment = () => {
     props.handleRemoveComment(commentIndex);
+  };
+  const handleEditComment = () => {
+    console.log(commentIndex);
   };
 
   const formatDates = function (dateAccepted) {
@@ -89,7 +93,7 @@ const NotificationMessage = (props) => {
         </div>
         <div className="notification_massage_subheader">
           <div className="left_message">
-            <span className="sender_type">{props.comment.sender}</span>
+            (<span className="sender_type">{props.comment.sender}</span>)
             <button
               className=" btn-remove-comment"
               onClick={handleRemoveComment}>
@@ -143,6 +147,7 @@ const NotificationButton = (props) => {
       </button>
     );
   if (props.type == "comment") return null;
+
   if (props.type == "new")
     return (
       <button
@@ -161,7 +166,6 @@ const NotificationButton = (props) => {
     );
 };
 export default (props) => {
-  const [commentSlide, setCommentSlide] = useState(2);
   let notificationNumber = 0,
     notificationMessages = [];
   let totalExpiredDrugs = 0;
@@ -170,12 +174,7 @@ export default (props) => {
   let pendingTypes = props?.storeOrders?.length || 0;
   let totalRequestedDrugs = 0;
   let requestTypes = props?.stockRequests?.length || 0;
-  const goToAddComments = () => {
-    setCommentSlide(1);
-  };
-  const goToSeeComments = () => {
-    setCommentSlide(2);
-  };
+
   const countNotificaitonNumber = () => {
     if (props.user == "coordinator") {
       if (props.expiredDrugs.length > 0) {
@@ -228,61 +227,6 @@ export default (props) => {
     }
   };
   countNotificaitonNumber();
-  if (props.user == "supplier") {
-    return (
-      <div className="comments_slide">
-        <div className="selectedButtons">
-          <button
-            className={`bnt_selector ${
-              commentSlide == 1 ? "bnt_selector-active" : ""
-            } `}
-            onClick={goToAddComments}>
-            add comment
-          </button>
-          <button
-            className={`bnt_selector ${
-              commentSlide == 2 ? "bnt_selector-active" : ""
-            } `}
-            onClick={goToSeeComments}>
-            previous comments
-          </button>
-        </div>
-        {commentSlide == 1 ? (
-          <div className="comment_form">
-            <h2 className="form_header">add Comment</h2>
-            <textarea className="input input-comment"></textarea>
-            <button className="btn btn-comment">submit</button>
-          </div>
-        ) : notificationNumber == 0 ? (
-          <div className="notificaton_content">
-            <h1 className="no_data_headers">Notification stack is empty </h1>;
-          </div>
-        ) : (
-          <div className="notificaton_content">
-            {props.comments.map((comment, index) => (
-              <Notification
-                key={index}
-                index={index}
-                type={"comment"}
-                comment={comment}
-                handleChangeCommentStatus={props.handleChangeCommentStatus}
-                handleRemoveComment={props.handleRemoveComment}
-                handleCheckExpiration={props.handleCheckExpiration}
-                handleRegistration={props.handleRegistration}
-                totalExpiredDrugs={totalExpiredDrugs}
-                totalPendigDrugs={totalPendigDrugs}
-                pendingTypes={pendingTypes}
-                expiredTypes={expiredTypes}
-                totalRequestedDrugs={totalRequestedDrugs}
-                requestTypes={requestTypes}
-                handleGoToAddToStock={props.handleGoToAddToStock}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
   if (notificationNumber == 0)
     return (
       <div className="notificaton_content">

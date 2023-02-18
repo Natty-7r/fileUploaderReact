@@ -117,7 +117,9 @@ const formatDates = function (dateAccepted) {
 };
 export default (props) => {
   let totalDrugs = 0,
-    totalAvailbleDrugs = 0,
+    totalPendingOrders = 0,
+    totolAccpetedOrders = 0,
+    totalRejctedOrdrs = 0,
     totalExpiredDrugs = 0,
     totalPendingDrugs = 0,
     totalDrugsOrderd,
@@ -132,6 +134,8 @@ export default (props) => {
 
   const [checkingExpiration, setCheckingExpiration] = useState(false);
   const [summary, setSummary] = useState([0, 0, 0, 0]);
+  const [summaryCreated, setSummaryCreated] = useState(0);
+
   const [selecteDrug, setSelectedDrug] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
 
@@ -143,6 +147,7 @@ export default (props) => {
   const [rejectedOrders, setRejectedOrders] = useState([]); // to mean pending orders
   const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [overviewVisible, setOverviewVisible] = useState(true);
+  const [orderType, setOrderType] = useState("pending");
 
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   const [currentSlide, setCurrentSlide] = useState("sendOrders"); // to track the the dashboard menu and slide
@@ -239,8 +244,9 @@ export default (props) => {
       orderdate = order.requestDate;
       totalOrders += order.amount;
     });
-    totalDrugsOrderd = totalOrders;
 
+    totalDrugsOrderd = totalOrders;
+    setSummary([]);
     setSummary([
       totalDrugsOrderd,
       orders.length,
@@ -251,6 +257,7 @@ export default (props) => {
 
   const onOrders = () => {
     setCurrentSlide("orders");
+    setOrderType("pending");
     setOverviewVisible(true);
   };
   const onSendOrders = () => {
@@ -259,9 +266,11 @@ export default (props) => {
   };
   const onAcceptedOrders = () => {
     setCurrentSlide("acceptedOrders");
+    setOrderType("accepted");
     setOverviewVisible(true);
   };
   const onRejectedOrders = () => {
+    setOrderType("rejected");
     setCurrentSlide("rejectedOrders");
     setOverviewVisible(true);
   };
@@ -377,18 +386,14 @@ export default (props) => {
 
   const SlideContent = (props) => {
     let timer;
-    const [requestResults, setRequests] = useState([]);
-    const [errorMsg, setErrorMsg] = useState(false);
-    const [requstNumber, setRequstNumber] = useState(0);
 
     const [orderNumber, setOrderNumber] = useState(0);
     const [orderResult, setOrderResult] = useState([]);
     const [orderDetail, setOrderDetail] = useState(false);
     const [formError, setFormError] = useState(false);
     const [formErrorMsg, setFormErrorMsg] = useState("");
-    const handleSeeDetail = () => {
-      setOrderDetail(true);
-    };
+    const [selectedOrderIndex, setSelectedOrderIndex] = useState(0);
+
     const handleBackToOrders = () => {
       setOrderDetail(false);
     };
@@ -397,77 +402,78 @@ export default (props) => {
       setOrderResult(orderResult);
       setOrderNumber(orderNumber - 1);
     };
-
-    const handleAddRequest = () => {
-      let requestExist = false;
-      let name = document.querySelector(".input_name-request").value;
-      let amount = +document.querySelector(".input_amount-request").value;
-      const currentRequests = requestResults;
-      if (name.length < 3) {
-        document.querySelector(".request_error").textContent =
-          "Please enter valid drug Name  !";
-        setErrorMsg(true);
-        setTimeout(() => {
-          setErrorMsg(false);
-        }, 1000);
-        return;
-      } else if (amount == "") {
-        document.querySelector(".request_error").textContent =
-          "Please enter valid drug amount !";
-        setErrorMsg(true);
-        setTimeout(() => {
-          setErrorMsg(false);
-        }, 1000);
-        return;
-      } else if (!Number.isInteger(amount)) {
-        document.querySelector(".request_error").textContent =
-          "Please enter valid drug amount !";
-        setErrorMsg(true);
-        setTimeout(() => {
-          setErrorMsg(false);
-        }, 1000);
-        return;
-      }
-
-      currentRequests.forEach((currentRequest, index) => {
-        // checking if it is order already
-        if (currentRequest.name.trim() == name.trim()) {
-          requestExist = true;
-          currentRequest.amount += amount;
-        }
-      });
-
-      if (requestExist) {
-        let requestNumberNOw = requstNumber;
-        setRequstNumber(++requestNumberNOw);
-      }
-      if (!requestExist) {
-        currentRequests.push({ name, amount });
-        setRequests(currentRequests);
-        setRequstNumber(currentRequests.length);
-      }
-
-      document.querySelector(".input_name-request").value = "";
-      document.querySelector(".input_amount-request").value = "";
-    };
-    const handleRemoveRequest = (index) => {
-      const currentRequests = requestResults;
-      currentRequests.splice(index, 1);
-      setRequests(currentRequests);
-      setRequstNumber(currentRequests.length);
-    };
-    const handleSendRequestDone = () => {
-      setRequests([]);
-      setRequstNumber(0);
+    // -------------------------------------
+    const handleOnAcceptOrder = (index) => {
+      const orderToAccept = orders[index];
+      acceptedOrders.push(orderToAccept);
+      orders.splice(index, 1);
+      setAcceptedOrders(acceptedOrders);
+      setOrders(orders);
+      createSummary();
       axios
-        .post(`${baseUrl}/drugs/request`, {
-          stockRequest: requestResults,
+        .patch(`${baseUrl}/order`, {
+          requestId: orderToAccept.id,
+          status: "accepted",
         })
         .then((response) => {
           console.log(response);
         })
         .catch((error) => console.log(error));
     };
+    const handleOnRejectOrder = (index) => {
+      const orderToReject = orders[index];
+      rejectedOrders.push(orderToReject);
+      orders.splice(index, 1);
+      setRejectedOrders(rejectedOrders);
+      setOrders(orders);
+      createSummary();
+      axios
+        .patch(`${baseUrl}/order`, {
+          requestId: orderToReject.id,
+          status: "rejected",
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+    };
+    const handleOnClearOrder = ({ index, type }) => {
+      let orderToClear;
+      if (type == "rejected") {
+        orderToClear = rejectedOrders[index];
+        rejectedOrders.splice(index, 1);
+        setRejectedOrders(rejectedOrders);
+      }
+      if (type == "accepted") {
+        orderToClear = acceptedOrders[index];
+        acceptedOrders.splice(index, 1);
+        setAcceptedOrders(acceptedOrders);
+      }
+      const requestId = orderToClear.id;
+      axios
+        .delete(`${baseUrl}/order/${requestId}`)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+      if (expiredDrugs.length == 0) setCheckingExpiration(false);
+      createSummary();
+    };
+    const OnSendComment = () => {
+      const commentInput = document.querySelector(".input-comment");
+      const comment = commentInput.value;
+      commentInput.value = "";
+      axios
+        .post(`${baseUrl}/comment`, {
+          message: comment,
+        })
+        .then((response) => {
+          console.log(response);
+        });
+    };
+
+    // -------------------------
+
     const OrderedDrug = (props) => {
       const handleRemove = () => {
         props.handleRemoveOrder(props.number);
@@ -638,12 +644,170 @@ export default (props) => {
             price: inputPrice,
             supplier: inputSupplier,
             expireDate: inputDate,
+            suppliedDate: new Date(),
           };
           orderResult.push(order);
           setOrderResult(orderResult);
           setOrderNumber(orderNumber + 1);
         }
       }
+    };
+    const handleOnSendOrder = () => {
+      axios
+        .post(`${baseUrl}/register`, { orders: orderResult })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
+      setOrderResult([]);
+    };
+
+    const OrderCard = (props) => {
+      const handleSeeDetail = () => {
+        setOrderDetail(true);
+        setSelectedOrderIndex(props.index);
+      };
+      let totalDrugsOrdered = 0;
+      let totalOrdersType = props.order.requestedDrugs.length;
+      props.order.requestedDrugs.forEach((drug) => {
+        totalDrugsOrdered += drug.amount;
+      });
+      const onAcceptOrder = () => {
+        handleOnAcceptOrder(props.index);
+      };
+      const onRejectOrder = () => {
+        handleOnRejectOrder(props.index);
+      };
+      const onClearOrder = () => {
+        handleOnClearOrder({ index: props.index, type: props.type });
+      };
+      return (
+        <div className="order">
+          <div className="order_header order_part">
+            {" "}
+            <div className="left">order -{props.index + 1} </div>
+            <div className="right">{formatDates(props.order.requestDate)} </div>
+          </div>
+          <div className="order_content order_part">
+            <p className="left">
+              {" "}
+              order for
+              <span className="order_content_value order_content_value-type">
+                {totalDrugsOrdered}
+              </span>
+              drugs from
+              <span className="order_content_value order_content_value-type">
+                {totalOrdersType}
+              </span>
+              types of drugs
+            </p>
+
+            {props.type == "pending" ? (
+              <button
+                className="right btn_order btn_order-accept  "
+                onClick={onAcceptOrder}>
+                accept
+              </button>
+            ) : (
+              <p className="right btn_order btn_order-accept  ">{props.type}</p>
+            )}
+          </div>
+
+          <div className="order_bottom order_part">
+            <button
+              className="left btn_order btn_order-detail"
+              onClick={handleSeeDetail}>
+              detail
+            </button>
+            {props.type == "pending" ? (
+              <button
+                className="right btn_order btn_order-reject"
+                onClick={onRejectOrder}>
+                reject
+              </button>
+            ) : (
+              <button
+                className="right btn_order btn_order-reject"
+                onClick={onClearOrder}>
+                clear
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
+    const OrderDetailCard = (props) => {
+      let order;
+      if (orderType == "pending") order = orders[props.selectedOrderIndex];
+      if (orderType == "accepted")
+        order = acceptedOrders[props.selectedOrderIndex];
+      if (orderType == "rejected")
+        order = rejectedOrders[props.selectedOrderIndex];
+
+      const onAcceptOrder = () => {
+        handleOnAcceptOrder(props.selectedOrderIndex);
+      };
+      const onRejectOrder = () => {
+        handleOnRejectOrder(props.selectedOrderIndex);
+      };
+      const onClearOrder = () => {
+        handleOnClearOrder({
+          index: props.selectedOrderIndex,
+          type: orderType,
+        });
+      };
+      return (
+        <div
+          className={`order_detail ${
+            orderDetail ? "order_detail_visible" : ""
+          }`}>
+          <div className="order_detail_header">
+            <h1 className="">order detail </h1>
+            <button
+              className="left btn_order btn_order-detail"
+              onClick={handleBackToOrders}>
+              close
+            </button>
+          </div>
+          <div className="order_detail_main">
+            {order.requestedDrugs.map((drug) => (
+              <div className="order_detail_content">
+                <div className="order_drug">
+                  {" "}
+                  Drug name :<p className="order_drug-value">{drug.name} </p>
+                </div>
+                <div className="order_drug ">
+                  {" "}
+                  requested amount :
+                  <p className="order_drug-value">{drug.amount}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {orderType == "pending" ? (
+            <div className="order_detail_footer">
+              <button
+                className="left btn_order btn_order-detail"
+                onClick={onAcceptOrder}>
+                accept
+              </button>
+              <button
+                className="right btn_order btn_order-reject"
+                onClick={onRejectOrder}>
+                reject
+              </button>
+            </div>
+          ) : (
+            <div className="order_detail_footer">
+              <button
+                className="right btn_order btn_order-reject"
+                onClick={onClearOrder}>
+                clear
+              </button>
+            </div>
+          )}
+        </div>
+      );
     };
     if (currentSlide == "orders")
       return (
@@ -653,83 +817,19 @@ export default (props) => {
             <h1 className="no_data_header">no orders recieved yet !</h1>
           ) : (
             <div className="orders_main">
-              <div
-                className={`order_detail ${
-                  orderDetail ? "order_detail_visible" : ""
-                }`}>
-                <div className="order_detail_header">
-                  <h1 className="">order detail </h1>
-                  <button
-                    className="left btn_order btn_order-detail"
-                    onClick={handleBackToOrders}>
-                    close
-                  </button>
-                </div>
-                <div className="order_detail_main">
-                  {orders.map((order) => (
-                    <div className="order_detail_content">
-                      <div className="order_drug">
-                        {" "}
-                        Drug name :
-                        <p className="order_drug-value">{order.name} </p>
-                      </div>
-                      <div className="order_drug ">
-                        {" "}
-                        requested amount :
-                        <p className="order_drug-value">{order.amount}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="order_detail_footer">
-                  <button className="left btn_order btn_order-detail">
-                    accept
-                  </button>
-                  <button className="right btn_order btn_order-reject">
-                    reject
-                  </button>
-                </div>
-              </div>
+              <OrderDetailCard selectedOrderIndex={selectedOrderIndex} />
               <div
                 className={`orders_list ${
                   orderDetail ? "orders_list-blurred" : ""
                 }`}>
-                <div className="order">
-                  <div className="order_header order_part">
-                    {" "}
-                    <div className="left">order one </div>
-                    <div className="right">{formatDates(orderdate)} </div>
-                  </div>
-                  <div className="order_content order_part">
-                    <p className="left">
-                      {" "}
-                      order for
-                      <span className="order_content_value order_content_value-type">
-                        {totalDrugsOrderd}
-                      </span>
-                      drugs from
-                      <span className="order_content_value order_content_value-type">
-                        {orderedrugs}
-                      </span>
-                      types of drugs
-                    </p>
-                    <button className="right btn_order btn_order-accept  ">
-                      accept
-                    </button>
-                  </div>
-
-                  <div className="order_bottom order_part">
-                    <button
-                      className="left btn_order btn_order-detail"
-                      onClick={handleSeeDetail}>
-                      detail
-                    </button>
-                    <button className="right btn_order btn_order-reject">
-                      reject
-                    </button>
-                  </div>
-                </div>
+                {orders.map((order, index) => (
+                  <OrderCard
+                    type="pending"
+                    order={order}
+                    index={index}
+                    key={index}
+                  />
+                ))}
               </div>
             </div>
           )}
@@ -860,7 +960,11 @@ export default (props) => {
                 ))}
               </div>
               <div className="order_result_footer">
-                <button className="btn btn_sendOrder">send order</button>
+                <button
+                  className="btn btn_sendOrder"
+                  onClick={handleOnSendOrder}>
+                  send order
+                </button>
               </div>
             </div>
           ) : null}
@@ -870,179 +974,71 @@ export default (props) => {
       return (
         <div className="orders">
           <h1 className="slide_header">accepted orders</h1>
-
-          <div className="orders_main">
-            <div
-              className={`order_detail ${
-                orderDetail ? "order_detail_visible" : ""
-              }`}>
-              <div className="order_detail_header">
-                <h1 className="">order detail </h1>
-                <button
-                  className="left btn_order btn_order-detail"
-                  onClick={handleBackToOrders}>
-                  close
-                </button>
-              </div>
-              <div className="order_detail_main">
-                {orders.map((order) => (
-                  <div className="order_detail_content">
-                    <div className="order_drug">
-                      {" "}
-                      Drug name :
-                      <p className="order_drug-value">{order.name} </p>
-                    </div>
-                    <div className="order_drug ">
-                      {" "}
-                      requested amount :
-                      <p className="order_drug-value">{order.amount}</p>
-                    </div>
-                  </div>
+          {acceptedOrders.length == 0 ? (
+            <h1 className="no_data_header">
+              no orders recieved is accepted yet !
+            </h1>
+          ) : (
+            <div className="orders_main">
+              <OrderDetailCard selectedOrderIndex={selectedOrderIndex} />
+              <div
+                className={`orders_list ${
+                  orderDetail ? "orders_list-blurred" : ""
+                }`}>
+                {acceptedOrders.map((order, index) => (
+                  <OrderCard
+                    type="accepted"
+                    order={order}
+                    index={index}
+                    key={index}
+                  />
                 ))}
               </div>
-
-              <div className="order_detail_footer">
-                <button className="right btn_order btn_order-reject">
-                  clear
-                </button>
-              </div>
             </div>
-            <div
-              className={`orders_list ${
-                orderDetail ? "orders_list-blurred" : ""
-              }`}>
-              <div className="order">
-                <div className="order_header order_part">
-                  {" "}
-                  <div className="left">order one </div>
-                  <div className="right">{formatDates(orderdate)} </div>
-                </div>
-                <div className="order_content order_part">
-                  <p className="left">
-                    {" "}
-                    order for
-                    <span className="order_content_value order_content_value-type">
-                      {totalDrugsOrderd}
-                    </span>
-                    drugs from
-                    <span className="order_content_value order_content_value-type">
-                      {orderedrugs}
-                    </span>
-                    types of drugs
-                  </p>
-                  <p className="right  btn_order-accept  ">accepted</p>
-                </div>
-
-                <div className="order_bottom order_part">
-                  <button
-                    className="left btn_order btn_order-detail"
-                    onClick={handleSeeDetail}>
-                    detail
-                  </button>
-                  <button className="right btn_order btn_order-clear">
-                    clear
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       );
     if (currentSlide == "rejectedOrders")
       return (
         <div className="orders">
           <h1 className="slide_header">rejected orders</h1>
-
-          <div className="orders_main">
-            <div
-              className={`order_detail ${
-                orderDetail ? "order_detail_visible" : ""
-              }`}>
-              <div className="order_detail_header">
-                <h1 className="">order detail </h1>
-                <button
-                  className="left btn_order btn_order-detail"
-                  onClick={handleBackToOrders}>
-                  close
-                </button>
-              </div>
-              <div className="order_detail_main">
-                {orders.map((order) => (
-                  <div className="order_detail_content">
-                    <div className="order_drug">
-                      {" "}
-                      Drug name :
-                      <p className="order_drug-value">{order.name} </p>
-                    </div>
-                    <div className="order_drug ">
-                      {" "}
-                      requested amount :
-                      <p className="order_drug-value">{order.amount}</p>
-                    </div>
-                  </div>
+          {rejectedOrders.length == 0 ? (
+            <h1 className="no_data_header">
+              no orders recieved is rejected yet !
+            </h1>
+          ) : (
+            <div className="orders_main">
+              <OrderDetailCard selectedOrderIndex={selectedOrderIndex} />
+              <div
+                className={`orders_list ${
+                  orderDetail ? "orders_list-blurred" : ""
+                }`}>
+                {rejectedOrders.map((order, index) => (
+                  <OrderCard
+                    type="rejected"
+                    order={order}
+                    index={index}
+                    key={index}
+                  />
                 ))}
               </div>
-
-              <div className="order_detail_footer">
-                <button className="right btn_order btn_order-reject">
-                  clear
-                </button>
-              </div>
             </div>
-            <div
-              className={`orders_list ${
-                orderDetail ? "orders_list-blurred" : ""
-              }`}>
-              <div className="order">
-                <div className="order_header order_part">
-                  {" "}
-                  <div className="left">order one </div>
-                  <div className="right">{formatDates(orderdate)} </div>
-                </div>
-                <div className="order_content order_part">
-                  <p className="left">
-                    {" "}
-                    order for
-                    <span className="order_content_value order_content_value-type">
-                      {totalDrugsOrderd}
-                    </span>
-                    drugs from
-                    <span className="order_content_value order_content_value-type">
-                      {orderedrugs}
-                    </span>
-                    types of drugs
-                  </p>
-                  <p className="right  btn_order-accept  ">rejected</p>
-                </div>
-
-                <div className="order_bottom order_part">
-                  <button
-                    className="left btn_order btn_order-detail"
-                    onClick={handleSeeDetail}>
-                    detail
-                  </button>
-                  <button className="right btn_order btn_order-clear">
-                    clear
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       );
     if (currentSlide == "comments") {
       return (
-        <div className="notification_slide">
-          <h1 className="slide_header">Comments </h1>
-          <NotificationSlide
-            user={"supplier"}
-            comments={comments}
-            expiredDrugs={expiredDrugs}
-            totalExpiredDrugs={totalExpiredDrugs}
-            storeOrders={[]}
-            totalPendingDrugs={totalPendingDrugs}
-            notificationNum={notificationNum}
-          />
+        <div className="comments_slide">
+          <h1 className="slide_header">Add comment</h1>
+          <div className="comment_form">
+            <h2 className="form_header">add Comment</h2>
+            <textarea className="input input-comment"></textarea>
+            <button
+              className="btn btn-comment"
+              onClick={OnSendComment}>
+              submit
+            </button>
+          </div>
         </div>
       );
     }

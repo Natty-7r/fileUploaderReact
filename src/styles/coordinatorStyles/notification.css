@@ -121,7 +121,7 @@
   width: 100%;
 }
 .notification_massage-comment .notification_massage_header .left_message {
-  width: 90%;
+  width: 70%;
 }
 .notification_massage-comment .notification_massage_header .sender_name {
   font-size: 1.8rem;
@@ -159,6 +159,18 @@
   color: var(--grayColor);
   opacity: 0.5;
   margin-left: 0.4rem;
+}
+.btn-edit-comment {
+  color: var(--grayColor);
+  opacity: 0.5;
+  margin-left: 0.4rem;
+  font-size: 1.6rem;
+  text-transform: capitalize;
+  color: darkblue;
+  letter-spacing: 0.04rem;
+}
+.btn-edit-comment:hover {
+  color: blue;
 }
 .btn-remove-comment:hover {
   color: var(--grayColor);

@@ -16,8 +16,9 @@
 }
 .orders .orders_list {
   padding-top: 3rem;
-  overflow-y: auto;
+  overflow-y: scroll;
   z-index: 0;
+  height: 100%;
 }
 .orders .orders_list-blurred {
   filter: blur(0.5rem);
@@ -27,13 +28,13 @@
   width: 70%;
   margin: auto;
   margin-bottom: 0.8rem;
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
   background-color: white;
   box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.134);
   border-radius: 0.4rem;
   display: flex;
   flex-flow: column;
-  gap: 0.6rem;
+  gap: 1.2rem;
   justify-content: space-between;
   z-index: 1;
   /* display: none; */
@@ -49,6 +50,7 @@
   text-transform: uppercase;
   letter-spacing: 0.06rem;
   color: darkblue;
+  margin-top: 2rem;
 }
 .order_content {
   font-size: 1.4rem;
@@ -57,7 +59,7 @@
   font-weight: 400;
 }
 .order_content .order_content_value {
-  padding: 0.2rem;
+  padding: 0.2rem 0.6rem;
   font-size: 1.6rem;
   font-weight: 600;
   color: darkblue;
