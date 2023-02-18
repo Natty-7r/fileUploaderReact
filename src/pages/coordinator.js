@@ -41,6 +41,7 @@ export default (props) => {
 
   useEffect(() => {
     axios.get(`${baseUrl}/drugs`).then((response) => {
+      console.log(response);
       setAvailbleDrugs(response.data.drugs.availbleStoreDrugs);
       setAvailbleStockDrugs(response.data.drugs.availbleStockDrugs);
       setStoreOrders(response.data.drugs.storeOrders);

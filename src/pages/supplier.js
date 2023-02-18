@@ -137,8 +137,9 @@ export default (props) => {
 
   const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
   const [stockOrders, setStockOrders] = useState([]);
+  const [comments, setComments] = useState([]);
   const [orders, setOrders] = useState([]); // to mean pending orders
-  const [accpredOrders, setAcceptedOrders] = useState([]); // to mean pending orders
+  const [acceptedOrders, setAcceptedOrders] = useState([]); // to mean pending orders
   const [rejectedOrders, setRejectedOrders] = useState([]); // to mean pending orders
   const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [overviewVisible, setOverviewVisible] = useState(true);
@@ -153,13 +154,14 @@ export default (props) => {
       setOrders(response.data.orders.pendingOrders);
       setAcceptedOrders(response.data.orders.acceptedOrders);
       setRejectedOrders(response.data.orders.rejectedOrders);
+      setComments(response.data.orders.comments);
       createSummary();
     });
   }, []);
 
   useEffect(() => {
     createSummary();
-  }, [availbleStockDrugs, expiredDrugs, stockOrders]);
+  }, [orders, acceptedOrders, rejectedOrders]);
 
   const supplier = () => {
     let totalOrders = 0;
@@ -242,8 +244,8 @@ export default (props) => {
     setSummary([
       totalDrugsOrderd,
       orders.length,
-      totalExpiredDrugs,
-      totalPendingDrugs,
+      acceptedOrders.length,
+      rejectedOrders.length,
     ]);
   };
 
@@ -264,6 +266,7 @@ export default (props) => {
     setOverviewVisible(true);
   };
   const onComment = () => {
+    setOverviewVisible(true);
     setCurrentSlide("comments");
   };
 
@@ -1027,58 +1030,19 @@ export default (props) => {
           </div>
         </div>
       );
-    if (currentSlide == "register") {
-      if (stockOrders.length == 0)
-        return (
-          <div className="drguList registration_list">
-            <h1 className="slide_header">Drug Registration</h1>
-            <div
-              className={`list_body ${
-                editing || checkingExpiration ? "blurred" : ""
-              }`}>
-              <h1 className="no_data_header"> There is No unRegistred Drug</h1>
-            </div>
-          </div>
-        );
+    if (currentSlide == "comments") {
       return (
-        <div className="drguList registration_list">
-          <div className="list_header">
-            <p className="list list_name list-no">No </p>
-            <p className="list list_name list-name">Name </p>
-            <p className="list list_name list-price">price </p>
-            <p className="list list_name list-amount">amount </p>
-            <p className="list list_name list-e_date">expired date </p>
-            <p className="list list_name list-supplier">supplier </p>
-            <p className="list list_name list-s_date">supllied date </p>
-            <p className="list list_name"> </p>
-          </div>
-          <div
-            className={`list_body ${
-              editing || checkingExpiration ? "blurred" : ""
-            }`}>
-            {stockOrders.length == 0 ? (
-              <h1 className="no_data_header">
-                {" "}
-                No drug was found in the stock!
-              </h1>
-            ) : (
-              stockOrders.map((drug, index) => (
-                <DrugList
-                  drug={drug}
-                  index={index}
-                  hasLastCol={true}
-                  key={index}
-                  type={"pendingAccept"}
-                  handleDiscard={handleDiscard}
-                />
-              ))
-            )}
-          </div>
-          <button
-            className="btn btn_register"
-            onClick={handleRegistrationDone}>
-            register all{" "}
-          </button>
+        <div className="notification_slide">
+          <h1 className="slide_header">Comments </h1>
+          <NotificationSlide
+            user={"supplier"}
+            comments={comments}
+            expiredDrugs={expiredDrugs}
+            totalExpiredDrugs={totalExpiredDrugs}
+            storeOrders={[]}
+            totalPendingDrugs={totalPendingDrugs}
+            notificationNum={notificationNum}
+          />
         </div>
       );
     }

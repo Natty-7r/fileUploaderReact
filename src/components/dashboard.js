@@ -105,14 +105,14 @@ export default (props) => {
             }`}
             onClick={props.seeAvailableDrugsInStock}>
             {" "}
-            availables in stock{" "}
+            drugs in stock{" "}
           </button>
           <button
             className={`btn_menu ${
               props.currentSlide == "expired" ? "btn_menu-active " : ""
             }`}
             onClick={props.handleCheckExpiration}>
-            check expired drugs{" "}
+            expired drugs{" "}
           </button>
           <button
             className={`btn_menu ${
