@@ -332,11 +332,16 @@ export default (props) => {
       stockRequests.length
     );
     let stockRequestExits = stockRequestSize > 0 ? true : false;
+    let requestedDrugs = []; // to fetch the drugs out of the request
+    stockRequests.forEach((stockRequest) => {
+      stockRequest.requestedDrugs.forEach((drug) => {
+        drug.date = stockRequest.requestDate;
+        requestedDrugs.push(drug);
+      });
+    });
 
     const StockRequest = (props) => {
-      const date = new Date(props.stockRequest.requestDate);
-      let dateFormatted = date.toLocaleDateString();
-
+      console.log(props);
       return (
         <div className="requested_drug">
           <p className="request_name">
@@ -349,7 +354,8 @@ export default (props) => {
             <span>amount: </span> {props.stockRequest.amount}
           </p>
           <p className="request_name">
-            <span>date: </span> {dateFormatted}
+            <span>date: </span>{" "}
+            {new Date(props.stockRequest.date).toLocaleDateString()}
           </p>
         </div>
       );
@@ -783,9 +789,9 @@ export default (props) => {
                   </p>
                 </div>
                 <div className="requested_drugs ">
-                  {stockRequests.map((stockRequest, index) => (
+                  {requestedDrugs.map((requestedDrug, index) => (
                     <StockRequest
-                      stockRequest={stockRequest}
+                      stockRequest={requestedDrug}
                       index={index}
                     />
                   ))}

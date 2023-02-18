@@ -125,11 +125,10 @@ const NotificationMessage = (props) => {
       <div className="notification_massage">
         <div className="notification_massage_header">stock requests </div>
         <div className="notification_massage_content">
-          There is request from stock for
+          There is request for
           <span className="expired_amount">{props.totalRequestedDrugs}</span>
           drugs from
-          <span className="expired_amount">{props.requestTypes}</span> type of
-          drugs
+          <span className="expired_amount">{props.requestTypes}</span> requests
         </div>
       </div>
     );
@@ -197,8 +196,10 @@ export default (props) => {
       props.storeOrders.forEach((drug) => {
         totalPendigDrugs += drug.amount;
       });
-      props.stockRequests.forEach((drug) => {
-        totalRequestedDrugs += drug.amount;
+      props.stockRequests.forEach((requests) => {
+        requests.requestedDrugs.forEach((drug) => {
+          totalRequestedDrugs += drug.amount;
+        });
       });
     }
     if (props.user == "pharmacist") {

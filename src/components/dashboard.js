@@ -26,7 +26,7 @@ export default (props) => {
             }`}
             onClick={props.seeAvailableDrugsInStore}>
             {" "}
-            availables in store{" "}
+            durgs in store{" "}
           </button>
           <button
             className={`btn_menu ${
@@ -34,7 +34,7 @@ export default (props) => {
             }`}
             onClick={props.seeAvailableDrugsInStock}>
             {" "}
-            availables in stock{" "}
+            drugs in stock{" "}
           </button>
           <button
             className={`btn_menu ${
@@ -48,7 +48,7 @@ export default (props) => {
               props.currentSlide == "register" ? "btn_menu-active " : ""
             }`}
             onClick={props.handleRegistration}>
-            Register new drugs{" "}
+            Register drugs{" "}
           </button>
           <button
             className={`btn_menu ${
