@@ -369,3 +369,8 @@
   left: 60%;
   transform: translate(-50%);
 }
+.supplier_sendOrder_header {
+  height: 1rem;
+  width: 100%;
+  background-image: linear-gradient(to right bottom, #4d1d95f3, #334155);
+}

@@ -93,7 +93,7 @@ const NotificationMessage = (props) => {
         </div>
         <div className="notification_massage_subheader">
           <div className="left_message">
-            (<span className="sender_type">{props.comment.sender}</span>)
+            <span className="sender_type">{props.comment.sender}</span>
             <button
               className=" btn-remove-comment"
               onClick={handleRemoveComment}>
