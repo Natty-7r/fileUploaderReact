@@ -1,4 +1,3 @@
-import "../../styles/adminStyles/account.css";
 export default (props) => {
   const handleMouseEnter = () => {
     props.handleDetailVisiblity(true, props.index, props.detailSelected, false);

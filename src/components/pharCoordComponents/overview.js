@@ -95,4 +95,21 @@ export default (props) => {
         </div>
       </div>
     );
+  if (props.user == "admin")
+    return (
+      <div className="overview">
+        <div className="summary">
+          <p className="summary_name">total accounts</p>
+          <p className="summary_value">{props.summary[0]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name"> active accounts </p>
+          <p className="summary_value">{props.summary[1]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name">inActive accounts </p>
+          <p className="summary_value">{props.summary[2]}</p>
+        </div>
+      </div>
+    );
 };

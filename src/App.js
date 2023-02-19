@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 import Header from "./components/adminComponents/header";
-import Admin from "./pages/admin";
+
 import Signup from "./pages/signup.";
 import Login from "./pages/login.js";
 import Coordinator from "./pages/coordinator";
@@ -25,7 +25,6 @@ function App(props) {
   };
   return (
     <Router>
-      <Header />
       <Routes>
         {" "}
         <Route
@@ -34,7 +33,7 @@ function App(props) {
         />
         <Route
           path="/"
-          element={<Admin />}
+          element={<Adminn />}
         />
       </Routes>
     </Router>

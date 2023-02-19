@@ -204,6 +204,47 @@ export default (props) => {
         </div>
       </div>
     );
+  if (props.user == "admin")
+    return (
+      <div className="page_dashboard">
+        <div className="dashboard_profile dashboard_profile-admin">
+          <div className="profile_image">
+            <img
+              src={user}
+              alt="user"
+            />
+          </div>
+          <div className="profile_name">
+            jalleta<span className="profile_role"> system {props.user}</span>{" "}
+          </div>
+          <button
+            className={`btn_menu profile_btn ${
+              props.currentSlide == "editAdmin" ? "profile_btn-acitve" : ""
+            }`}
+            onClick={props.onUpdateAdmin}>
+            Update profile
+          </button>
+        </div>
+        <div className="dashboard_menus dashboard_menus-admin">
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "list" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.onAccountList}>
+            {" "}
+            account list{" "}
+          </button>
+
+          <button
+            className={`btn_menu ${
+              props.currentSlide == "add" ? "btn_menu-active " : ""
+            }`}
+            onClick={props.OnCreateUser}>
+            create account{" "}
+          </button>
+        </div>
+      </div>
+    );
   if (props.user == "manager")
     return (
       <div className="page_dashboard">

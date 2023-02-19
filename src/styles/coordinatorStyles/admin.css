@@ -1,0 +1,274 @@
+.users {
+  height: 90vh;
+}
+.users_main {
+  height: 100%;
+}
+.users_list {
+  height: 97%;
+  overflow-y: scroll;
+  padding-top: 2rem;
+  /* position: relative; */
+}
+.user_list-blurred {
+  filter: blur(5rem);
+}
+.users_list .account_detail {
+  position: absolute;
+}
+.user {
+  padding: 2%;
+  background-image: linear-gradient(to right bottom, white, #f8fafc);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.01);
+  width: 70%;
+
+  margin: auto;
+  margin-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.6rem;
+}
+.user_image {
+  flex-basis: 10%;
+  aspect-ratio: 1/1;
+  position: relative;
+}
+.user_image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.user_text {
+  flex-basis: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+.text_left {
+}
+.text_right {
+  flex-flow: column;
+  align-items: center;
+}
+.text_part {
+  flex-basis: 30%;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+
+.user_name {
+  font-weight: 600;
+  color: darkblue;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+}
+.user_role {
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.user_state {
+  font-size: 1.4rem;
+  border: solid thin orange;
+  text-transform: uppercase;
+  margin-left: 0.6rem;
+  padding: 0.4rem 1.8rem;
+  width: fit-content;
+  border-radius: 0.4rem;
+}
+
+.user_btn {
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+  font-size: 1.4rem;
+  margin-left: 0.6rem;
+  padding: 0.4rem 1.8rem;
+  width: fit-content;
+  border-radius: 0.4rem;
+}
+.user_btn-detail {
+  border-radius: 0%;
+  padding: 0.4rem 0.4rem;
+  color: var(--gray);
+}
+.user_btn-detail:hover {
+  border-bottom: solid thin red;
+}
+.user_btn-delete {
+  padding: 0.4rem 0.4rem;
+  border-radius: 0%;
+  color: red;
+}
+.user_btn-delete:hover {
+  border-bottom: solid thin red;
+}
+.account_form {
+  background: none;
+  padding: 0rem;
+  width: 70%;
+  height: 80%;
+  top: 15%;
+  position: fixed;
+  left: 25%;
+  z-index: 5;
+}
+.account_form .form {
+  margin: 0rem;
+  width: 100%;
+  height: 100%;
+  padding: 0rem;
+}
+.close_form {
+  position: absolute;
+  right: 4%;
+  top: 4%;
+  color: red;
+}
+.account_form .title {
+  margin: 3rem 2rem 3rem 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
+  color: darkblue;
+}
+.account_form .form {
+  gap: 2rem;
+}
+.form_row-account {
+}
+.inputContainer-account {
+  height: 5rem;
+}
+.inputContainer-account .input {
+  border-radius: 0.2rem;
+  border: solid 1px var(--gray);
+}
+.btn_create {
+  margin: auto;
+  padding: 1.6rem 3.2rem;
+  font-size: 1.4rem;
+}
+/*                 account detail  */
+.account_detail {
+  z-index: 5;
+  position: fixed;
+  top: 7%;
+  left: 60%;
+  transform: translate(-50%);
+  background-color: white;
+  z-index: 5;
+  width: 40%;
+  height: 90%;
+  display: flex;
+  flex-flow: column;
+  gap: 0.8rem;
+  padding: 1em 3%;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.3rem);
+  border-radius: 0.4rem;
+}
+
+.detail_header .close {
+  font-size: 2rem;
+  color: red;
+  transition: transform 0.3s;
+  transform: rotate(90deg);
+}
+.detail_header .close:hover {
+  transform: rotate(0deg);
+}
+.account_detail .account_state {
+  border: solid thin red;
+  font-size: 1.4rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  padding: 0.4rem 1.6rem;
+  border-radius: 0.4rem;
+  min-height: fit-content;
+}
+
+.account_detail .active {
+  color: var(--grayColor);
+}
+.account_detail .inactive {
+  color: var(--grayColor);
+  color: #7316;
+}
+.detail_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 5rem;
+}
+.detail_header-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 0rem 0.8rem 1.6rem;
+}
+
+.account_detail .detail_image {
+  height: 7em;
+  position: relative;
+  margin-bottom: 2rem;
+  border-radius: 0.2rem;
+}
+.detail_image img {
+  border-radius: 0.2rem;
+  /* position: absolute; */
+  top: 0;
+  left: 1%;
+  height: 100%;
+  aspect-ratio: 1/1;
+}
+.account_detail .detail_text {
+  flex-basis: 70%;
+  display: flex;
+  flex-flow: column;
+  gap: 0.6rem;
+}
+.detail_text .detail {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: dashed thin rgba(12, 74, 110, 0.8);
+  flex-basis: 50%;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--grayColor);
+  letter-spacing: 0.04rem;
+  text-transform: capitalize;
+  word-wrap: break-word;
+}
+.detail .key {
+  overflow: hidden;
+}
+.detail .value {
+  overflow: hidden;
+  flex-basis: 40%;
+  text-align: left;
+}
+.account_detail .detail_btns {
+  margin: 0.8rem;
+  justify-content: center;
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  overflow: hidden;
+}
+.detail_btns .btn {
+  padding: 1.6rem 1.8rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  transition: all 0.3s;
+  transform-origin: left;
+  outline: solid transparent;
+}
+.detail_btns .btn:hover {
+  opacity: 0.85;
+}
