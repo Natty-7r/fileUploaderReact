@@ -25,6 +25,7 @@ function App(props) {
   };
   return (
     <Router>
+      <Header />
       <Routes>
         {" "}
         <Route

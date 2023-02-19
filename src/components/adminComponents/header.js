@@ -1,5 +1,5 @@
 import { logo } from "../../constants/images.js";
-
+import "../../styles/adminStyles/header.css";
 export default (props) => {
   return (
     <header className="header">
