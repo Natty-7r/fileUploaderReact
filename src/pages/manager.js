@@ -748,7 +748,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
-        username={username}
+        username={props.username}
         user="manager"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
