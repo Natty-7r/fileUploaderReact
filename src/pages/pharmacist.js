@@ -97,6 +97,7 @@ const SellDrug = (props) => {
     );
 };
 export default (props) => {
+  const username = props.username;
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
     totalExpiredDrugs = 0,
@@ -617,6 +618,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        username={username}
         user="pharmacist"
         notificationNum={notificationNum}
         currentSlide={currentSlide}

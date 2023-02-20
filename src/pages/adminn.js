@@ -10,79 +10,12 @@ import Dashboard from "../components/dashboard";
 const baseUrl = "http://localhost:8080/admin";
 
 export default (props) => {
-  const users = [
-    {
-      active: false,
-      firstName: "natty ",
-      lastName: "fekadu",
-      date: "jan 5 2023",
-      accountId: 12,
-      role: "phamacist ",
-      username: "natty@gmail.com",
-      fullName: "natty fekadu ",
-      password: "123",
-    },
-    {
-      active: false,
-      firstName: "natty ",
-      lastName: "fekadu",
-      date: "jan 5 2023",
-      accountId: 12,
-      role: "phamacist ",
-      username: "natty@gmail.com",
-      fullName: "natty fekadu ",
-      password: "123",
-    },
-    {
-      active: true,
-      firstName: "wubshet",
-      lastName: "bezabih ",
-      date: "jan 5 2023",
-      accountId: 12,
-      role: "manaer ",
-      username: "natty@gmail.com",
-      fullName: "wubshet bezabih ",
-      password: "123",
-    },
-    {
-      active: true,
-      firstName: "seni",
-      lastName: "alemayehu ",
-      date: "jan 5 2023",
-      accountId: 12,
-      role: " coordinator",
-      username: "natty@gmail.com",
-      fullName: "seni alemayehu",
-      password: "123",
-    },
-    {
-      active: true,
-      firstName: "yabsira ",
-      lastName: "fekadu",
-      date: "jan 5 2023",
-      accountId: 12,
-      role: "casher",
-      username: "natty@gmail.com",
-      fullName: "yabsira fekadu",
-      password: "123",
-    },
-  ];
-  // const adminAccount = {
-  //   firstName: "admin ",
-  //   lastName: "user",
-  //   date: "jan 5 2023",
-  //   accountId: 12,
-  //   role: "system admin ",
-  //   username: "admin@gmail.com",
-  //   fullName: "admin user",
-  //   password: "123",
-  // };
-
+  const username = props.user.name;
   const [editing, setEditing] = useState(false);
 
   const [selectedIndex, setSelectedIndex] = useState();
 
-  const [userAccount, setUserAccount] = useState(users);
+  const [userAccount, setUserAccount] = useState([]);
   const [adminAccount, setAdminAccount] = useState();
   const [change, setChange] = useState(0);
 
@@ -690,6 +623,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        username={username}
         user="admin"
         onAccountList={onAccountList}
         OnCreateUser={OnCreateUser}

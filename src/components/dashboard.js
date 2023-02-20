@@ -215,7 +215,8 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            jalleta<span className="profile_role"> system {props.user}</span>{" "}
+            {props.username}
+            <span className="profile_role"> system {props.user}</span>{" "}
           </div>
           <button
             className={`btn_menu profile_btn ${

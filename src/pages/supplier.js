@@ -116,6 +116,7 @@ const formatDates = function (dateAccepted) {
   return dateDisplayed;
 };
 export default (props) => {
+  const username = props.username;
   let totalDrugs = 0,
     totalPendingOrders = 0,
     totolAccpetedOrders = 0,
@@ -904,6 +905,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        username={username}
         user="supplier"
         notificationNum={notificationNum}
         currentSlide={currentSlide}

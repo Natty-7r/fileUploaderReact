@@ -11,6 +11,7 @@ import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
 const baseUrl = "http://localhost:8080/coordinator";
 
 export default (props) => {
+  const username = props.username;
   let totalDrugs = 0,
     totalAvailbleDrugsInStore = 0,
     totalAvailbleDrugsInStock = 0,
@@ -861,6 +862,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
+        username={username}
         user="coordinator"
         notificationNum={notificationNum}
         currentSlide={currentSlide}
