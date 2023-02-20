@@ -39,6 +39,8 @@ export default () => {
           password,
         })
         .then((response) => {
+          const isAuth = response.data.auth;
+          const user = response.data.user;
           console.log(response.data);
         });
     }
