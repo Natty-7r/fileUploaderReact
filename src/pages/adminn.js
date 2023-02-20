@@ -443,8 +443,6 @@ export default (props) => {
       }
       if (currentSlide == "edit") account = userAccount[selectedIndex];
       if (currentSlide == "editAdmin") account = adminAccount;
-      console.log(account);
-      console.log(adminAccount);
       if (
         !(
           currentSlide == "add" ||

@@ -5,7 +5,10 @@ import { useState, useEffect } from "react";
 export default (props) => {
   const navigate = useNavigate();
   const logout = () => {
-    navigate("/admin");
+    localStorage.removeItem("sewiUser");
+    props.setAuth(false);
+    props.setUser({});
+    navigate("/");
   };
   return (
     <header className="header">

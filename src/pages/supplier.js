@@ -116,6 +116,8 @@ const formatDates = function (dateAccepted) {
   return dateDisplayed;
 };
 export default (props) => {
+  const username = props.username;
+
   let totalDrugs = 0,
     totalPendingOrders = 0,
     totolAccpetedOrders = 0,
@@ -319,9 +321,11 @@ export default (props) => {
       const commentInput = document.querySelector(".input-comment");
       const comment = commentInput.value;
       commentInput.value = "";
+      console.log(props.username);
       axios
         .post(`${baseUrl}/comment`, {
           message: comment,
+          username: username,
         })
         .then((response) => {
           console.log(response);
@@ -904,7 +908,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
-        username={props.username}
+        username={username}
         user="supplier"
         notificationNum={notificationNum}
         currentSlide={currentSlide}

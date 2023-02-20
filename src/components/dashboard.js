@@ -1,11 +1,8 @@
 import { user } from "../constants/images";
 
-import { AiOutlineUnorderedList } from "react-icons/fa";
-
 import "../styles/coordinatorStyles/dashboard.css";
 
 export default (props) => {
-  console.log(props);
   if (props.user == "coordinator")
     return (
       <div className="page_dashboard">

@@ -46,11 +46,11 @@
   margin: auto;
   text-align: center;
   font-size: 1.6rem;
-  visibility: hidden;
+  opacity: 0;
   color: orange;
 }
 .login_form_error-visible {
-  visibility: visible;
+  opacity: 1;
 }
 .login_form .input_container {
   position: relative;
@@ -136,7 +136,7 @@
   text-transform: capitalize;
 }
 .btn_login:hover {
-  transform: translateY(-0.1rem);
+  transform: translateY(-0.2rem);
 }
 .btn_login:active {
   transform: scale(0.95);

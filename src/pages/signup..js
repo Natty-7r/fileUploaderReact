@@ -40,16 +40,17 @@ export default (props) => {
           password,
         })
         .then((response) => {
-          const isAuth = response.data.auth;
+          const auth = response.data.auth;
           const user = response.data.user;
-          if (isAuth) {
+          if (auth) {
+            localStorage.setItem("sewiUser", JSON.stringify({ auth, user }));
             setError(false);
             props.setUser(user);
-            props.setAuth(isAuth);
+            props.setAuth(auth);
             console.log(user.username);
             navigate(`/${user.role}`);
           }
-          if (!isAuth) {
+          if (!auth) {
             setErrorMsg(response.data.message);
             setError(true);
           }
