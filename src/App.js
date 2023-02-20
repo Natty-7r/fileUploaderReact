@@ -21,6 +21,7 @@ import Login from "./pages/signup.";
 
 function App(props) {
   const [auth, setAuth] = useState(false);
+  const [user, setUser] = useState(undefined);
 
   return (
     <Router>
@@ -33,7 +34,6 @@ function App(props) {
         <Route
           exact
           path="/"
-          setPath={setPath}
           element={<Login />}
         />
         <Route

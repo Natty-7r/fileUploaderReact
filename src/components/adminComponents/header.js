@@ -19,11 +19,13 @@ export default (props) => {
         <h2 className="name">sewi drug store </h2>
       </div>
       <div className="header_right">
-        <button
-          className="btn btn_logout"
-          onClick={logout}>
-          logout
-        </button>
+        {props.auth ? (
+          <button
+            className="btn btn_logout"
+            onClick={logout}>
+            logout
+          </button>
+        ) : null}
       </div>
     </header>
   );
