@@ -18,13 +18,15 @@
     rgba(16, 4, 38, 0.938)
   ); */
   background: none;
-  width: 50%;
+  width: 40%;
   position: absolute;
   top: 12%;
   left: 50%;
   transform: translate(-50%);
   padding: 5% 5% 3% 5%;
   color: white;
+  border-radius: 0.4rem;
+  border: solid thin rgba(255, 166, 0, 0.119);
 }
 .login_form .form_header {
   font-size: 1.8rem;
