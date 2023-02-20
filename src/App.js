@@ -45,26 +45,22 @@ function App(props) {
         <Route
           exact
           path="/admin"
-          username={user.username}
-          element={<Adminn />}
+          element={<Adminn username={user.username} />}
         />
         <Route
           exact
           path="/manger"
-          username={user.username}
-          element={<Manager />}
+          element={<Manager username={user.username} />}
         />
         <Route
           exact
           path="/pharmacist"
-          username={user.username}
           element={<Pharmacist />}
         />
         <Route
           exact
           path="/coordinator"
-          username={user.username}
-          element={<Coordinator />}
+          element={<Coordinator username={user.username} />}
         />
       </Routes>
     </Router>

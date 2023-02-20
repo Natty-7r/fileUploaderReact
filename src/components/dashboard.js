@@ -5,6 +5,7 @@ import { AiOutlineUnorderedList } from "react-icons/fa";
 import "../styles/coordinatorStyles/dashboard.css";
 
 export default (props) => {
+  console.log(props, "ddd");
   if (props.user == "coordinator")
     return (
       <div className="page_dashboard">
@@ -16,7 +17,8 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            jalleta<span className="profile_role">{props.user}</span>{" "}
+            {user.username}
+            <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
         <div className="dashboard_menus">
@@ -95,7 +97,8 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            jalleta<span className="profile_role">{props.user}</span>{" "}
+            {user.username}
+            <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
         <div className="dashboard_menus">
@@ -159,7 +162,8 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            jalleta<span className="profile_role">{props.user}</span>{" "}
+            {user.username}
+            <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
         <div className="dashboard_menus">
@@ -257,7 +261,8 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            jalleta<span className="profile_role">{props.user}</span>{" "}
+            {user.username}
+            <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
         <div className="dashboard_menus">

@@ -97,7 +97,6 @@ const SellDrug = (props) => {
     );
 };
 export default (props) => {
-  const username = props.username;
   let totalDrugs = 0,
     totalAvailbleDrugs = 0,
     totalExpiredDrugs = 0,
