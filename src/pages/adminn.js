@@ -2,6 +2,7 @@ import "../styles/coordinatorStyles/supplier.css";
 import "../styles/coordinatorStyles/admin.css";
 import "../styles/coordinatorStyles/admin.css";
 import axios from "axios";
+import Select from "react-dropdown-select";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
@@ -17,7 +18,7 @@ export default (props) => {
       date: "jan 5 2023",
       accountId: 12,
       role: "phamacist ",
-      email: "natty@gmail.com",
+      username: "natty@gmail.com",
       fullName: "natty fekadu ",
       password: "123",
     },
@@ -28,7 +29,7 @@ export default (props) => {
       date: "jan 5 2023",
       accountId: 12,
       role: "phamacist ",
-      email: "natty@gmail.com",
+      username: "natty@gmail.com",
       fullName: "natty fekadu ",
       password: "123",
     },
@@ -39,7 +40,7 @@ export default (props) => {
       date: "jan 5 2023",
       accountId: 12,
       role: "manaer ",
-      email: "natty@gmail.com",
+      username: "natty@gmail.com",
       fullName: "wubshet bezabih ",
       password: "123",
     },
@@ -50,7 +51,7 @@ export default (props) => {
       date: "jan 5 2023",
       accountId: 12,
       role: " coordinator",
-      email: "natty@gmail.com",
+      username: "natty@gmail.com",
       fullName: "seni alemayehu",
       password: "123",
     },
@@ -61,38 +62,38 @@ export default (props) => {
       date: "jan 5 2023",
       accountId: 12,
       role: "casher",
-      email: "natty@gmail.com",
+      username: "natty@gmail.com",
       fullName: "yabsira fekadu",
       password: "123",
     },
   ];
-  const adminAccount = {
-    firstName: "admin ",
-    lastName: "user",
-    date: "jan 5 2023",
-    accountId: 12,
-    role: "system admin ",
-    email: "admin@gmail.com",
-    fullName: "admin user",
-    password: "123",
-  };
+  // const adminAccount = {
+  //   firstName: "admin ",
+  //   lastName: "user",
+  //   date: "jan 5 2023",
+  //   accountId: 12,
+  //   role: "system admin ",
+  //   username: "admin@gmail.com",
+  //   fullName: "admin user",
+  //   password: "123",
+  // };
 
   const [editing, setEditing] = useState(false);
 
   const [selectedIndex, setSelectedIndex] = useState();
 
   const [userAccount, setUserAccount] = useState(users);
+  const [adminAccount, setAdminAccount] = useState();
   const [change, setChange] = useState(0);
 
-  // ------------------------
   const [currentSlide, setCurrentSlide] = useState("list");
 
-  // useEffect(() => {
-  //   let drugsFetched = [];
-  //   axios.get(`${baseUrl}/index`).then((response) => {
-  //     console.log(response);
-  //   });
-  // }, []);
+  useEffect(() => {
+    axios.get(`${baseUrl}/index`).then((response) => {
+      setAdminAccount(response.data.accounts.adminAccount);
+      setUserAccount(response.data.accounts.userAcccounts);
+    });
+  }, []);
 
   const OnCreateUser = () => {
     setCurrentSlide("add");
@@ -110,20 +111,38 @@ export default (props) => {
     const [formErrorMsg, setFormErrorMsg] = useState("");
 
     const UserCard = (props) => {
+      console.log(props.index);
       const handleOnDetail = () => {
         setSelectedIndex(props.index);
         setCurrentSlide("detail");
       };
       const handleOnDelete = () => {
-        userAccount.splice(props.index, 1);
-        console.log(userAccount.length);
-        setUserAccount(userAccount);
-        setChange(change + 1);
+        const accountIdToDelete = userAccount[props.index].accountId;
+        axios
+          .delete(`${baseUrl}/account/${accountIdToDelete}`)
+          .then((response) => {
+            const status = response.data.status;
+            if (status == "success") {
+              userAccount.splice(props.index, 1);
+              setUserAccount(userAccount);
+              setChange(change + 1);
+            }
+          });
       };
       const handleOnSetState = () => {
         let active = userAccount[props.index].active;
-        userAccount[props.index].active = !active;
-        setEditing(editing + 1);
+        axios
+          .patch(`${baseUrl}/account`, {
+            accountId: userAccount[props.index].accountId,
+            active: !active,
+          })
+          .then((response) => {
+            const status = response.data.status;
+            if (status == "success") {
+              userAccount[props.index].active = !active;
+              setEditing(editing + 1);
+            }
+          });
       };
 
       return (
@@ -169,15 +188,33 @@ export default (props) => {
       let account = userAccount[selectedIndex];
 
       const handleOnDelete = () => {
-        userAccount.splice(selectedIndex, 1);
-        console.log(userAccount.length);
-        setUserAccount(userAccount);
-        setChange(change + 1);
-        setCurrentSlide("list");
+        const accountIdToDelete = userAccount[selectedIndex].accountId;
+        axios
+          .delete(`${baseUrl}/account/${accountIdToDelete}`)
+          .then((response) => {
+            const status = response.data.status;
+            if (status == "success") {
+              userAccount.splice(selectedIndex, 1);
+              setUserAccount(userAccount);
+              setChange(change + 1);
+              setCurrentSlide("list");
+            }
+          });
       };
       const handleOnSetState = () => {
-        account.active = !account.active;
-        setChange(change + 1);
+        let active = account.active;
+        axios
+          .patch(`${baseUrl}/account`, {
+            accountId: account.accountId,
+            active: !active,
+          })
+          .then((response) => {
+            const status = response.data.status;
+            if (status == "success") {
+              account.active = !account.active;
+              setChange(change + 1);
+            }
+          });
       };
       const handleOnCloseDetail = () => {
         setCurrentSlide("list");
@@ -186,14 +223,6 @@ export default (props) => {
         setCurrentSlide("edit");
       };
 
-      const [active, setActive] = useState(true);
-      const hadleClick = () => {
-        setActive(!active);
-        // props.account.active = !props.account.active;
-      };
-      const handleClose = () => {
-        props.handleDetailVisiblity(false, props.index, false, true);
-      };
       if (currentSlide != "detail") return null;
       return (
         <div className="account_detail ">
@@ -233,13 +262,13 @@ export default (props) => {
               <span className="value value-lname">{account.lastName} </span>
             </p>
 
-            <p className="detail email">
-              <span className="key key-email">email/phone no.</span>
-              <span className="value value-email">{account.email}</span>
+            <p className="detail username">
+              <span className="key key-username">username/</span>
+              <span className="value value-username">{account.username}</span>
             </p>
             <p className="detail role">
               <span className="key key-role">role</span>
-              <span className="value value-email">{account.role} </span>
+              <span className="value value-username">{account.role} </span>
             </p>
             <p className="detail date_assigned">
               <span className="key key-date">assigned date</span>
@@ -262,29 +291,27 @@ export default (props) => {
       );
     };
     const CreateUser = (props) => {
-      let timer;
       const handleOnCreateEditUser = () => {
         const fNameInput = document.querySelector(".input-fname");
         const lNameInput = document.querySelector(".input-lname");
-        const emailInput = document.querySelector(".input-email");
+        const usernameInput = document.querySelector(".input-username");
         const roleInput = document.querySelector(".input-role");
         const passwordInput = document.querySelector(".input-password");
         const cPasswordInput = document.querySelector(".input-c_password");
 
         const fName = fNameInput.value;
         const lName = lNameInput.value;
-        const email = emailInput.value;
+        const username = usernameInput.value;
         const role = roleInput.value;
         const password = passwordInput.value;
         const cPassword = cPasswordInput.value;
-
         {
           //validation
 
           if (
             fName == "" ||
             lName == "" ||
-            email == "" ||
+            username == "" ||
             role == "" ||
             password == "" ||
             cPassword == ""
@@ -294,7 +321,7 @@ export default (props) => {
             setFormError(true);
             timer = setTimeout((e) => {
               setFormError(false);
-            }, 2000);
+            }, 5000);
             return;
           }
 
@@ -304,49 +331,164 @@ export default (props) => {
             setFormError(true);
             timer = setTimeout((e) => {
               setFormError(false);
-            }, 2000);
+            }, 5000);
             return;
           }
         }
+        {
+          if (currentSlide == "add") {
+            const userCreated = {
+              active: true,
+              firstName: fName,
+              lastName: lName,
+              date: new Date(),
+              accountId: 45,
+              role: role,
+              username: username,
+              fullName: `${fName} ${lName}`,
+              password: password,
+            };
 
-        if (currentSlide == "add") {
-          const userCreated = {
-            active: true,
-            firstName: fName,
-            lastName: lName,
-            date: "jan 5 2023",
-            accountId: 45,
-            role: role,
-            email: email,
-            fullName: `${fName} {lName}`,
-            password: password,
-          };
-          userAccount.push(userCreated);
-          setUserAccount(userAccount);
-          setChange(change + 1);
-          setCurrentSlide("list");
-        }
-        if (currentSlide == "edit") {
-          account.firstName = fName;
-          account.lastName = lName;
-          account.role = role;
-          account.email = email;
-          account.password = password;
-          account.fullName = `${fName} {lName}`;
-          setChange(change + 1);
-          setCurrentSlide("list");
-        }
-        if (currentSlide == "editAdmin") {
-          adminAccount.firstName = fName;
-          adminAccount.lastName = lName;
-          adminAccount.role = role;
-          adminAccount.email = email;
-          adminAccount.password = password;
-          adminAccount.fullName = `${fName} {lName}`;
-          setChange(change + 1);
-          setCurrentSlide("list");
+            axios
+              .post(`${baseUrl}/account`, {
+                account: userCreated,
+              })
+              .then((response) => {
+                const status = response.data.status;
+                if (status == "fail") {
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                    fNameInput.value = fName;
+                    lNameInput.value = lName;
+                    roleInput.value = role;
+                    usernameInput.value = username;
+                    passwordInput.value = password;
+                    cPasswordInput.value = cPassword;
+                  }, 5000);
+                  fNameInput.value = fName;
+                  lNameInput.value = lName;
+                  roleInput.value = role;
+                  usernameInput.value = username;
+                  passwordInput.value = password;
+                  cPasswordInput.value = cPassword;
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                  }, 5000);
+                  return;
+                }
+                if (status == "success") {
+                  userAccount.push(response.data.userAcccount);
+                  setUserAccount(userAccount);
+                  setChange(change + 1);
+                  setCurrentSlide("list");
+                }
+              });
+          }
+          if (currentSlide == "edit") {
+            const accountToEdit = Object.assign({}, account);
+            accountToEdit.firstName = fName;
+            accountToEdit.lastName = lName;
+            accountToEdit.role = role;
+            accountToEdit.username = username;
+            accountToEdit.password = password;
+            accountToEdit.fullName = `${fName} ${lName}`;
+            axios
+              .put(`${baseUrl}/account`, {
+                ...accountToEdit,
+              })
+              .then((response) => {
+                const status = response.data.status;
+                if (status == "fail") {
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                    fNameInput.value = fName;
+                    lNameInput.value = lName;
+                    roleInput.value = role;
+                    usernameInput.value = username;
+                    passwordInput.value = password;
+                    cPasswordInput.value = cPassword;
+                  }, 5000);
+                  fNameInput.value = fName;
+                  lNameInput.value = lName;
+                  roleInput.value = role;
+                  usernameInput.value = username;
+                  passwordInput.value = password;
+                  cPasswordInput.value = cPassword;
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                  }, 5000);
+                  return;
+                }
+                if (status == "success") {
+                  userAccount[selectedIndex] = accountToEdit;
+                  setChange(change + 1);
+                  setCurrentSlide("list");
+                }
+              });
+          }
+          if (currentSlide == "editAdmin") {
+            const accountToEdit = Object.assign({}, adminAccount);
+            accountToEdit.firstName = fName;
+            accountToEdit.lastName = lName;
+            accountToEdit.role = role;
+            accountToEdit.username = username;
+            accountToEdit.password = password;
+            accountToEdit.fullName = `${fName} ${lName}`;
+            axios
+              .put(`${baseUrl}/account`, {
+                ...accountToEdit,
+              })
+              .then((response) => {
+                const status = response.data.status;
+                if (status == "fail") {
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                    fNameInput.value = fName;
+                    lNameInput.value = lName;
+                    roleInput.value = role;
+                    usernameInput.value = username;
+                    passwordInput.value = password;
+                    cPasswordInput.value = cPassword;
+                  }, 5000);
+                  fNameInput.value = fName;
+                  lNameInput.value = lName;
+                  roleInput.value = role;
+                  usernameInput.value = username;
+                  passwordInput.value = password;
+                  cPasswordInput.value = cPassword;
+                  setFormErrorMsg(response.data.message);
+                  clearTimeout(timer);
+                  setFormError(true);
+                  timer = setTimeout((e) => {
+                    setFormError(false);
+                  }, 5000);
+                  return;
+                }
+                if (status == "success") {
+                  setAdminAccount(accountToEdit);
+                  setChange(change + 1);
+                  setCurrentSlide("list");
+                }
+              });
+          }
         }
       };
+
       const handleOnCloseForm = () => {
         if (currentSlide == "add") setCurrentSlide("list");
         if (currentSlide == "editAdmin") setCurrentSlide("list");
@@ -362,7 +504,7 @@ export default (props) => {
           date: "",
           accountId: 12,
           role: "",
-          email: "",
+          username: "",
           fullName: "",
           password: "",
         };
@@ -439,29 +581,29 @@ export default (props) => {
               <div class="inputContainer inputContainer-account">
                 <input
                   type="text"
-                  class="input input-email "
+                  class="input input-username "
                   placeholder="a"
-                  defaultValue={account.email}
+                  defaultValue={account.username}
                 />
                 <label
                   htmlFor=""
                   class="label">
-                  email
+                  username
                 </label>
               </div>
 
               <div class="inputContainer inputContainer-account">
-                <input
-                  type="text"
-                  class="input input-role"
-                  placeholder="a"
-                  defaultValue={account.role}
-                />
-                <label
-                  htmlFor=""
-                  class="label">
-                  user role
-                </label>
+                <select className="input input-role">
+                  <option
+                    value="phamacist"
+                    selected>
+                    phamacist
+                  </option>
+                  <option value="coordinator">coordinator</option>
+                  <option value="cashier">cashier</option>
+                  <option value="manager">manager</option>
+                  <option value="supplier">supplier</option>
+                </select>
               </div>
             </div>
             <div className="form_row form_row-account">
@@ -493,6 +635,7 @@ export default (props) => {
                 </label>
               </div>
             </div>
+
             <button
               className="btn btn_create"
               onClick={handleOnCreateEditUser}>
@@ -508,26 +651,27 @@ export default (props) => {
         <h1 className="slide_header">
           {currentSlide != "list" ? "" : "user accounts"}
         </h1>
-        {userAccount.length == 0 ? (
-          <h1 className="no_data_header">no user account is added yet </h1>
-        ) : (
-          <div className="users_main">
-            <AccountDetail />
-            <CreateUser />
-            <div
-              className={`users_list ${
-                currentSlide != "list" ? "user_list-blurred" : ""
-              }`}>
-              {userAccount.map((account, index) => (
+
+        <div className="users_main">
+          <AccountDetail />
+          <CreateUser />
+          <div
+            className={`users_list ${
+              currentSlide != "list" ? "user_list-blurred" : ""
+            }`}>
+            {userAccount.length == 0 ? (
+              <h1 className="no_data_header">no user account is added yet </h1>
+            ) : (
+              userAccount.map((account, index) => (
                 <UserCard
                   index={index}
                   key={index}
                   account={account}
                 />
-              ))}
-            </div>
+              ))
+            )}
           </div>
-        )}
+        </div>
       </div>
     );
   };

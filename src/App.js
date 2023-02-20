@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Route,
   BrowserRouter as Router,
@@ -12,29 +12,46 @@ import {
 import Header from "./components/adminComponents/header";
 
 import Signup from "./pages/signup.";
-import Login from "./pages/login.js";
 import Coordinator from "./pages/coordinator";
 import Pharmacist from "./pages/pharmacist";
 import Manager from "./pages/manager";
 import Supplier from "./pages//supplier";
 import Adminn from "./pages/adminn";
+import Login from "./pages/signup.";
 
 function App(props) {
-  const loginHandler = () => {
-    console.log("login clicked");
-  };
+  const [path, setPath] = useState("/");
+
   return (
     <Router>
-      <Header />
+      <Header setPath={setPath} />
       <Routes>
         {" "}
         <Route
+          exact
           path="/"
-          element={<Adminn loginHandler={loginHandler} />}
+          setPath={setPath}
+          element={<Login />}
         />
         <Route
-          path="/"
+          exact
+          path="/admin"
           element={<Adminn />}
+        />
+        <Route
+          exact
+          path="/manger"
+          element={<Manager />}
+        />
+        <Route
+          exact
+          path="/pharmacist"
+          element={<Pharmacist />}
+        />
+        <Route
+          exact
+          path="/coordinator"
+          element={<Coordinator />}
         />
       </Routes>
     </Router>

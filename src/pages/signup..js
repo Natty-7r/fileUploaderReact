@@ -1,69 +1,90 @@
+import React, { useEffect, useState } from "react";
+
+import { AiFillEye } from "react-icons/ai";
+import { FaUserAlt, FaLock } from "react-icons/fa";
+import { AiFillEyeInvisible } from "react-icons/ai";
+import { logo } from "../constants/images";
 import "../styles/auth/signup.css";
+import axios from "axios";
 export default () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [passcodeVisible, setPasscodeVisibility] = useState(false);
+  const [visibilityIcon, setVisibilityIcon] = useState(<AiFillEyeInvisible />);
+
+  const handleOnChangeVisibility = (e) => {
+    setPasscodeVisibility(!passcodeVisible);
+    if (passcodeVisible) setVisibilityIcon(<AiFillEye />);
+    if (!passcodeVisible) setVisibilityIcon(<AiFillEyeInvisible />);
+  };
+  const handleOnLogin = () => {
+    if (username == "") {
+      setErrorMsg("Username filed empty !");
+      setError(true);
+      return;
+    } else if (password == "") {
+      setErrorMsg("Password filed empty !");
+      setError(true);
+      return;
+    } else {
+      axios
+        .post("http://localhost:8080/auth/login", {
+          username,
+          password,
+        })
+        .then((response) => {
+          console.log(response.data);
+        });
+    }
+  };
   return (
-    <div
-      action=""
-      className="form signupForm">
-      <div className="formContainer">
-        <div className="inputContainer">
+    <div className="login_form">
+      <div className="form_header">
+        <div className="form_header_image">
+          <img src={logo} />
+        </div>
+        <h1 className="form_header_title">login here </h1>
+      </div>
+      <p
+        className={`login_form_error ${
+          error ? "login_form_error-visible" : ""
+        }`}>
+        {errorMsg}
+      </p>
+      <div className="form_content">
+        <div className="input_container">
           <input
             type="text"
-            className="input"
-            placeholder="a"
+            placeholder={""}
+            className="input input-username"
+            onChange={(e) => setUsername(e.target.value)}
           />
-          <label
-            for=""
-            className="label">
-            Email
-          </label>
+          <FaUserAlt className="input_icon" />
         </div>
-
-        <div className="inputContainer">
+        <div className="input_container input_container-passcode">
           <input
-            type="text"
-            className="input"
-            placeholder="a"
+            placeholder="Username "
+            type={passcodeVisible ? "text" : "password"}
+            className="input input-username"
+            onChange={(e) => setPassword(e.target.value)}
           />
-          <label
-            for=""
-            className="label">
-            Username
-          </label>
-        </div>
-
-        <div className="inputContainer">
-          <input
-            type="password"
-            className="input"
-            placeholder="a"
-          />
-          <label
-            for=""
-            className="label">
-            Password
-          </label>
-        </div>
-
-        <div className="inputContainer">
-          <input
-            type="password"
-            className="input"
-            placeholder="a"
-          />
-          <label
-            for=""
-            className="label">
-            Confirm password
-          </label>
-        </div>
-        <div className="inputContanier buttonContainer">
+          <FaLock className="input_icon" />
           <button
-            className="btn btn_submit"
-            value="login ">
-            login{" "}
+            className="password_visbility"
+            onClick={handleOnChangeVisibility}>
+            {" "}
+            {visibilityIcon}{" "}
           </button>
-          <button className="link link_forgot">forgot password?</button>
         </div>
+        <button
+          className=" btn_login"
+          onClick={handleOnLogin}>
+          login{" "}
+        </button>
       </div>
     </div>
   );

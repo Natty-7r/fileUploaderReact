@@ -1,0 +1,139 @@
+.login_form {
+  background-color: white;
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.066);
+  transition: all 0.3s;
+  background-image: linear-gradient(
+    to right bottom,
+    rgba(77, 29, 149, 0.939),
+    rgba(16, 4, 38, 0.938)
+  ) !important;
+  width: 40%;
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  transform: translate(-50%);
+  padding: 5% 5% 3% 5%;
+  color: white;
+}
+.login_form .form_header {
+  font-size: 1.8rem;
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 2rem;
+}
+.form_header_title {
+  text-transform: capitalize;
+}
+.form_header_image {
+  aspect-ratio: 1/1;
+  height: 6rem;
+  position: relative;
+}
+.form_header_image img {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.login_form_error {
+  background-color: transparent;
+  text-transform: capitalize;
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  font-size: 1.6rem;
+  visibility: hidden;
+  color: orange;
+}
+.login_form_error-visible {
+  visibility: visible;
+}
+.login_form .input_container {
+  position: relative;
+  width: 80%;
+  margin: auto;
+  margin-bottom: 2rem;
+  height: 6rem;
+  z-index: 1;
+}
+.input_container .input_icon {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0%;
+  width: 10%;
+  font-size: 1.6rem;
+  transition: all.3s;
+}
+.lable {
+  position: absolute;
+  bottom: 0rem;
+  left: 12%;
+  font-size: 1.6rem;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.input_container .input {
+  color: white;
+  position: absolute;
+  padding: 0rem 0rem 0rem 10%;
+  outline: none;
+  height: 50%;
+  bottom: 0;
+  left: 2%;
+  top: 50%;
+  border: none;
+  border-radius: 0%;
+  border-bottom: solid thin white;
+  z-index: 1;
+}
+.input ::placeholder {
+  background-color: red;
+}
+.input_container .password_visbility {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 1%;
+  width: 10%;
+  font-size: 1.6rem;
+  color: white;
+  z-index: 3;
+}
+.input_container .input:focus {
+  outline: none;
+  border: none;
+  border-radius: 0%;
+  border-bottom: solid white;
+}
+.input_container .input:focus + .input_icon {
+  bottom: 70%;
+  left: 0%;
+}
+.input_container .input:focus + .lable {
+  font-size: 2rem;
+  display: none;
+}
+.btn_login {
+  background-color: white;
+  border-radius: 5rem;
+  padding: 1.2rem 3.6rem;
+  display: block;
+  font-size: 1.8rem;
+  padding: 1.2rem 3.2rem;
+  margin: auto;
+  margin-top: 5rem;
+  transition: all 0.3s;
+  letter-spacing: 0.06rem;
+  text-transform: capitalize;
+}
+.btn_login:hover {
+  transform: translateY(-0.1rem);
+}
+.btn_login:active {
+  transform: scale(0.95);
+}
