@@ -5,7 +5,7 @@ import { AiOutlineUnorderedList } from "react-icons/fa";
 import "../styles/coordinatorStyles/dashboard.css";
 
 export default (props) => {
-  console.log(props, "ddd");
+  console.log(props);
   if (props.user == "coordinator")
     return (
       <div className="page_dashboard">
@@ -17,7 +17,7 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            {user.username}
+            {props.username}
             <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
@@ -97,7 +97,7 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            {user.username}
+            {props.username}
             <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
@@ -162,7 +162,7 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            {user.username}
+            {props.username}
             <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>
@@ -261,7 +261,7 @@ export default (props) => {
             />
           </div>
           <div className="profile_name">
-            {user.username}
+            {props.username}
             <span className="profile_role">{props.user}</span>{" "}
           </div>
         </div>

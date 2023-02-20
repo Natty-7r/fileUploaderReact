@@ -22,6 +22,7 @@ import Login from "./pages/signup.";
 function App(props) {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState({});
+  console.log(user);
 
   return (
     <Router>
@@ -55,7 +56,7 @@ function App(props) {
         <Route
           exact
           path="/pharmacist"
-          element={<Pharmacist />}
+          element={<Pharmacist username={user.username} />}
         />
         <Route
           exact
