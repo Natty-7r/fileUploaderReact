@@ -10,7 +10,6 @@ import Dashboard from "../components/dashboard";
 const baseUrl = "http://localhost:8080/admin";
 
 export default (props) => {
-  const username = props.user.name;
   const [editing, setEditing] = useState(false);
 
   const [selectedIndex, setSelectedIndex] = useState();

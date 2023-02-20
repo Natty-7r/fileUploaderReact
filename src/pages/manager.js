@@ -12,7 +12,6 @@ import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
 const baseUrl = "http://localhost:8080/manager";
 
 export default (props) => {
-  const username = props.username;
   let totalDrugs = 0,
     totalAvailbleDrugsInStore = 0,
     totalAvailbleDrugsInStock = 0,

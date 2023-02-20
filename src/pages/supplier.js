@@ -116,7 +116,6 @@ const formatDates = function (dateAccepted) {
   return dateDisplayed;
 };
 export default (props) => {
-  const username = props.username;
   let totalDrugs = 0,
     totalPendingOrders = 0,
     totolAccpetedOrders = 0,
