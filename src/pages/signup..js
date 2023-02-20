@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { AiFillEye } from "react-icons/ai";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { logo } from "../constants/images";
 import "../styles/auth/signup.css";
 import axios from "axios";
-export default () => {
+export default (props) => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [nameLable, setNameLable] = useState(true);
@@ -41,11 +42,17 @@ export default () => {
         .then((response) => {
           const isAuth = response.data.auth;
           const user = response.data.user;
+          if (isAuth) {
+            setError(false);
+            props.setUser(user);
+            props.setAuth(isAuth);
+            console.log(user.role);
+            navigate(`/${user.role}`);
+          }
           if (!isAuth) {
             setErrorMsg(response.data.message);
             setError(true);
           }
-          console.log(response.data);
         });
     }
   };

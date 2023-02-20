@@ -28,13 +28,19 @@ function App(props) {
       <Header
         auth={auth}
         setAuth={setAuth}
+        setUser={setUser}
       />
       <Routes>
         {" "}
         <Route
           exact
           path="/"
-          element={<Login />}
+          element={
+            <Login
+              setAuth={setAuth}
+              setUser={setUser}
+            />
+          }
         />
         <Route
           exact
