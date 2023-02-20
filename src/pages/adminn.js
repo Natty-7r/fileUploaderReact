@@ -623,7 +623,7 @@ export default (props) => {
   return (
     <div className="whole_page coordinator_page">
       <Dashboard
-        username={username}
+        username={props.username}
         user="admin"
         onAccountList={onAccountList}
         OnCreateUser={OnCreateUser}
