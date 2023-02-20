@@ -605,7 +605,7 @@ export default (props) => {
                   <select className="input input-role">
                     <option
                       disabled
-                      value="phamacist"
+                      value="pharmacist"
                       selected>
                       phamacist
                     </option>
