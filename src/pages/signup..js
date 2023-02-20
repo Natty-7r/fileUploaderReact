@@ -58,61 +58,63 @@ export default (props) => {
     }
   };
   return (
-    <div className="login_form">
-      <div className="form_header">
-        <div className="form_header_image">
-          <img src={logo} />
+    <div className="login_form_container">
+      <div className="login_form">
+        <div className="form_header">
+          <div className="form_header_image">
+            <img src={logo} />
+          </div>
+          <h1 className="form_header_title">login here </h1>
         </div>
-        <h1 className="form_header_title">login here </h1>
-      </div>
-      <p
-        className={`login_form_error ${
-          error ? "login_form_error-visible" : ""
-        }`}>
-        {errorMsg}
-      </p>
-      <div className="form_content">
-        <div className="input_container">
-          {nameLable ? (
-            <label className="lable name_label">username </label>
-          ) : null}
-          <input
-            type="text"
-            className="input input-username"
-            onChange={(e) => setUsername(e.target.value)}
-            onFocus={(e) => setNameLable(false)}
-            onBlur={(e) => {
-              if (e.target.value == "") setNameLable(true);
-            }}
-          />
-          <FaUserAlt className="input_icon" />
-        </div>
-        <div className="input_container input_container-passcode">
-          {codeLabel ? (
-            <label className="lable code_label">password </label>
-          ) : null}
-          <input
-            type={passcodeVisible ? "text" : "password"}
-            className="input input-username"
-            onChange={(e) => setPassword(e.target.value)}
-            onFocus={(e) => setCodeLabel(false)}
-            onBlur={(e) => {
-              if (e.target.value == "") setCodeLabel(true);
-            }}
-          />
-          <FaLock className="input_icon" />
+        <p
+          className={`login_form_error ${
+            error ? "login_form_error-visible" : ""
+          }`}>
+          {errorMsg}
+        </p>
+        <div className="form_content">
+          <div className="input_container">
+            {nameLable ? (
+              <label className="lable name_label">username </label>
+            ) : null}
+            <input
+              type="text"
+              className="input input-username"
+              onChange={(e) => setUsername(e.target.value)}
+              onFocus={(e) => setNameLable(false)}
+              onBlur={(e) => {
+                if (e.target.value == "") setNameLable(true);
+              }}
+            />
+            <FaUserAlt className="input_icon" />
+          </div>
+          <div className="input_container input_container-passcode">
+            {codeLabel ? (
+              <label className="lable code_label">password </label>
+            ) : null}
+            <input
+              type={passcodeVisible ? "text" : "password"}
+              className="input input-username"
+              onChange={(e) => setPassword(e.target.value)}
+              onFocus={(e) => setCodeLabel(false)}
+              onBlur={(e) => {
+                if (e.target.value == "") setCodeLabel(true);
+              }}
+            />
+            <FaLock className="input_icon" />
+            <button
+              className="password_visbility"
+              onClick={handleOnChangeVisibility}>
+              {" "}
+              {visibilityIcon}{" "}
+            </button>
+          </div>
           <button
-            className="password_visbility"
-            onClick={handleOnChangeVisibility}>
-            {" "}
-            {visibilityIcon}{" "}
+            className=" btn_login"
+            onClick={handleOnLogin}>
+            login{" "}
           </button>
         </div>
-        <button
-          className=" btn_login"
-          onClick={handleOnLogin}>
-          login{" "}
-        </button>
       </div>
     </div>
   );
