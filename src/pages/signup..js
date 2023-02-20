@@ -41,6 +41,10 @@ export default () => {
         .then((response) => {
           const isAuth = response.data.auth;
           const user = response.data.user;
+          if (!isAuth) {
+            setErrorMsg(response.data.message);
+            setError(true);
+          }
           console.log(response.data);
         });
     }
