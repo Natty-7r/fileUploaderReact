@@ -595,18 +595,26 @@ export default (props) => {
               </div>
 
               <div class="inputContainer inputContainer-account">
-                <select className="input input-role">
-                  <option
+                {currentSlide == "editAdmin" ? (
+                  <input
+                    className="input"
+                    value="admin"
                     disabled
-                    value="phamacist"
-                    selected>
-                    phamacist
-                  </option>
-                  <option value="coordinator">coordinator</option>
-                  <option value="cashier">cashier</option>
-                  <option value="manager">manager</option>
-                  <option value="supplier">supplier</option>
-                </select>
+                  />
+                ) : (
+                  <select className="input input-role">
+                    <option
+                      disabled
+                      value="phamacist"
+                      selected>
+                      phamacist
+                    </option>
+                    <option value="coordinator">coordinator</option>
+                    <option value="cashier">cashier</option>
+                    <option value="manager">manager</option>
+                    <option value="supplier">supplier</option>
+                  </select>
+                )}
               </div>
             </div>
             <div className="form_row form_row-account">

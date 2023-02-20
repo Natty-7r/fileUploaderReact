@@ -9,6 +9,8 @@ import axios from "axios";
 export default () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [nameLable, setNameLable] = useState(true);
+  const [codeLabel, setCodeLabel] = useState(true);
 
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -57,20 +59,32 @@ export default () => {
       </p>
       <div className="form_content">
         <div className="input_container">
+          {nameLable ? (
+            <label className="lable name_label">username </label>
+          ) : null}
           <input
             type="text"
-            placeholder={""}
             className="input input-username"
             onChange={(e) => setUsername(e.target.value)}
+            onFocus={(e) => setNameLable(false)}
+            onBlur={(e) => {
+              if (e.target.value == "") setNameLable(true);
+            }}
           />
           <FaUserAlt className="input_icon" />
         </div>
         <div className="input_container input_container-passcode">
+          {codeLabel ? (
+            <label className="lable code_label">password </label>
+          ) : null}
           <input
-            placeholder="Username "
             type={passcodeVisible ? "text" : "password"}
             className="input input-username"
             onChange={(e) => setPassword(e.target.value)}
+            onFocus={(e) => setCodeLabel(false)}
+            onBlur={(e) => {
+              if (e.target.value == "") setCodeLabel(true);
+            }}
           />
           <FaLock className="input_icon" />
           <button

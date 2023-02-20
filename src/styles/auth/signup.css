@@ -78,6 +78,10 @@
   display: block;
   margin-bottom: 0.4rem;
 }
+.lable {
+  letter-spacing: 0.06rem;
+  text-transform: capitalize;
+}
 .input_container .input {
   color: white;
   position: absolute;
