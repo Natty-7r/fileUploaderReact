@@ -20,11 +20,14 @@ import Adminn from "./pages/adminn";
 import Login from "./pages/signup.";
 
 function App(props) {
-  const [path, setPath] = useState("/");
+  const [auth, setAuth] = useState(false);
 
   return (
     <Router>
-      <Header setPath={setPath} />
+      <Header
+        auth={auth}
+        setAuth={setAuth}
+      />
       <Routes>
         {" "}
         <Route
