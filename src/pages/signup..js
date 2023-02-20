@@ -46,7 +46,7 @@ export default (props) => {
             setError(false);
             props.setUser(user);
             props.setAuth(isAuth);
-            console.log(user.role);
+            console.log(user.username);
             navigate(`/${user.role}`);
           }
           if (!isAuth) {
