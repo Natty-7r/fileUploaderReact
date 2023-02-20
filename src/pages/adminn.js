@@ -90,6 +90,7 @@ export default (props) => {
 
   useEffect(() => {
     axios.get(`${baseUrl}/index`).then((response) => {
+      console.log(response);
       setAdminAccount(response.data.accounts.adminAccount);
       setUserAccount(response.data.accounts.userAcccounts);
     });
@@ -111,7 +112,6 @@ export default (props) => {
     const [formErrorMsg, setFormErrorMsg] = useState("");
 
     const UserCard = (props) => {
-      console.log(props.index);
       const handleOnDetail = () => {
         setSelectedIndex(props.index);
         setCurrentSlide("detail");
@@ -442,7 +442,6 @@ export default (props) => {
             const accountToEdit = Object.assign({}, adminAccount);
             accountToEdit.firstName = fName;
             accountToEdit.lastName = lName;
-            accountToEdit.role = role;
             accountToEdit.username = username;
             accountToEdit.password = password;
             accountToEdit.fullName = `${fName} ${lName}`;
@@ -496,6 +495,7 @@ export default (props) => {
       };
 
       let account;
+
       if (currentSlide == "add") {
         account = {
           active: true,
@@ -511,6 +511,8 @@ export default (props) => {
       }
       if (currentSlide == "edit") account = userAccount[selectedIndex];
       if (currentSlide == "editAdmin") account = adminAccount;
+      console.log(account);
+      console.log(adminAccount);
       if (
         !(
           currentSlide == "add" ||
@@ -595,6 +597,7 @@ export default (props) => {
               <div class="inputContainer inputContainer-account">
                 <select className="input input-role">
                   <option
+                    disabled
                     value="phamacist"
                     selected>
                     phamacist
