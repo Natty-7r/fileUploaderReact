@@ -40,11 +40,13 @@ function App(props) {
   return (
     <div>
       {" "}
-      <Header
-        auth={auth}
-        setAuth={setAuth}
-        setUser={setUser}
-      />
+      {auth ? (
+        <Header
+          auth={auth}
+          setAuth={setAuth}
+          setUser={setUser}
+        />
+      ) : null}
       <div>
         <Routes>
           {" "}
