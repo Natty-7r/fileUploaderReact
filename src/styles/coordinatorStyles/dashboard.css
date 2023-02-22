@@ -25,7 +25,7 @@
 }
 
 .dashboard_profile .profile_image {
-  width: 5.5rem;
+  width: 6rem;
   aspect-ratio: 1/1;
   border-radius: 50%;
   position: relative;
@@ -48,14 +48,14 @@
   letter-spacing: 0.1erm;
   font-size: 1.8rem;
   font-weight: 600;
-  margin-top: 0.3rem;
+  margin-top: 0.4rem;
   color: var(--grayColor);
   color: white;
-  padding-left: 12%;
+  padding-left: 25%;
 }
 .dashboard_profile-admin .profile_name {
   margin-top: 1rem;
-  padding-left: 0%;
+  padding-left: 15%;
 }
 .profile_role {
   display: block;
