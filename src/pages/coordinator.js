@@ -196,9 +196,10 @@ export default (props) => {
     availbleDrugs.forEach((availbleDrug) => {
       storeOrders.forEach((pendingDrug, pendingIndex) => {
         // updai=ting existing ones
-        if (availbleDrug.name.trim() == pendingDrug.name.trim()) {
+        if (availbleDrug.drugCode.trim() == pendingDrug.drugCode.trim()) {
           availbleDrug.amount += pendingDrug.amount;
           availbleDrug.price = pendingDrug.price;
+          availbleDrug.name = pendingDrug.name;
           storeOrders.splice(pendingIndex, 1);
         }
       });
