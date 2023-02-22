@@ -505,6 +505,7 @@ export default (props) => {
             supplier: inputSupplier,
             expireDate: inputDate,
             suppliedDate: new Date(),
+            status: "unbilled",
           };
           orderResult.push(order);
           setOrderResult(orderResult);

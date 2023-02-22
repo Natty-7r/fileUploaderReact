@@ -10,13 +10,7 @@
 }
 .login_form {
   background-color: white;
-  /* box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.066); */
   transition: all 0.3s;
-  /* background-image: linear-gradient(
-    to right bottom,
-    rgba(77, 29, 149, 0.939),
-    rgba(16, 4, 38, 0.938)
-  ); */
   background: none;
   width: 40%;
   position: absolute;
@@ -73,6 +67,8 @@
   height: 6rem;
   z-index: 1;
 }
+.input_container-passcode {
+}
 .input_container .input_icon {
   position: absolute;
   bottom: 0.6rem;
@@ -120,6 +116,7 @@
   font-size: 1.6rem;
   color: white;
   z-index: 3;
+  background-color: red;
 }
 .input_container .input:focus {
   outline: none;

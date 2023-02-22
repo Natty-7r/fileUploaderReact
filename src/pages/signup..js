@@ -24,7 +24,8 @@ export default (props) => {
     if (passcodeVisible) setVisibilityIcon(<AiFillEye />);
     if (!passcodeVisible) setVisibilityIcon(<AiFillEyeInvisible />);
   };
-  const handleOnLogin = () => {
+  const handleOnLogin = (e) => {
+    e.preventDefault();
     if (username == "") {
       setErrorMsg("Username filed empty !");
       setError(true);
@@ -59,7 +60,9 @@ export default (props) => {
   };
   return (
     <div className="login_form_container">
-      <div className="login_form">
+      <form
+        className="login_form"
+        onSubmit={handleOnLogin}>
         <div className="form_header">
           <div className="form_header_image">
             <img src={logo} />
@@ -104,7 +107,7 @@ export default (props) => {
             <FaLock className="input_icon" />
             <button
               className="password_visbility"
-              onClick={handleOnChangeVisibility}>
+              onMouseDown={handleOnChangeVisibility}>
               {" "}
               {visibilityIcon}{" "}
             </button>
@@ -115,7 +118,7 @@ export default (props) => {
             login{" "}
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

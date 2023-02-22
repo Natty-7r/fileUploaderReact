@@ -122,9 +122,9 @@
 }
 .notification_number {
   position: absolute;
-  top: 5%;
+  top: 4%;
   right: 5%;
-  padding: 5%;
+  padding: 4%;
   aspect-ratio: 1/1;
   display: flex;
   justify-content: center;
@@ -132,7 +132,6 @@
   border-radius: 50%;
   border: solid orange;
   z-index: 3;
-  /* background-color: white; */
   z-index: 3;
 }
 .notification_blink {

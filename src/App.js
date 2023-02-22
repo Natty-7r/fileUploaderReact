@@ -18,6 +18,7 @@ import Manager from "./pages/manager";
 import Supplier from "./pages//supplier";
 import Adminn from "./pages/adminn";
 import Login from "./pages/signup.";
+import Cashier from "./pages/casher";
 import Protected from "./RoutProtector";
 
 function App(props) {
@@ -47,6 +48,11 @@ function App(props) {
       <div>
         <Routes>
           {" "}
+          <Route
+            exact
+            path="/ll"
+            element={<Cashier username="naty c" />}
+          />
           <Route
             exact
             path="/"

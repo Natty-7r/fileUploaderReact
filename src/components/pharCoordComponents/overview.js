@@ -26,6 +26,19 @@ export default (props) => {
         ) : null}
       </div>
     );
+  if (props.user == "casher")
+    return (
+      <div className="overview">
+        <div className="summary">
+          <p className="summary_name">unbilled drugs </p>
+          <p className="summary_value">{props.summary[0]}</p>
+        </div>
+        <div className="summary">
+          <p className="summary_name"> drugs sold today </p>
+          <p className="summary_value">{props.summary[1]}</p>
+        </div>
+      </div>
+    );
   if (props.user == "coordinator")
     return (
       <div className="overview">

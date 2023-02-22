@@ -117,6 +117,12 @@ export default (props) => {
   const [stockOrders, setStockOrders] = useState([]);
   const [expiredDrugs, setExpiredDrugs] = useState([]);
 
+  const [searchKey, setSearchKey] = useState("");
+  const [searchView, setSearchView] = useState(""); //  determine where the search was made on stock or store , with value fo store or stock
+  const [searchError, setSearchError] = useState(false);
+  const [searchErrorMsg, setSearchErrorMsg] = useState("");
+  const [replacedDrugs, setReplacedDrugs] = useState([]); // determine where the stock or store is replaced
+
   const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   const [currentSlide, setCurrentSlide] = useState("availableStock"); // to track the the dashboard menu and slide
 
@@ -135,6 +141,44 @@ export default (props) => {
     createSummary();
   }, [availbleStockDrugs, expiredDrugs, stockOrders]);
 
+  const handleSearchDrugs = (e) => {
+    e.preventDefault();
+    if (searchKey.trim() == "") return;
+
+    axios
+      .get(`${baseUrl}/search/${searchKey}`)
+      .then((response) => {
+        if (response.data.status == "fail") {
+          searchErrorMsg(` no data associated with you search in stock `);
+          setSearchError(true);
+          setSearchView("");
+          setTimeout(() => {
+            setSearchError(false);
+          }, 3000);
+        } else if (response.data.searchResult.length == 0) {
+          setSearchErrorMsg(` no data associated with your search in stock `);
+          setSearchError(true);
+          setSearchView("");
+          setTimeout(() => {
+            setSearchError(false);
+          }, 3000);
+        } else {
+          setSearchError(false);
+          setReplacedDrugs(availbleStockDrugs);
+          setAvailbleStockDrugs(response.data.searchResult);
+          setSearchView("stock");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setSearchErrorMsg("unable to make search please try again");
+        setSearchError(true);
+        setSearchView("");
+        setTimeout(() => {
+          setSearchError(false);
+        }, 3000);
+      });
+  };
   const handleSell = (index) => {
     setEditing(true);
     setSelectedIndex(index);
@@ -220,6 +264,11 @@ export default (props) => {
     setCurrentSlide("availableStore");
   };
   const seeAvailableDrugsInStock = () => {
+    if (searchView == "stock") {
+      setAvailbleStockDrugs(replacedDrugs);
+    }
+    setSearchKey("");
+    setSearchView("");
     setCurrentSlide("availableStock");
   };
   const handleCheckExpiration = () => {
@@ -633,6 +682,38 @@ export default (props) => {
           user="pharmacist"
           summary={summary}
         />
+        <div className="actions">
+          {" "}
+          {searchError ? (
+            <div className="search_error">{searchErrorMsg}</div>
+          ) : null}
+          {searchView != "" ? (
+            <div className="search_error search_error-result ">
+              search result for<p className="search_key">'{searchKey}' </p> in{" "}
+              {currentSlide == "availableStock" ? "stock " : "store"}
+            </div>
+          ) : null}
+          <form
+            className="search_form"
+            onSubmit={handleSearchDrugs}>
+            <input
+              type="text"
+              placeholder="search"
+              className="input input-serach"
+              onChange={(e) => {
+                if (e.target.value == "") {
+                  if (searchView == "stock") {
+                    seeAvailableDrugsInStock();
+                  }
+                  setSearchView("");
+                  setSearchError(false);
+                }
+                setSearchKey(e.target.value);
+              }}
+            />
+            <p className="btn btn-search">[]</p>
+          </form>
+        </div>
         <div className="druglist">
           <SellDrug
             handleSendRequest={handleSendRequest}
