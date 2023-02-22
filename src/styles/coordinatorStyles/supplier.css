@@ -1,5 +1,7 @@
 .orders {
   position: relative;
+  min-height: 50vh;
+  height: 60vh;
 }
 
 .orders .orders_header {

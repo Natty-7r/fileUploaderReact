@@ -156,12 +156,12 @@
   margin: auto;
 }
 .no_data_header {
-  top: 20%;
+  top: 30%;
   left: 50%;
   margin: auto;
   position: absolute;
   font-size: 2rem;
   font-weight: 600;
-  text-transform: capitalize;
+  text-transform: uppercase;
   color: red;
 }
