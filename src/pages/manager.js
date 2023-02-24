@@ -3,7 +3,6 @@ import "../styles/coordinatorStyles/coordinator.css";
 import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaBox } from "react-icons/fa";
 import Dashboard from "../components/dashboard";
 import NotificationSlide from "../components/notificationSlide";
 import DrugList from "../components/druglist";
@@ -335,30 +334,6 @@ export default (props) => {
             className="request_btn request_btn-remove"
             onClick={handleRemove}>
             cancel request
-          </button>
-        </div>
-      );
-  };
-  const RequestResultContent = (props) => {
-    if (props.requestResults.length == 0) return null;
-    else
-      return (
-        <div className="request_main">
-          <div className="request_results">
-            {props.requestResults.map((request, index) => (
-              <RequestOrderResult
-                index={index}
-                key={index}
-                requestOrder={request}
-                type={"request"}
-                handleRemove={props.handleRemove}
-              />
-            ))}
-          </div>
-          <button
-            className="btn btn_request-send"
-            onClick={props.handleSendRequestDone}>
-            send request
           </button>
         </div>
       );
