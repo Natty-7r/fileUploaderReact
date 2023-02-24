@@ -7,6 +7,7 @@ import {
   Navigate,
   Navigator,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 
 import Header from "./components/header";
@@ -23,17 +24,22 @@ import Protected from "./RoutProtector";
 
 function App(props) {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState({});
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("sewiUser"));
-    if (!userData) navigate("/ll");
-    else if (!userData.auth) navigate("/");
+    console.log(location.pathname);
+    if (location.pathname == "/") navigate("/");
     else {
-      setUser(userData.user);
-      setAuth(userData.auth);
-      navigate(`/${userData.user.role}`);
+      const userData = JSON.parse(localStorage.getItem("sewiUser"));
+      if (!userData) navigate("/login");
+      else if (!userData.auth) navigate("/login");
+      else {
+        setUser(userData.user);
+        setAuth(userData.auth);
+        navigate(`/${userData.user.role}`);
+      }
     }
   }, []);
 
@@ -52,12 +58,12 @@ function App(props) {
           {" "}
           <Route
             exact
-            path="/ll"
+            path="/"
             element={<Customer username="user" />}
           />
           <Route
             exact
-            path="/"
+            path="/login"
             element={
               <Login
                 setAuth={setAuth}
