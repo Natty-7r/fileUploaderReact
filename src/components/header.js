@@ -8,7 +8,7 @@ export default (props) => {
     localStorage.removeItem("sewiUser");
     props.setAuth(false);
     props.setUser({});
-    navigate("/");
+    navigate("/login");
   };
   return (
     <header className="header">
