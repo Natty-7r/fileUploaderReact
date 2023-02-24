@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaComments } from "react-icons/fa";
-import "../styles/coordinatorStyles/notification.css";
+import "../styles/pagesStyle/notification.css";
 const Notification = (props) => {
   return (
     <div className={`notification notification-${props.type}`}>

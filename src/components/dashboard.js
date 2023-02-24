@@ -1,7 +1,7 @@
 import { user } from "../constants/images";
 import { FaUserAlt, FaUserCog } from "react-icons/fa";
 
-import "../styles/coordinatorStyles/dashboard.css";
+import "../styles/pagesStyle/dashboard.css";
 
 export default (props) => {
   if (props.user == "coordinator")

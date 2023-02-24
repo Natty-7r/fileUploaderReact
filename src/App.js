@@ -11,7 +11,6 @@ import {
 
 import Header from "./components/header";
 
-import Signup from "./pages/login";
 import Coordinator from "./pages/coordinator";
 import Pharmacist from "./pages/pharmacist";
 import Manager from "./pages/manager";
@@ -19,6 +18,7 @@ import Supplier from "./pages//supplier";
 import Adminn from "./pages/admin";
 import Login from "./pages/login";
 import Cashier from "./pages/casher";
+import Customer from "./pages/customer";
 import Protected from "./RoutProtector";
 
 function App(props) {
@@ -28,7 +28,7 @@ function App(props) {
   const [user, setUser] = useState({});
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("sewiUser"));
-    if (!userData) navigate("/");
+    if (!userData) navigate("/ll");
     else if (!userData.auth) navigate("/");
     else {
       setUser(userData.user);
@@ -53,7 +53,7 @@ function App(props) {
           <Route
             exact
             path="/ll"
-            element={<Cashier username="naty c" />}
+            element={<Customer username="user" />}
           />
           <Route
             exact

@@ -45,7 +45,6 @@ a {
 }
 .main_page {
   flex-basis: 80%;
-  overflow: hidden;
 }
 
 /* ----------------general declarations ends  ------------- */
