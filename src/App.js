@@ -9,15 +9,15 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import Header from "./components/adminComponents/header";
+import Header from "./components/header";
 
-import Signup from "./pages/signup.";
+import Signup from "./pages/login";
 import Coordinator from "./pages/coordinator";
 import Pharmacist from "./pages/pharmacist";
 import Manager from "./pages/manager";
 import Supplier from "./pages//supplier";
-import Adminn from "./pages/adminn";
-import Login from "./pages/signup.";
+import Adminn from "./pages/admin";
+import Login from "./pages/login";
 import Cashier from "./pages/casher";
 import Protected from "./RoutProtector";
 
@@ -112,6 +112,16 @@ function App(props) {
               <Protected auth={auth}>
                 {" "}
                 <Supplier username={user.username} />
+              </Protected>
+            }
+          />
+          <Route
+            exact
+            path="/chashier"
+            element={
+              <Protected auth={auth}>
+                {" "}
+                <Cashier username={user.username} />
               </Protected>
             }
           />

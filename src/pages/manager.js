@@ -3,11 +3,12 @@ import "../styles/coordinatorStyles/coordinator.css";
 import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { FaBox } from "react-icons/fa";
 import Dashboard from "../components/dashboard";
-import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
-import DrugList from "../components/pharCoordComponents/druglist";
-import Overview from "../components/pharCoordComponents/overview";
-import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
+import NotificationSlide from "../components/notificationSlide";
+import DrugList from "../components/druglist";
+import Overview from "../components/overview";
+import UpdateDrugInfo from "../components/updateSetInfo";
 
 const baseUrl = "http://localhost:8080/manager";
 
@@ -860,7 +861,6 @@ export default (props) => {
                 setSearchKey(e.target.value);
               }}
             />
-            <p className="btn btn-search">[]</p>
           </form>
         </div>
 

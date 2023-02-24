@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { GrCheckboxSelected } from "react-icons/fa";
-import { user } from "../../constants/images";
-import "../../styles/coordinatorStyles/notification.css";
+import { FaComments } from "react-icons/fa";
+import "../styles/coordinatorStyles/notification.css";
 const Notification = (props) => {
   return (
     <div className={`notification notification-${props.type}`}>
       <div className="notification_image">
-        <img src={user} />
+        <FaComments className="img" />
       </div>
       <NotificationMessage
         index={props.index}

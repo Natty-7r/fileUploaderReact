@@ -1,5 +1,5 @@
-import { logo } from "../../constants/images.js";
-import "../../styles/adminStyles/header.css";
+import { logo } from "../constants/images.js";
+import "../styles/adminStyles/header.css";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 export default (props) => {

@@ -192,15 +192,16 @@
   top: 0rem;
   left: 50%;
   transform: translateX(-50%);
-  width: fit-content;
-  padding: 0.8rem 3.2rem;
+  width: 80%;
+  text-align: center;
+  padding: 2.8rem 3.2rem;
   font-size: 1.8rem;
   background-color: var(--whiteBlue);
   border-radius: 0.4rem;
-  border: solid thin orange;
   color: red;
+  text-transform: uppercase;
   z-index: 5;
-  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.084);
+  box-shadow: 0rem 1rem 2rem rgba(0, 0, 0, 0.184);
   display: none;
 }
 .form_error-visible {
@@ -216,7 +217,7 @@
 .inputContainer {
   position: relative;
   height: 4.5rem;
-  z-index: 1;
+  z-index: 0;
   width: 48%;
 }
 
@@ -248,9 +249,9 @@
   color: #dadce0;
   font-size: 1.6rem;
   transition: 0.5s;
-  z-index: 0;
   height: fit-content;
   text-transform: capitalize;
+  z-index: 4;
 }
 
 .order_form .btn_add {
@@ -287,6 +288,8 @@
 }
 
 .order_result {
+  width: 95%;
+  margin: auto;
   margin-top: 1rem;
 }
 .order_result_header {
@@ -325,7 +328,7 @@
 .order_result_list {
   font-size: 1.6rem;
   flex-basis: 16%;
-  padding: 0.4rem;
+  padding: 1rem 0.4rem;
   padding-left: 1%;
   text-transform: none;
   initial-letter: 0.04rem;

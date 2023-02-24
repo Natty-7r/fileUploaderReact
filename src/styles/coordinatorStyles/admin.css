@@ -7,8 +7,7 @@
 .users_list {
   height: 97%;
   overflow-y: scroll;
-  padding-top: 2rem;
-  /* position: relative; */
+  padding: 3rem 0rem;
 }
 .user_list-blurred {
   filter: blur(5rem);
@@ -35,12 +34,13 @@
   aspect-ratio: 1/1;
   position: relative;
 }
-.user_image img {
+.user_image .img {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  color: #1e3a8a;
 }
 .user_text {
   flex-basis: 80%;
@@ -173,14 +173,14 @@
 }
 
 .detail_header .close {
-  font-size: 2rem;
-  color: red;
+  font-size: 3rem;
   transition: transform 0.3s;
   transform: rotate(90deg);
 }
 .detail_header .close:hover {
-  transform: rotate(0deg);
+  color: red;
 }
+
 .account_detail .account_state {
   border: solid thin red;
   font-size: 1.4rem;
@@ -251,6 +251,7 @@
   overflow: hidden;
   flex-basis: 40%;
   text-align: left;
+  font-weight: bold;
 }
 .account_detail .detail_btns {
   margin: 0.8rem;

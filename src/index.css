@@ -45,6 +45,7 @@ a {
 }
 .main_page {
   flex-basis: 80%;
+  overflow: hidden;
 }
 
 /* ----------------general declarations ends  ------------- */
@@ -52,7 +53,6 @@ a {
   padding: 0px;
   margin: 0px;
   box-sizing: border-box;
-  overflow: hidden;
 }
 :root {
   --grayColor: #0c4a6e;
@@ -112,43 +112,5 @@ button {
 @media (max-wdth: 600px) {
   html {
     font-size: 8px;
-  }
-  .accounts_container {
-    margin-top: 0px;
-    width: 98%;
-    display: block;
-    flex-flow: column-reverse;
-  }
-
-  .account_detail {
-    padding-top: 15%;
-    height: fit-content;
-    position: absolute;
-    flex-basis: 80%;
-    height: fit-content;
-    width: 70%;
-    left: 11%;
-    top: 5%;
-    /* gap: 2rem; */
-  }
-  .account_detail .detail_text {
-    gap: 1.6rem;
-  }
-  .account_detail .close {
-  }
-  .account_list {
-    height: auto;
-  }
-  .blured {
-    filter: blur(0.1rem);
-  }
-  .hidden {
-    display: none;
-  }
-  .visible {
-    display: block;
-  }
-  .visible_flex {
-    display: flex;
   }
 }

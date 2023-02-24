@@ -1,4 +1,5 @@
 import { user } from "../constants/images";
+import { FaUserAlt, FaUserCog } from "react-icons/fa";
 
 import "../styles/coordinatorStyles/dashboard.css";
 
@@ -8,10 +9,7 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserAlt className="img" />
           </div>
           <div className="profile_name">
             {props.username}
@@ -88,10 +86,7 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserAlt className="img" />
           </div>
           <div className="profile_name">
             {props.username}
@@ -153,10 +148,7 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserAlt className="img" />
           </div>
           <div className="profile_name">
             {props.username}
@@ -211,10 +203,7 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserAlt className="img" />
           </div>
           <div className="profile_name">
             {props.username}
@@ -279,10 +268,7 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile dashboard_profile-admin">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserCog className="img" />
           </div>
           <div className="profile_name">
             {props.username}
@@ -321,22 +307,12 @@ export default (props) => {
       <div className="page_dashboard">
         <div className="dashboard_profile dashboard_profile-admin">
           <div className="profile_image">
-            <img
-              src={user}
-              alt="user"
-            />
+            <FaUserAlt className="img" />
           </div>
           <div className="profile_name">
             {props.username}
             <span className="profile_role">{props.user}</span>{" "}
           </div>
-          <button
-            className={`btn_menu profile_btn ${
-              props.currentSlide == "editAdmin" ? "profile_btn-acitve" : ""
-            }`}
-            onClick={props.onUpdateAdmin}>
-            Update profile
-          </button>
         </div>
         <div className="dashboard_menus dashboard_menus-admin">
           <button

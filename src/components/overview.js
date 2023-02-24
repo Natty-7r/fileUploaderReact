@@ -103,7 +103,7 @@ export default (props) => {
           <p className="summary_value">{props.summary[2]}</p>
         </div>
         <div className="summary">
-          <p className="summary_name">rejected oreders </p>
+          <p className="summary_name">rejected orders </p>
           <p className="summary_value">{props.summary[3]}</p>
         </div>
       </div>

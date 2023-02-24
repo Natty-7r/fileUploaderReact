@@ -3,10 +3,10 @@ import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Dashboard from "../components/dashboard";
-import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
-import DrugList from "../components/pharCoordComponents/druglist";
-import Overview from "../components/pharCoordComponents/overview";
-import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
+import NotificationSlide from "../components/notificationSlide";
+import DrugList from "../components/druglist";
+import Overview from "../components/overview";
+import UpdateDrugInfo from "../components/updateSetInfo";
 
 const baseUrl = "http://localhost:8080/coordinator";
 
@@ -690,12 +690,13 @@ export default (props) => {
             <p className="list list_name list-supplier">supplier </p>
             <p className="list list_name list-s_date">supllied date </p>
             <p className="list list_name list_name_discardAll">
-              {" "}
-              <button
-                className="btn expired_list_btn expired_list_btn-discardAll"
-                onClick={handleDiscardAll}>
-                discard All{" "}
-              </button>{" "}
+              {expiredDrugs.length != 0 ? (
+                <button
+                  className="btn expired_list_btn expired_list_btn-discardAll"
+                  onClick={handleDiscardAll}>
+                  discard All{" "}
+                </button>
+              ) : null}
             </p>
           </div>
           <div

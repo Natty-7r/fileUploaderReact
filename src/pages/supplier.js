@@ -2,102 +2,11 @@
 import "../styles/coordinatorStyles/supplier.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import moment from "moment/moment";
-import DatePicker from "react-datepicker";
-import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
-import DrugList from "../components/pharCoordComponents/druglist";
-import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
-import Overview from "../components/pharCoordComponents/overview";
+import Overview from "../components/overview";
 
 const baseUrl = "http://localhost:8080/supplier";
 
-const SellDrug = (props) => {
-  let amount = props?.selecteDrug?.amount;
-  const drugCode = props?.selecteDrug?.drugCode;
-  let amountToSell;
-  const [errorType, setErrorType] = useState(0);
-  const [errorMsgContent, setErrorMsgContent] = useState("");
-
-  const getAmount = (e) => {
-    amountToSell = e.target.value.trim();
-  };
-  amountToSell = document.querySelector(".input_amount-sell")?.value;
-  const handleSellDone = () => {
-    console.log(amountToSell);
-
-    if (amountToSell == undefined) {
-      setErrorMsgContent("Invalid  amount ");
-      setErrorType(1);
-      setTimeout(() => {
-        setErrorType(0);
-      }, 2000);
-      return;
-    } else if (!Number.isInteger(+amountToSell)) {
-      setErrorMsgContent("Invalid  amount ");
-      setErrorType(1);
-      setTimeout(() => {
-        setErrorType(0);
-      }, 2000);
-      return;
-    } else if (amountToSell > amount) {
-      setErrorMsgContent("Insufficent amount ");
-      setErrorType(2);
-      setTimeout(() => {
-        setErrorType(0);
-      }, 2000);
-    } else {
-      props.handleSellDone(amount - amountToSell, drugCode);
-    }
-  };
-  const handleCloseSell = () => {
-    props.setEditing(false);
-  };
-  const handleSendRequest = () => {
-    handleCloseSell();
-    props.handleSendRequest();
-  };
-  if (!props.editing) return null;
-  if (props.editing)
-    return (
-      <div className="update_druginfo">
-        <button
-          className="close_check"
-          onClick={handleCloseSell}>
-          {" "}
-          X
-        </button>
-        {errorType != 0 ? (
-          <div className="sell_error">
-            <p>{errorMsgContent}</p>
-            {errorType == 2 ? (
-              <button
-                onClick={handleSendRequest}
-                className="btn">
-                send request
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-
-        <p className="drug_name">{"diclone"}</p>
-
-        <div className="info">
-          <label htmlFor="">amount</label>
-          <input
-            type="text"
-            className="info_input input_amount  input_amount-sell"
-            onChange={getAmount}
-          />
-        </div>
-        <button
-          className="btn btn_updateInfo"
-          onClick={handleSellDone}>
-          sell drug{" "}
-        </button>
-      </div>
-    );
-};
 const formatDates = function (dateAccepted) {
   const date = new Date(dateAccepted);
   let now = new Date();
@@ -118,38 +27,19 @@ const formatDates = function (dateAccepted) {
 export default (props) => {
   const username = props.username;
 
-  let totalDrugs = 0,
-    totalPendingOrders = 0,
-    totolAccpetedOrders = 0,
-    totalRejctedOrdrs = 0,
-    totalExpiredDrugs = 0,
-    totalPendingDrugs = 0,
-    totalDrugsOrderd = 0,
-    orderedrugs;
+  let orderedrugs;
   let orderdate;
-  let expiredSummary = "";
+
   const [notificationNum, setNotificationNum] = useState(0);
-
-  const [editing, setEditing] = useState(false);
-  const [editingType, setEditingType] = useState("");
-
-  const [checkingExpiration, setCheckingExpiration] = useState(false);
   const [summary, setSummary] = useState([0, 0, 0, 0]);
 
-  const [selecteDrug, setSelectedDrug] = useState();
-  const [selectedIndex, setSelectedIndex] = useState();
-
-  const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
-  const [stockOrders, setStockOrders] = useState([]);
   const [comments, setComments] = useState([]);
+  const [commentSent, setCommentSent] = useState(false);
   const [orders, setOrders] = useState([]); // to mean pending orders
   const [acceptedOrders, setAcceptedOrders] = useState([]); // to mean pending orders
   const [rejectedOrders, setRejectedOrders] = useState([]); // to mean pending orders
-  const [expiredDrugs, setExpiredDrugs] = useState([]);
   const [overviewVisible, setOverviewVisible] = useState(true);
   const [orderType, setOrderType] = useState("pending");
-
-  const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   const [currentSlide, setCurrentSlide] = useState("orders"); // to track the the dashboard menu and slide
 
   useEffect(() => {
@@ -167,39 +57,6 @@ export default (props) => {
   useEffect(() => {
     createSummary();
   }, [orders, acceptedOrders, rejectedOrders]);
-
-  const handleSellDone = (newAmount, drugCode) => {
-    selecteDrug.amount = newAmount;
-    availbleStockDrugs[selectedIndex] = selecteDrug;
-    setEditing(false);
-    if (newAmount != 0) {
-      axios
-        .patch(`${baseUrl}/drug`, { drugCode, newAmount })
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => console.log(error));
-    }
-    if (newAmount == 0) {
-      // if all sold discard the drug
-      handleDiscard(selecteDrug, drugCode);
-    }
-  };
-
-  const handleDiscard = (indexSelected, drugCode) => {
-    expiredDrugs.splice(indexSelected, 1);
-    setExpiredDrugs(expiredDrugs);
-    setDrugsLength(availbleStockDrugs.length);
-    createSummary();
-
-    axios
-      .delete(`${baseUrl}/drug/${drugCode}`)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => console.log(error));
-    if (expiredDrugs.length == 0) setCheckingExpiration(false);
-  };
 
   const createSummary = () => {
     let totaldrugsOrderd = 0;
@@ -314,21 +171,28 @@ export default (props) => {
           console.log(response);
         })
         .catch((error) => console.log(error));
-      if (expiredDrugs.length == 0) setCheckingExpiration(false);
+
       createSummary();
     };
     const OnSendComment = () => {
       const commentInput = document.querySelector(".input-comment");
+
       const comment = commentInput.value;
-      commentInput.value = "";
-      console.log(props.username);
+      if (comment == "") return;
+
       axios
         .post(`${baseUrl}/comment`, {
           message: comment,
           username: username,
         })
         .then((response) => {
-          console.log(response);
+          if (response.data.status == "success") {
+            setCommentSent(true);
+            commentInput.value = "";
+            setTimeout(() => {
+              setCommentSent(false);
+            }, 3000);
+          }
         });
     };
 
@@ -366,6 +230,10 @@ export default (props) => {
       const inputPrice = document.querySelector(".input-price").value;
       const inputDate = document.querySelector(".input-date").value;
       const inputSupplier = document.querySelector(".input-supplier").value;
+      const sixMonthHead = new Date(Date.now() + 6 * 30 * 24 * 3600 * 1000);
+      const insertedTime = new Date(inputDate);
+      const currentTime = new Date();
+
       {
         {
           // drug code validation
@@ -463,6 +331,37 @@ export default (props) => {
             return;
           }
         }
+
+        {
+          // drug name validation
+          if (inputDate == "") {
+            setFormErrorMsg("expried date field can't be empty  !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+          if (insertedTime < currentTime) {
+            setFormErrorMsg("The Drug is already Expired !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+          if (insertedTime < sixMonthHead) {
+            setFormErrorMsg("the drug should not expire before 6 months !");
+            clearTimeout(timer);
+            setFormError(true);
+            timer = setTimeout(() => {
+              setFormError(false);
+            }, 3000);
+            return;
+          }
+        }
         {
           // drug supplier name  validation
           if (inputSupplier == "") {
@@ -483,18 +382,7 @@ export default (props) => {
             return;
           }
         }
-        {
-          // drug name validation
-          if (inputDate == "") {
-            setFormErrorMsg("expried date field can't be empty  !");
-            clearTimeout(timer);
-            setFormError(true);
-            timer = setTimeout(() => {
-              setFormError(false);
-            }, 3000);
-            return;
-          }
-        }
+
         {
           // if all validation passed
           const order = {
@@ -766,7 +654,8 @@ export default (props) => {
               <div className="form_row">
                 <div class="inputContainer">
                   <input
-                    type="text"
+                    defaultValue={new Date()}
+                    type="date"
                     class="input input-date"
                     placeholder="a"
                   />
@@ -891,9 +780,12 @@ export default (props) => {
     if (currentSlide == "comments") {
       return (
         <div className="comments_slide">
-          <h1 className="slide_header">Add comment</h1>
+          <h1 className="slide_header">Add comment </h1>
           <div className="comment_form">
-            <h2 className="form_header">add Comment</h2>
+            {commentSent ? (
+              <div className="comment_succes"> Comment accepted </div>
+            ) : null}
+            <h2 className="form_header">add Comment Here</h2>
             <textarea className="input input-comment"></textarea>
             <button
               className="btn btn-comment"
@@ -928,14 +820,6 @@ export default (props) => {
           />
         ) : null}
         <div className="druglist">
-          <SellDrug
-            editing={editing}
-            editingType={editingType}
-            setEditing={setEditing}
-            handleSellDone={handleSellDone}
-            selecteDrug={selecteDrug}
-          />
-
           <div className="page_slide">
             <SlideContent notificationNum={notificationNum} />
           </div>

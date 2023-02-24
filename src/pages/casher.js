@@ -5,9 +5,9 @@ import "../styles/coordinatorStyles/casher.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Dashboard from "../components/dashboard";
-import DrugList from "../components/pharCoordComponents/druglist";
-import Overview from "../components/pharCoordComponents/overview";
-import UpdateDrugInfo from "../components/pharCoordComponents/updateSetInfo";
+import DrugList from "../components/druglist";
+import Overview from "../components/overview";
+import UpdateDrugInfo from "../components/updateSetInfo";
 
 const baseUrl = "http://localhost:8080/casher";
 

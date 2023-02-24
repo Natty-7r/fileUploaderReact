@@ -4,9 +4,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";
 import Dashboard from "../components/dashboard";
-import DrugList from "../components/pharCoordComponents/druglist";
-import NotificationSlide from "../components/pharCoordComponents/notificationSlide";
-import Overview from "../components/pharCoordComponents/overview";
+import DrugList from "../components/druglist";
+import NotificationSlide from "../components/notificationSlide";
+import Overview from "../components/overview";
 
 const baseUrl = "http://localhost:8080/pharmacist";
 
@@ -711,7 +711,6 @@ export default (props) => {
                 setSearchKey(e.target.value);
               }}
             />
-            <p className="btn btn-search">[]</p>
           </form>
         </div>
         <div className="druglist">
