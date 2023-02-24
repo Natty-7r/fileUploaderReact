@@ -117,7 +117,7 @@ function App(props) {
           />
           <Route
             exact
-            path="/chashier"
+            path="/cashier"
             element={
               <Protected auth={auth}>
                 {" "}

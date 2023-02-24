@@ -12,41 +12,14 @@ import UpdateDrugInfo from "../components/updateSetInfo";
 const baseUrl = "http://localhost:8080/casher";
 
 export default (props) => {
-  let totalDrugs = 0,
-    totalAvailbleDrugsInStore = 0,
-    totalAvailbleDrugsInStock = 0,
-    totalExpiredDrugs = 0,
-    totalPendingDrugs = 0,
-    totalStockRequest = 0;
-  let expiredSummary = "";
-  const [notificationNum, setNotificationNum] = useState(0);
-  const [notificationMessages, setNotificationMessages] = useState([]);
-
-  const [editing, setEditing] = useState(false);
-  const [editingType, setEditingType] = useState("");
-  const [statusChange, setStatusChange] = useState(0);
-
-  const [checkingExpiration, setCheckingExpiration] = useState(false);
   const [summary, setSummary] = useState([0, 0, 0, 0]);
-  const [selecteDrug, setSelectedDrug] = useState();
-  const [selectedIndex, setSelectedIndex] = useState();
 
-  const [availbleDrugs, setAvailbleDrugs] = useState([]);
-  const [availbleStockDrugs, setAvailbleStockDrugs] = useState([]);
-  const [comments, setComments] = useState([]);
-  const [storeOrders, setStoreOrders] = useState([]);
-  const [stockRequests, setStockRequest] = useState([]);
-  const [storeRequests, setStoreRequest] = useState([]);
-  const [expiredDrugs, setExpiredDrugs] = useState([]);
-  const [slideChange, countSlideChange] = useState(1);
   const [unbilledDrugs, setUnbilledDrugs] = useState([]);
-
   const [billedToday, setBilledToday] = useState([]);
   const [drugsToBill, setDrugsToBill] = useState([]);
   const [drugsBilled, setDrugsBilled] = useState([]);
   const [billing, setBilling] = useState(false);
 
-  const [drugsLength, setDrugsLength] = useState(5); // just to nofity the app there is changed
   const [currentSlide, setCurrentSlide] = useState("unbilled"); // to track the the dashboard menu and slide
 
   useEffect(() => {
@@ -75,16 +48,6 @@ export default (props) => {
 
   const SlideContent = (props) => {
     const [totalPrice, setTotalPrice] = useState(0);
-    let storeRequestExits = storeRequests.length > 0 ? true : false;
-    let requestedDrugs = []; // to fetch the drugs out of the request
-    if (storeRequestExits)
-      storeRequests.forEach((storeRequest) => {
-        storeRequest.requestedDrugs.forEach((drug) => {
-          drug.date = storeRequest.requestDate;
-          requestedDrugs.push(drug);
-        });
-      });
-
     const handleCloseBilling = () => {
       setBilling(false);
     };
@@ -241,7 +204,6 @@ export default (props) => {
         <Overview
           user="casher"
           summary={summary}
-          stockRequest={stockRequests}
         />
         <div className="page_slide">
           <SlideContent />
