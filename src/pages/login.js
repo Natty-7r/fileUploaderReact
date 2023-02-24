@@ -4,7 +4,7 @@ import { AiFillEye } from "react-icons/ai";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { logo } from "../constants/images";
-import "../styles/auth/signup.css";
+import "../styles/login.css";
 import axios from "axios";
 export default (props) => {
   const navigate = useNavigate();

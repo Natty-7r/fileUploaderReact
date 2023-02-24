@@ -1,5 +1,3 @@
-// import "../styles/coordinatorStyles/coordinator.css";
-// import "../styles/coordinatorStyles/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { user } from "../constants/images";

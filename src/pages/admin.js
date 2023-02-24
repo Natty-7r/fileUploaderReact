@@ -1,6 +1,6 @@
-import "../styles/coordinatorStyles/supplier.css";
-import "../styles/coordinatorStyles/admin.css";
-import "../styles/coordinatorStyles/admin.css";
+import "../styles/pagesStyle/supplier.css";
+import "../styles/pagesStyle/admin.css";
+import "../styles/pagesStyle/admin.css";
 import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaUserAlt } from "react-icons/fa";

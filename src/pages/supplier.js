@@ -1,5 +1,5 @@
 // import "../styles/coordinatorStyles/coordinator.css";
-import "../styles/coordinatorStyles/supplier.css";
+import "../styles/pagesStyle/supplier.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Dashboard from "../components/dashboard";

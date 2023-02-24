@@ -1,6 +1,6 @@
 // expried drugs means sold drugs
-import "../styles/coordinatorStyles/coordinator.css";
-import "../styles/coordinatorStyles/slide.css";
+import "../styles/pagesStyle/coordinator.css";
+import "../styles/pagesStyle/slide.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Dashboard from "../components/dashboard";
