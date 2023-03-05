@@ -29,7 +29,6 @@ function App(props) {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState({});
   useEffect(() => {
-    console.log(location.pathname);
     if (location.pathname == "/") navigate("/");
     else {
       const userData = JSON.parse(localStorage.getItem("sewiUser"));
@@ -41,6 +40,11 @@ function App(props) {
         navigate(`/${userData.user.role}`);
       }
     }
+    return () => {
+      localStorage.removeItem("sewiUser");
+      setAuth(false);
+      setUser({});
+    };
   }, []);
 
   return (

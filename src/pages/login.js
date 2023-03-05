@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiFillEye } from "react-icons/ai";
 import { FaUserAlt, FaLock } from "react-icons/fa";
@@ -8,8 +8,9 @@ import "../styles/login.css";
 import axios from "axios";
 export default (props) => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useRef();
+  const password = useRef();
+  const passwordFocused = useRef(false);
   const [nameLable, setNameLable] = useState(true);
   const [codeLabel, setCodeLabel] = useState(true);
 
@@ -24,17 +25,22 @@ export default (props) => {
     if (passcodeVisible) setVisibilityIcon(<AiFillEye />);
     if (!passcodeVisible) setVisibilityIcon(<AiFillEyeInvisible />);
   };
-  const handleOnLogin = (e) => {
+  const handleOnLogin = (caller, e) => {
     e.preventDefault();
-    if (username == "") {
+    if (username.current.value == "") {
       setErrorMsg("Username filed empty !");
       setError(true);
       return;
-    } else if (password == "") {
+    } else if (password.current.value == "") {
+      if (!passwordFocused.current && caller == "form") {
+        passwordFocused.current = true;
+        return password.current.focus();
+      }
       setErrorMsg("Password filed empty !");
       setError(true);
       return;
     } else {
+      setError(false);
       axios
         .post("http://localhost:8080/auth/login", {
           username,
@@ -45,7 +51,6 @@ export default (props) => {
           const user = response.data.user;
           if (auth) {
             localStorage.setItem("sewiUser", JSON.stringify({ auth, user }));
-            setError(false);
             props.setUser(user);
             props.setAuth(auth);
             console.log(user.username);
@@ -62,7 +67,7 @@ export default (props) => {
     <div className="login_form_container">
       <form
         className="login_form"
-        onSubmit={handleOnLogin}>
+        onSubmit={(e) => handleOnLogin("form", e)}>
         <div className="form_header">
           <div className="form_header_image">
             <img src={logo} />
@@ -81,9 +86,9 @@ export default (props) => {
               <label className="lable name_label">username </label>
             ) : null}
             <input
+              ref={username}
               type="text"
               className="input input-username"
-              onChange={(e) => setUsername(e.target.value)}
               onFocus={(e) => setNameLable(false)}
               onBlur={(e) => {
                 if (e.target.value == "") setNameLable(true);
@@ -96,9 +101,9 @@ export default (props) => {
               <label className="lable code_label">password </label>
             ) : null}
             <input
+              ref={password}
               type={passcodeVisible ? "text" : "password"}
-              className="input input-username"
-              onChange={(e) => setPassword(e.target.value)}
+              className="input input-password"
               onFocus={(e) => setCodeLabel(false)}
               onBlur={(e) => {
                 if (e.target.value == "") setCodeLabel(true);
@@ -114,7 +119,7 @@ export default (props) => {
           </div>
           <button
             className=" btn_login"
-            onClick={handleOnLogin}>
+            onClick={(e) => handleOnLogin("button", e)}>
             login{" "}
           </button>
         </div>
