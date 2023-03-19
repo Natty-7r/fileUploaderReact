@@ -43,10 +43,11 @@ export default (props) => {
       setError(false);
       axios
         .post("http://localhost:8080/auth/login", {
-          username,
-          password,
+          username: username.current.value,
+          password: password.current.value,
         })
         .then((response) => {
+          console.log(response);
           const auth = response.data.auth;
           const user = response.data.user;
           if (auth) {
@@ -60,6 +61,10 @@ export default (props) => {
             setErrorMsg(response.data.message);
             setError(true);
           }
+        })
+        .catch((error) => {
+          setErrorMsg("Login Falied please try Again !");
+          setError(true);
         });
     }
   };
