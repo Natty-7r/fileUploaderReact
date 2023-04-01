@@ -1,141 +1,40 @@
 import { useEffect, useState } from "react";
-import {
-  Route,
-  BrowserRouter as Router,
-  redirect,
-  Routes,
-  Navigate,
-  Navigator,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
-
-import Header from "./components/header";
-
-import Coordinator from "./pages/coordinator";
-import Pharmacist from "./pages/pharmacist";
-import Manager from "./pages/manager";
-import Supplier from "./pages//supplier";
-import Adminn from "./pages/admin";
-import Login from "./pages/login";
-import Cashier from "./pages/casher";
-import Customer from "./pages/customer";
-import Protected from "./RoutProtector";
-
+import FilesList from "./components/FileList/FilesList";
+import FileUploader from "./components/Uploader/FileUploader";
+import "./App.css";
 function App(props) {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [auth, setAuth] = useState(false);
-  const [user, setUser] = useState({});
-  useEffect(() => {
-    if (location.pathname == "/") navigate("/");
-    else {
-      const userData = JSON.parse(localStorage.getItem("sewiUser"));
-      if (!userData) navigate("/login");
-      else if (!userData.auth) navigate("/login");
-      else {
-        setUser(userData.user);
-        setAuth(userData.auth);
-        navigate(`/${userData.user.role}`);
-      }
-    }
-    return () => {
-      localStorage.removeItem("sewiUser");
-      setAuth(false);
-      setUser({});
-    };
-  }, []);
-
+  const [active, setActive] = useState(1);
+  const [fileListChanged, setListChange] = useState(0);
   return (
-    <div>
-      {" "}
-      {auth ? (
-        <Header
-          auth={auth}
-          setAuth={setAuth}
-          setUser={setUser}
+    <div className="app">
+      <h2 className="menu">
+        <button
+          className={`menu_btn ${active == 1 ? "active" : ""} `}
+          onClick={(e) => {
+            setActive(1);
+          }}>
+          list
+        </button>
+        <button
+          className={`menu_btn ${active == 2 ? "active" : ""} `}
+          onClick={(e) => {
+            setActive(2);
+          }}>
+          upload
+        </button>
+      </h2>
+      <div className="app_main">
+        <FilesList
+          active={active}
+          setListChange={setListChange}
+          fileListChanged={fileListChanged}
         />
-      ) : null}
-      <div>
-        <Routes>
-          {" "}
-          <Route
-            exact
-            path="/"
-            element={<Customer username="user" />}
-          />
-          <Route
-            exact
-            path="/login"
-            element={
-              <Login
-                setAuth={setAuth}
-                setUser={setUser}
-              />
-            }
-          />
-          <Route
-            exact
-            path="/admin"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Adminn username={user.username} />
-              </Protected>
-            }
-          />
-          <Route
-            exact
-            path="/manager"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Manager username={user.username} />
-              </Protected>
-            }
-          />
-          <Route
-            exact
-            path="/pharmacist"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Pharmacist username={user.username} />
-              </Protected>
-            }
-          />
-          <Route
-            exact
-            path="/coordinator"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Coordinator username={user.username} />
-              </Protected>
-            }
-          />
-          <Route
-            exact
-            path="/supplier"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Supplier username={user.username} />
-              </Protected>
-            }
-          />
-          <Route
-            exact
-            path="/cashier"
-            element={
-              <Protected auth={auth}>
-                {" "}
-                <Cashier username={user.username} />
-              </Protected>
-            }
-          />
-        </Routes>
+        <FileUploader
+          active={active}
+          setActive={setActive}
+          fileListChanged={fileListChanged}
+          setListChange={setListChange}
+        />
       </div>
     </div>
   );

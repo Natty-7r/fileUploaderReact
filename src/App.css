@@ -1,0 +1,55 @@
+*,
+*::after,
+*::before {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+:root {
+  --golden: #facc15;
+  --golderDark: #eab308;
+  --orange: orange;
+  --white: white;
+  --whiteDim: rgba(255, 255, 255, 0.315);
+  --gray: #262626;
+  --darkBlue: #0c4a6e;
+  --lightDarkBlue: #1515bb;
+  --bgWhite: #f0f8ff;
+  --whiteBlue: aliceblue;
+}
+html {
+  font-size: 10px;
+}
+.app {
+  width: 70%;
+  margin: auto;
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  height: 50vh;
+  transform: translate(-50%);
+  border: solid thin red;
+  border-radius: 0.3rem;
+}
+.menu {
+  padding: 0.8rem;
+  gap: 0.8rem;
+}
+.menu .menu_btn {
+  font-size: 1.6rem;
+  letter-spacing: 0.08rem;
+  text-transform: capitalize;
+  padding: 0.2rem 0.8rem 0.2rem 0.2rem;
+  background: none;
+  margin-right: 0.8rem;
+  border: none;
+}
+.menu .active {
+  border-bottom: solid red;
+}
+.app_main {
+  /* position: relative; */
+  overflow-x: hidden;
+  background-color: red;
+}
